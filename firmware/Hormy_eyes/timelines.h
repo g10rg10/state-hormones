@@ -18,11 +18,14 @@ static const Track a2_tracks[] = {
   {CH_DSY,     EASE_A2_DOT, 7, 4000, a2_dot},
 };
 
-// A3_idle — loop. breath 4600ms + blink track 13000ms
+// A3_idle — loop. breath 4600ms + look-around drift 7200ms + blink 13000ms
+// (three independent rhythms = EMO's "never perfectly still" idle).
 static const Kf a3_scale[] = {{0,1},{50,1.08f},{100,1}};
+static const Kf a3_drift[] = {{0,0},{18,-11},{32,-11},{50,0},{68,12},{82,12},{100,0}};
 static const Kf a3_dot[]   = {{0,1},{38.5f,1},{39.06f,.07f},{39.62f,1},{86.4f,1},{86.96f,.07f},{87.52f,1},{100,1}};
 static const Track a3_tracks[] = {
   {CH_G_SCALE, EASE_IN_OUT, 3, 4600,  a3_scale},
+  {CH_G_TX,    EASE_IN_OUT, 7, 7200,  a3_drift},
   {CH_DSY,     EASE_DOT_46, 8, 13000, a3_dot},
 };
 
@@ -61,10 +64,11 @@ static const Track b3_tracks[] = {
 
 // ========================= C · feedback & confirm ===========================
 
-// C1_confirm — one-shot 2400ms, action 0-12.5%
-static const Kf c1_dot[] = {{0,1},{2.5f,.07f},{5,1},{6.25f,1},{8.75f,.07f},{12.5f,1},{100,1}};
+// C1_confirm — one-shot: eyes fade out, a check ✓ morphs in, then eyes return.
+// (the check itself is drawn in draw.h's renderFrame from the C1 progress)
+static const Kf c1_op[] = {{0,1},{12,0},{80,0},{92,1},{100,1}};
 static const Track c1_tracks[] = {
-  {CH_DSY, EASE_DOT_46, 7, 2400, c1_dot},
+  {CH_DOP, EASE_IN_OUT, 5, 2400, c1_op},
 };
 
 // C2_didnt_catch — one-shot 3600ms, action 0-17%. tilt L-13 / R+13
@@ -151,12 +155,12 @@ static const StateDef STATES[NUM_STATES] = {
 //  id              mode          baseDur action chain nTr tracks       sScale ovl  pivot dotsOff
   { "A1_off",       MODE_STATIC,     0,    0,   0xFF, 0,  nullptr,     0,    OV_NONE,    0, true  },
   { "A2_wake",      MODE_ONESHOT, 4000,   37,    2,   3,  a2_tracks,   0,    OV_NONE,    0, false },
-  { "A3_idle",      MODE_LOOP,    4600,  100,   0xFF, 2,  a3_tracks,   0,    OV_NONE,    0, false },
+  { "A3_idle",      MODE_LOOP,    4600,  100,   0xFF, 3,  a3_tracks,   0,    OV_NONE,    0, false },
   { "A4_clock",     MODE_DISPLAY,    0,    0,   0xFF, 0,  nullptr,     0,    OV_CLOCK,   0, false },
   { "B1_speaking",  MODE_LOOP,    3400,  100,   0xFF, 4,  b1_tracks,   0,    OV_NONE,    0, false },
   { "B2_listening", MODE_LOOP,    9000,  100,   0xFF, 1,  b2_tracks,   1.12f, OV_NOTEPAD, 0, false },
   { "B3_thinking",  MODE_LOOP,    2000,  100,   0xFF, 3,  b3_tracks,   0,    OV_NONE,    0, false },
-  { "C1_confirm",   MODE_ONESHOT, 2400, 12.5f, 0xFF, 1,  c1_tracks,   0,    OV_NONE,    0, false },
+  { "C1_confirm",   MODE_ONESHOT, 2400,  92,   0xFF, 1,  c1_tracks,   0,    OV_NONE,    0, false },
   { "C2_didnt_catch", MODE_ONESHOT, 3600, 17,  0xFF, 3,  c2_tracks,   0,    OV_NONE,    0, false },
   { "D1_reminder",  MODE_ONESHOT, 3200,   25,    4,   3,  d1_tracks,   0,    OV_NONE,    0, false },
   { "D2_wakeword",  MODE_ONESHOT, 3400,   15,    5,   2,  d2_tracks,   1.12f, OV_NONE,   0, false },

@@ -89,9 +89,9 @@ Controls: **Tempo** (global `--spd` duration multiplier), **Square/Round**,
 | `A3_idle` | loop | ±8% breath (~4.6 s) + natural blink every ~5–8 s |
 | `A4_clock` | display | the eyes give way to a live glowing digital clock (HH:MM, blinking colon) |
 | `B1_speaking` | loop | breath at speech rhythm (simulated TTS envelope) + blink ~6 s |
-| `B2_listening` | loop | dots +12%, held still, rare blink — your turn; a notepad in the corner is always writing (overlay, eyes untouched) |
+| `B2_listening` | loop | dots +12%, held still, rare blink — your turn; a centered notepad + hand is always writing (overlay, eyes untouched) |
 | `B3_thinking` | loop ~2 s | gaze slips away and back + one slow half blink |
-| `C1_confirm` | one-shot ~300 ms | quick double blink |
+| `C1_confirm` | one-shot ~1.9 s | the eyes morph into a check ✓, hold, then return to eyes |
 | `C2_didnt_catch` | one-shot ~600 ms | slow blink + tilt (one dot up, one down), then back |
 | `D1_reminder` | one-shot ~500 ms | scale "perk up" + one soft blink |
 | `D2_wakeword` | one-shot ~400 ms | attentive pop, settles at the listening size (B2) |
@@ -157,3 +157,27 @@ until you leave them.
 > On the device, the same amplitude envelope drives **eyes + light + audio**
 > together (spec §production notes); here each state restarts on select/replay so
 > motion and sound stay in sync.
+
+### Light feedback (Maind X spec §0 · Light states)
+
+A third feedback layer beyond motion and sound: an **external light halo** around
+the device — a "shadow of light" (inside the screen there are only the eyes) —
+whose **level + tint** follow the state. Brightness mimics the audio-envelope floor
+(never 0); the guardrail is *never bouncy* (anti-hyperfocus). The **speaking** light
+pulses **in time with the eyes**. Per state (`lightDesc` in `state-anims.js`, the
+`.stage` outer glow in the CSS; on the device it drives an external RGB LED —
+`g_lightLevel` in the firmware):
+
+| light | states | behavior |
+|-------|--------|----------|
+| **idle** | A3, A4, B3, E1–E5 | slow breathe around a low floor (not audio-driven) |
+| **speak** | B1, C2, D1 | pulses with the speech envelope — floor 0.55, fast attack / slow release |
+| **listen** | B2, D2 | brighter floor (0.65) + **cooler tint** → "your turn" |
+| **wake** | A2 | fade-in from off, settle to floor |
+| **confirm** | C1 | single brightness pulse |
+| **off** | A1 | dark (the only state with light fully off) |
+
+The **listening** overlay also shows a **centered** white **notepad** (spiral
+binding on the right) with a **hand writing** on it — "I'm taking notes" — without
+touching the eyes. And **confirm** (C1) morphs the eyes into a **check ✓** and back.
+Both mirrored in the firmware (`drawNotepad`, `drawCheck`).

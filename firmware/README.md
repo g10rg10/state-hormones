@@ -3,10 +3,16 @@
 A **faithful C++ port** of the web `states.html` gallery to the
 **Waveshare ESP32-S3-Touch-LCD-2.8C** (2.8″ **480×480 round**, ST7701, 8 MB OPI
 PSRAM, 16 MB flash). Same two glossy EMO eyes, same 16 states, the tall
-vertically-elongated clock, and the listening notepad — **round-only**, no new
-design. The render loop is paced ~30 fps and every timeline is driven from the
-wall clock with per-segment cubic-bezier easing, so motion stays smooth and
-framerate-independent (matching EMO's eased blinks + continuous micro-life).
+vertically-elongated clock, the centered listening notepad (white pad, spiral on
+the right, a **writing hand**), the **confirm check ✓** (the eyes morph into a
+checkmark and back), and the **light feedback** (Maind X §0) whose level + tint
+follow the state (idle breathe, speak pulse *in time with the eyes*, listen
+brighter + cooler, confirm pulse, wake fade). The light is **EXTERNAL** on the
+device (an RGB LED halo — the LCD shows only the eyes); the firmware exposes
+`g_lightLevel` / `g_lightCool` for it. **Round-only**, no new design. The
+render loop is paced ~30 fps and every timeline is driven from the wall clock with
+per-segment cubic-bezier easing, so motion stays smooth and framerate-independent
+(matching EMO's eased blinks + continuous micro-life).
 
 Sketch folder: [`Hormy_eyes/`](Hormy_eyes/).
 

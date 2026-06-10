@@ -66,6 +66,23 @@
   animation-duration: calc(var(--spd) * 13000ms);
   animation-timing-function: cubic-bezier(.4, 0, .6, 1);
 }
+/* continuous look-around drift (EMO is never perfectly still): a slow gaze that
+   eases left, holds, comes back, eases right — on the .eye layer so it has its
+   OWN 7.2s rhythm independent of the 4.6s breath and 13s blink. ±11–12px. */
+@keyframes A3i-drift {
+  0%   { transform: translateX(0); }
+  18%  { transform: translateX(-11px); }
+  32%  { transform: translateX(-11px); }   /* small hold looking left */
+  50%  { transform: translateX(0); }
+  68%  { transform: translateX(12px); }
+  82%  { transform: translateX(12px); }     /* small hold looking right */
+  100% { transform: translateX(0); }
+}
+.st-A3_idle .eye {
+  animation-name: A3i-drift;
+  animation-duration: calc(var(--spd) * 7200ms);
+  animation-timing-function: ease-in-out;
+}
 
 /* === A4_clock — Clock — display: the eyes give way to a live glowing digital
    clock (HH:MM, colon blinking once per second). The "on the shelf" idle face.
@@ -164,21 +181,35 @@
 
 /* ============ C · Feedback & confirmation ============ */
 
-/* === C1_confirm — Confirm — one-shot ~300ms: crisp double blink.
-   Action: 0–12.5% of the 2400ms cycle. === */
-@keyframes C1c-dot {
-  0%     { transform: scaleY(1); }
-  2.5%   { transform: scaleY(.07); }
-  5%     { transform: scaleY(1); }
-  6.25%  { transform: scaleY(1); }
-  8.75%  { transform: scaleY(.07); }
-  12.5%  { transform: scaleY(1); }
-  100%   { transform: scaleY(1); }
+/* === C1_confirm — Confirm — one-shot: the eyes morph into a CHECK ✓, hold,
+   then return to eyes. Action ~0–80% of the 2400ms cycle. === */
+@keyframes C1eyes {            /* dots shrink + fade out while the check shows, then back */
+  0%   { opacity: 1; transform: scale(1); }
+  12%  { opacity: 0; transform: scale(.5); }
+  80%  { opacity: 0; transform: scale(.5); }
+  92%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1); }
 }
+@keyframes C1check {           /* the check draws in, holds, fades out */
+  0%   { stroke-dashoffset: 80; opacity: 0; }
+  12%  { stroke-dashoffset: 80; opacity: 1; }
+  40%  { stroke-dashoffset: 0;  opacity: 1; }
+  70%  { stroke-dashoffset: 0;  opacity: 1; }
+  82%  { stroke-dashoffset: 0;  opacity: 0; }
+  100% { stroke-dashoffset: 0;  opacity: 0; }
+}
+.st-C1_confirm .check { display: flex; }
 .st-C1_confirm .dot {
-  animation-name: C1c-dot;
+  animation-name: C1eyes;
   animation-duration: calc(var(--spd) * 2400ms);
-  animation-timing-function: cubic-bezier(.4, 0, .6, 1);
+  animation-timing-function: cubic-bezier(.4, 0, .3, 1);
+}
+.st-C1_confirm .check path {
+  animation-name: C1check;
+  animation-duration: calc(var(--spd) * 2400ms);
+  animation-timing-function: cubic-bezier(.45, 0, .25, 1);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
 }
 
 /* === C2_didnt_catch — Didn't catch that — one-shot ~600ms: slow blink + gentle
@@ -348,30 +379,61 @@
   animation-timing-function: cubic-bezier(.4, 0, .6, 1);
 }
 
-/* === B2 note-taking overlay — while LISTENING, a little notepad in the corner
-   is always writing. The eyes are untouched (still B2 pose); this is an extra
-   layer that signals "I'm taking notes". Always animated (not gated by --spd). === */
+/* === Listening notepad + writing hand (B2) — fixed-time, not spd-scaled.
+   White pad, spiral on the right, a hand writing line by line. === */
 .st-B2_listening .notes { display: block; }
-@keyframes noteWrite {                 /* the active line fills, like a pen writing */
-  0%   { width: 8%; opacity: .9; }
+@keyframes noteWrite {                  /* the active line fills as the hand moves */
+  0%   { width: 8%;  opacity: .9; }
   8%   { opacity: 1; }
-  68%  { width: 80%; opacity: 1; }
-  82%  { width: 80%; opacity: 1; }
-  100% { width: 80%; opacity: 0; }     /* fades, then snaps back = next line */
+  64%  { width: 74%; opacity: 1; }
+  80%  { width: 74%; opacity: 1; }
+  100% { width: 74%; opacity: 0; }      /* fades, then snaps back = next line */
 }
-@keyframes notePen {                   /* the pen nib tracks the writing, then returns */
-  0%   { transform: translateX(0)    rotate(38deg); }
-  68%  { transform: translateX(40px) rotate(38deg); }
-  82%  { transform: translateX(40px) rotate(38deg); }
-  100% { transform: translateX(0)    rotate(38deg); }
+@keyframes handWrite {                  /* the hand sweeps along the line, then returns */
+  0%   { transform: translate(0, 0); }
+  22%  { transform: translate(7px, -1px); }
+  46%  { transform: translate(14px, 1px); }
+  70%  { transform: translate(21px, -1px); }
+  80%  { transform: translate(24px, 0); }
+  100% { transform: translate(0, 0); }  /* carriage return = next line */
 }
-@keyframes noteBob {                    /* tiny lively bob */
+@keyframes noteBob {                    /* tiny lively bob of the whole pad + hand */
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-3px); }
 }
-.st-B2_listening .notes        { animation: noteBob 2.6s ease-in-out infinite; }
-.st-B2_listening .notes .write { animation: noteWrite 1.9s cubic-bezier(.4,0,.5,1) infinite; }
-.st-B2_listening .notes .pen   { animation: notePen   1.9s cubic-bezier(.4,0,.5,1) infinite; }
+.st-B2_listening .notes { animation: noteBob   2.6s ease-in-out infinite; }
+.st-B2_listening .write { animation: noteWrite 1.9s cubic-bezier(.4,0,.5,1) infinite; }
+.st-B2_listening .hand  { animation: handWrite 1.9s cubic-bezier(.4,0,.5,1) infinite; }
+
+/* === Ambient light feedback (Maind X §0) — EXTERNAL halo, animates --lumeLevel
+   on the .stage box-shadow (outer glow). Speak pulses IN TIME with the eyes:
+   same 3400 ms + same peak %s as the B1 breath. Never bouncy. === */
+@keyframes lumIdle    { 0% { --lumeLevel: .10; } 50% { --lumeLevel: .26; } 100% { --lumeLevel: .10; } }
+@keyframes lumSpeak   {   /* peaks aligned to B1s-grp (the speaking eye breath) */
+  0%  { --lumeLevel: .20; }  7% { --lumeLevel: .46; } 13% { --lumeLevel: .28; }
+  21% { --lumeLevel: .54; } 28% { --lumeLevel: .33; } 36% { --lumeLevel: .47; }
+  44% { --lumeLevel: .26; } 52% { --lumeLevel: .56; } 60% { --lumeLevel: .35; }
+  68% { --lumeLevel: .52; } 76% { --lumeLevel: .28; } 84% { --lumeLevel: .47; }
+  92% { --lumeLevel: .30; } 100% { --lumeLevel: .20; } }
+@keyframes lumListen  { 0% { --lumeLevel: .34; } 50% { --lumeLevel: .44; } 100% { --lumeLevel: .34; } }
+@keyframes lumWake    { 0% { --lumeLevel: 0; } 28% { --lumeLevel: .40; } 45% { --lumeLevel: .22; } 100% { --lumeLevel: .22; } }
+@keyframes lumConfirm { 0% { --lumeLevel: .18; } 9% { --lumeLevel: .52; } 26% { --lumeLevel: .20; } 100% { --lumeLevel: .20; } }
+.st-A2_wake        { animation: lumWake    calc(var(--spd) * 4000ms) ease-out    infinite; }
+.st-A3_idle,
+.st-A4_clock,
+.st-B3_thinking,
+.st-E1_dizzy,
+.st-E2_quirk,
+.st-E3_happy,
+.st-E4_wink,
+.st-E5_content     { animation: lumIdle    calc(var(--spd) * 4600ms) ease-in-out infinite; }
+.st-B1_speaking    { animation: lumSpeak   calc(var(--spd) * 3400ms) ease-in-out infinite; }
+.st-C2_didnt_catch,
+.st-D1_reminder    { animation: lumSpeak   calc(var(--spd) * 3400ms) ease-in-out infinite; }
+.st-B2_listening   { animation: lumListen  calc(var(--spd) * 3000ms) ease-in-out infinite; }
+.st-D2_wakeword    { animation: lumListen  calc(var(--spd) * 3000ms) ease-in-out infinite; }
+.st-C1_confirm     { animation: lumConfirm calc(var(--spd) * 2400ms) ease-in-out infinite; }
+/* A1_off: no stage animation → --lumeLevel 0 = light off */
 
 /* ============ E · Personality — dynamic expressions ============
    Built only by squashing the rounded-rectangle height (scaleY) — no nose, no

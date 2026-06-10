@@ -14,8 +14,8 @@ extern Arduino_GFX* gfx;     // defined in panel_config.h (filled by the user)
 // ----- base geometry (states.css, CONFIRMED) -----
 static const int SCREEN = 480;
 static const int CXC = 240, CYC = 240;        // screen center
-static const int EYE_W = 118, EYE_H = 150, EYE_RAD = 46;
-static const int GAP = 62;                     // between the inner edges
+static const int EYE_W = 124, EYE_H = 132, EYE_RAD = 44;   // rounded-square, EMO-like
+static const int GAP = 58;                     // between the inner edges
 static const int BASE_CX_L = 240 - GAP / 2 - EYE_W / 2;   // 150
 static const int BASE_CX_R = 240 + GAP / 2 + EYE_W / 2;   // 330
 static const float GLOW_REACH = 40.0f;         // halo px (scaled from CSS 72 for round-fit/perf)
@@ -163,35 +163,108 @@ static void drawClock() {
 
 // ---------------------------------------------------------------- notepad (B2)
 // bottom-right corner overlay, all timings FIXED seconds (not spd-scaled).
+// notepad (white, spiral on the RIGHT) + a writing hand. Fixed-time (not spd).
 static void drawNotepad() {
-  int nx = SCREEN - 60 - 96;     // 324
-  int ny = SCREEN - 64 - 112;    // 304
-  // bob 2.6s: ty 0 -> -3 -> 0
+  int w = 120, h = 100;
+  int nx = (SCREEN - w) / 2;   // 180 — centered below the eyes
+  int ny = SCREEN - 96 - h;    // 284
   float bp = fmodf(millis() / 2600.0f, 1.0f);
-  int bob = (int)(-3.0f * sinf(bp * (float)M_PI));   // 0 -> -3 -> 0
-  ny += bob;
-  // pad
-  RGB pad = lerpRGB(G0, G1, 0.35f);
-  gfx->fillRoundRect(nx, ny, 96, 112, 12, pack565(pad));
-  // spiral binding dots
-  RGB bind = lerpRGB(pad, ISH, 0.55f);
-  for (int bx = nx + 14; bx < nx + 84; bx += 18) gfx->fillCircle(bx, ny + 11, 3, pack565(bind));
-  // written lines
-  RGB ln = lerpRGB(pad, ISH, 0.55f);
-  gfx->fillRoundRect(nx + 14, ny + 30, (int)(96 * 0.64f), 6, 3, pack565(ln));   // l1
-  gfx->fillRoundRect(nx + 14, ny + 46, (int)(96 * 0.52f), 6, 3, pack565(ln));   // l2
-  // active write line 1.9s: width 8% -> 80%
+  ny += (int)(-3.0f * sinf(bp * (float)M_PI));        // bob
+  RGB white = {235, 252, 249};
+  RGB pad = lerpRGB(white, G1, 0.10f);
+  gfx->fillRoundRect(nx, ny, w, h, 13, pack565(pad));
+  // spiral binding loops on the RIGHT edge
+  int ry[4] = {14, 36, 58, 78};
+  for (int i = 0; i < 4; i++)
+    gfx->fillRoundRect(nx + w - 8, ny + ry[i], 16, 7, 4, pack565(G2));
+  // already-written lines
+  RGB ln = lerpRGB(pad, ISH, 0.5f);
+  gfx->fillRoundRect(nx + 16, ny + 20, (int)(w * 0.54f), 6, 3, pack565(ln));
+  gfx->fillRoundRect(nx + 16, ny + 38, (int)(w * 0.66f), 6, 3, pack565(ln));
+  // active write line (1.9s, 8% -> 74%)
   float wp = fmodf(millis() / 1900.0f, 1.0f);
-  float frac = wp < 0.68f ? (0.08f + (0.80f - 0.08f) * (wp / 0.68f)) : 0.80f;
-  RGB lnA = lerpRGB(pad, ISH, 0.8f);
-  int wl = (int)(96 * frac);
-  gfx->fillRoundRect(nx + 14, ny + 64, wl, 6, 3, pack565(lnA));
-  // pen nib sweeping with the write line (tx 0 -> 40)
-  float pp = wp < 0.68f ? (wp / 0.68f) : 1.0f;
-  int penX = nx + 16 + (int)(40 * pp);
-  RGB pen = lerpRGB({58, 48, 38}, GLOW, 0.2f);
-  gfx->fillCircle(penX, ny + 66, 4, pack565(pen));
-  gfx->drawLine(penX, ny + 66, penX - 9, ny + 50, pack565(lerpRGB({90, 74, 56}, G0, .3f)));
+  float frac = wp < 0.64f ? (0.08f + (0.74f - 0.08f) * (wp / 0.64f)) : 0.74f;
+  gfx->fillRoundRect(nx + 16, ny + 56, (int)(w * frac), 6, 3, pack565(lerpRGB(pad, ISH, 0.72f)));
+  // writing hand (white mitten + pen) sweeping along the line
+  float hp = wp < 0.7f ? (wp / 0.7f) : 1.0f;
+  int hx = nx - 8 + (int)(24 * hp);
+  int hy = ny + h + 2;
+  RGB nibC = {36, 31, 27};
+  RGB pen = lerpRGB(G1, nibC, 0.45f);
+  for (int o = -1; o <= 1; o++) gfx->drawLine(hx + 22 + o, hy - 8, hx + 38 + o, hy - 46, pack565(pen));
+  gfx->fillCircle(hx + 38, hy - 46, 3, pack565(nibC));               // nib
+  gfx->fillRoundRect(hx + 2, hy - 28, 40, 30, 14, pack565(white));   // palm
+  gfx->fillCircle(hx, hy - 16, 8, pack565(white));                   // thumb
+}
+
+// ---------------------------------------------------------------- light feedback
+// Maind X spec §0 · Light states. The light is EXTERNAL on the device (an RGB LED
+// halo around it) — the LCD shows ONLY the eyes. So we do NOT draw it on screen;
+// instead we expose the current level + tint for the LED (TODO: wire the LED).
+// Speak tracks the eye breath; listen runs cooler.
+enum { LUM_OFF, LUM_IDLE, LUM_SPEAK, LUM_LISTEN, LUM_WAKE, LUM_CONFIRM };
+float g_lightLevel = 0.0f;   // 0..1 — drive an external RGB LED with this
+bool  g_lightCool  = false;  // listen = cooler tint
+
+static uint8_t lightModeFor(int idx) {
+  switch (idx) {
+    case 0:  return LUM_OFF;      // A1_off
+    case 1:  return LUM_WAKE;     // A2_wake
+    case 4:                       // B1_speaking
+    case 8:                       // C2_didnt_catch
+    case 9:  return LUM_SPEAK;    // D1_reminder
+    case 5:                       // B2_listening
+    case 10: return LUM_LISTEN;   // D2_wakeword
+    case 7:  return LUM_CONFIRM;  // C1_confirm
+    default: return LUM_IDLE;     // A3,A4,B3,E1..E5
+  }
+}
+
+// brightness envelope per light mode (floor never 0 except OFF)
+static float lightLevel(uint8_t mode, uint32_t now) {
+  float p;
+  switch (mode) {
+    case LUM_OFF:     return 0.0f;
+    case LUM_IDLE:    p = fmodf(now / 4600.0f, 1.0f); return 0.16f + 0.24f * (0.5f - 0.5f * cosf(p * 2 * (float)M_PI));
+    case LUM_LISTEN:  p = fmodf(now / 3000.0f, 1.0f); return 0.50f + 0.10f * (0.5f - 0.5f * cosf(p * 2 * (float)M_PI));
+    case LUM_SPEAK:   p = fmodf(now / 3400.0f, 1.0f); { float v = 0.32f + 0.42f * fabsf(sinf(p * (float)M_PI * 3.0f)); return v > 0.76f ? 0.76f : v; }
+    case LUM_WAKE:    p = fmodf(now / 4000.0f, 1.0f); return p < 0.28f ? (p / 0.28f * 0.52f) : 0.30f;
+    case LUM_CONFIRM: p = fmodf(now / 2400.0f, 1.0f);
+                      if (p < 0.09f) return 0.28f + (0.80f - 0.28f) * (p / 0.09f);
+                      if (p < 0.26f) return 0.80f - (0.80f - 0.30f) * ((p - 0.09f) / 0.17f);
+                      return 0.30f;
+  }
+  return 0.2f;
+}
+
+// speak light tracks the eye breath (group scale) — for the external LED
+static float speakLightFromScale(float sc) {
+  float v = 0.20f + (sc - 1.0f) * 4.5f;
+  return v < 0.20f ? 0.20f : (v > 0.56f ? 0.56f : v);
+}
+
+// confirm: the eyes morph into a check. drawn 0..1 = how much of the stroke is
+// drawn; alpha 0..1 = its opacity. Two passes: a soft glow, then the bright line.
+static void drawCheck(float drawn, float alpha) {
+  if (alpha <= 0.01f) return;
+  RGB col = lerpRGB(BG, G0, alpha);
+  RGB glo = lerpRGB(BG, GLOW, alpha * 0.5f);
+  const float ax = 173, ay = 246, bx = 223, by = 296, cx = 313, cy = 190;
+  const float L1 = 70.7f, L2 = 139.0f, T = L1 + L2;
+  float prog = drawn * T; if (prog > T) prog = T;
+  for (int pass = 0; pass < 2; pass++) {        // glow pass, then bright pass
+    int rad = pass == 0 ? 15 : 9;
+    uint16_t c = pack565(pass == 0 ? glo : col);
+    for (float s = 0; s <= L1 && s <= prog; s += 5) {
+      float t = s / L1;
+      gfx->fillCircle((int)(ax + (bx - ax) * t), (int)(ay + (by - ay) * t), rad, c);
+    }
+    if (prog > L1)
+      for (float s = 0; s <= L2 && s <= (prog - L1); s += 5) {
+        float t = s / L2;
+        gfx->fillCircle((int)(bx + (cx - bx) * t), (int)(by + (cy - by) * t), rad, c);
+      }
+  }
 }
 
 // ---------------------------------------------------------------- background
@@ -203,9 +276,30 @@ static void drawBackground() {
 static void renderFrame(int stateIdx, uint32_t now, uint32_t startMs) {
   const StateDef* s = &STATES[stateIdx];
   drawBackground();
-  if (s->dotsOff) return;                       // A1_off: dark screen
-  if (s->overlay == OV_CLOCK) { drawClock(); return; }
+  uint8_t lm = lightModeFor(stateIdx);
+
+  if (s->dotsOff) { g_lightLevel = 0; g_lightCool = false; return; }   // A1: dark + light off
+  if (s->overlay == OV_CLOCK) { g_lightLevel = lightLevel(lm, now); g_lightCool = false; drawClock(); return; }
+
   Pose p = evalState(s, now, startMs);
+
+  // external light feedback (for the device LED — NOT drawn on the LCD). Speak
+  // tracks the eye breath, so the halo pulses in time with the eyes.
+  g_lightCool  = (lm == LUM_LISTEN);
+  g_lightLevel = (lm == LUM_SPEAK) ? speakLightFromScale(p.gScale) : lightLevel(lm, now);
+
+  if (stateIdx == 7) {                  // C1_confirm: eyes fade → check ✓ → eyes
+    drawEyes(p);
+    uint32_t dur = (uint32_t)(s->baseDurMs * g_spd);
+    float pr = (float)(now - startMs) / dur; if (pr > 0.92f) pr = 0.92f;
+    float alpha = pr < 0.12f ? pr / 0.12f
+                : (pr < 0.70f ? 1.0f
+                : (pr < 0.82f ? 1.0f - (pr - 0.70f) / 0.12f : 0.0f));
+    float drawn = pr < 0.12f ? 0.0f : (pr < 0.40f ? (pr - 0.12f) / 0.28f : 1.0f);
+    drawCheck(drawn, alpha);
+    return;
+  }
+
   drawEyes(p);
   if (s->overlay == OV_NOTEPAD) drawNotepad();
 }

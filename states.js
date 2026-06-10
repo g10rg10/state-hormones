@@ -16,6 +16,7 @@
   var spd = document.getElementById("spd");
   var spdVal = document.getElementById("spdVal");
 
+  var flight = document.getElementById("flight");
   var soundBtn = document.getElementById("sound");
   var SE = window.SoundEngine;
 
@@ -51,10 +52,13 @@
       '<div class="eye right"><div class="dot"></div></div>' +
     '</div>' +
     '<div class="clock"><b class="hh">--</b><b class="cl">:</b><b class="mm">--</b></div>' +
+    '<div class="check"><svg viewBox="0 0 100 100"><path d="M26 52 L44 70 L76 32"/></svg></div>' +
     '<div class="notes">' +
-      '<div class="pad"></div>' +
-      '<div class="ln l1"></div><div class="ln l2"></div>' +
-      '<div class="write"></div><div class="pen"></div>' +
+      '<div class="pad">' +
+        '<span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span><span class="ring r4"></span>' +
+        '<i class="ln l1"></i><i class="ln l2"></i><i class="write"></i>' +
+      '</div>' +
+      '<div class="hand"><div class="pen2"></div><div class="palm"></div></div>' +
     '</div>';
 
   /* feed the live wall-clock time into every .clock on the page (1 Hz) */
@@ -112,6 +116,9 @@
         '<span class="chip">' + a.dur + "</span>" +
         '<span class="chip light">light ' + a.light + "</span>";
       fdesc.textContent = a.desc;
+      if (flight) flight.innerHTML = a.lightDesc
+        ? '<span class="licon"></span><b>Light feedback</b> · ' + a.lightDesc
+        : "";
     }
     Array.prototype.forEach.call(grid.querySelectorAll(".card"), function (c) {
       c.classList.toggle("active", c.dataset.id === state.id);
@@ -131,8 +138,10 @@
     el.style.animation = "";
   }
   function replay() {
+    // include .stage (light) + .check path so the light pulse and check redraw
+    // restart in sync with the eyes (speaking light is timed to the eye breath)
     Array.prototype.forEach.call(
-      document.querySelectorAll(".stage .eyes, .stage .eye, .stage .dot"),
+      document.querySelectorAll(".stage, .stage .eyes, .stage .eye, .stage .dot, .stage .check path"),
       restart
     );
     playCurrent(); // re-trigger the featured state's sound in sync with the replay
