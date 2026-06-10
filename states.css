@@ -161,15 +161,22 @@ main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
 .clock {
   display: none;                       /* shown only for .st-A4_clock */
   position: absolute; inset: 0;
-  align-items: center; justify-content: center; gap: 4px;
-  font: 600 118px/1 "SF Mono", "Segoe UI Mono", "Roboto Mono", ui-monospace, monospace;
-  letter-spacing: 2px;
+  align-items: center; justify-content: center; gap: 8px;
   color: var(--g0);
   text-shadow:
-    0 0 18px rgba(var(--glow), .9),
-    0 0 52px rgba(var(--glow), .45);
+    0 0 16px rgba(var(--glow), .9),
+    0 0 48px rgba(var(--glow), .5);
 }
-.clock .cl { opacity: 1; margin: 0 2px; }   /* the blinking colon */
+/* "font allungato verticale": monospace digits stretched TALL and narrowed,
+   like the watch-face reference. Monospace keeps the columns from jittering
+   as the time changes. This same tall-digit look is mirrored in the firmware. */
+.clock b {
+  display: inline-block;
+  font: 800 96px/1 "SF Mono", "Segoe UI Mono", "Roboto Mono", ui-monospace, monospace;
+  transform: scaleY(1.62) scaleX(0.86);
+  transform-origin: center center;
+}
+.clock .cl { opacity: 1; transform: scaleY(1.18); }   /* blinking colon, a touch shorter */
 
 /* ---------- Note-taking overlay (B2_listening) ----------
    A little notepad that is always writing while the device listens. The eyes

@@ -22,12 +22,12 @@
   var state = {
     id: STATES.length ? STATES[2].id : null, // start on A3_idle: the "home" state
     spd: parseFloat(spd.value),
-    shape: "square",
     sound: true,
   };
 
+  // Round-only: the target hardware is a 480x480 ROUND display (no square version).
   function stageClass(id) {
-    return "stage " + state.shape + " st-" + id;
+    return "stage round st-" + id;
   }
 
   /* fire the state's sound (one-shot voicing; loop states keep a bed going).
@@ -125,13 +125,6 @@
 
   function select(id) { state.id = id; applyFeatured(); playCurrent(); }
 
-  function refreshAllStages() {
-    applyFeatured();
-    Array.prototype.forEach.call(grid.querySelectorAll(".card"), function (c) {
-      c.querySelector(".stage").className = stageClass(c.dataset.id);
-    });
-  }
-
   function restart(el) {
     el.style.animation = "none";
     void el.offsetWidth; // force reflow
@@ -151,16 +144,6 @@
     applySpd();
     // keep a running loop bed (A3/B1/B2/B3) in tempo with the new --spd
     if (state.sound && SE && /loop/i.test((find(state.id) || {}).type || "")) playCurrent();
-  });
-
-  document.getElementById("shape").addEventListener("click", function (e) {
-    var b = e.target.closest("button[data-shape]");
-    if (!b) return;
-    state.shape = b.dataset.shape;
-    Array.prototype.forEach.call(this.querySelectorAll("button"), function (x) {
-      x.classList.toggle("on", x === b);
-    });
-    refreshAllStages();
   });
 
   document.getElementById("tint").addEventListener("click", function (e) {
