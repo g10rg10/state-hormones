@@ -6,8 +6,13 @@ designed to run even on embedded displays:
 - **`index.html` — Appear**: the 9 animations the EMO eyes can appear with.
 - **`states.html` — States**: the states from the *Maind X Healthcare* spec
   ([docs/maind-x-eyes-animation.md](docs/maind-x-eyes-animation.md)) — plus a
-  clock and a few height-only expressions — the same glossy EMO eyes as the
-  Appear gallery, all expression carried by rhythm.
+  clock (tall vertical digits) and a few height-only expressions — the same
+  glossy EMO eyes as the Appear gallery, all expression carried by rhythm.
+  **Round-only** (the hardware screen is round).
+- **`firmware/` — device port**: a faithful C++ / Arduino_GFX port of the States
+  gallery for the **Waveshare ESP32-S3 2.8″ 480×480 round** display. All 16
+  states + the tall clock, ~30 fps eased motion. See
+  [firmware/README.md](firmware/README.md).
 
 ## Run
 
