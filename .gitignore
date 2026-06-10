@@ -1,0 +1,7 @@
+# macOS
+.DS_Store
+
+# tool/agent artifacts
+.claude-flow/
+.swarm/
+*.log

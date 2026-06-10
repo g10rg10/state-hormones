@@ -1,0 +1,353 @@
+/* keyframes.css — generato dal design panel (9 varianti, tutte transform/opacity/filter[/clip-path]).
+   Ogni variante: @keyframes ap-<id> + selettore .anim-<id> .eye. NON modificare a mano: rigenerare. */
+
+/* === pop — Pop molla — Gli occhi scattano dal minuscolo con un rimbalzo elastico e si stabilizzano. === */
+@keyframes ap-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  6% {
+    opacity: 1;
+  }
+  10% {
+    transform: scale(1.12);
+  }
+  13% {
+    transform: scale(0.97);
+  }
+  16% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  84% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  92% {
+    opacity: 0;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+.anim-pop .eye {
+  animation-name: ap-pop;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* === eye-open — Apertura occhi — Gli occhi si aprono da una sottile fessura orizzontale espandendosi in verticale con un piccolo rimbalzo, come al risveglio. === */
+@keyframes ap-eye-open {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.04);
+    filter: brightness(0.6);
+  }
+  8% {
+    opacity: 1;
+    transform: scaleY(0.04);
+    filter: brightness(1);
+  }
+  12% {
+    transform: scaleY(1.06);
+  }
+  16% {
+    transform: none;
+    opacity: 1;
+    filter: none;
+  }
+  84% {
+    opacity: 1;
+    transform: none;
+  }
+  92% {
+    opacity: 0;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+.anim-eye-open .eye {
+  animation-name: ap-eye-open;
+  animation-timing-function: cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+
+/* === fade-scale — Fade + scala — Gli occhi appaiono dolcemente in dissolvenza ingrandendosi da piccoli a pieni, senza rimbalzo. === */
+@keyframes ap-fade-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  16% {
+    opacity: 1;
+    transform: none;
+  }
+  84% {
+    opacity: 1;
+    transform: none;
+  }
+  92% {
+    opacity: 0;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+.anim-fade-scale .eye {
+  animation-name: ap-fade-scale;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* === slide-in — Scivola dai lati — Gli occhi entrano scivolando orizzontalmente dai bordi esterni fino al centro. === */
+@keyframes ap-slide-in {
+  0% { opacity: 0; transform: translateX(var(--from)); }
+  10% { opacity: 1; }
+  12% { transform: translateX(var(--overshoot)); }
+  16% { opacity: 1; transform: none; }
+  84% { opacity: 1; transform: none; }
+  92% { opacity: 0; transform: none; }
+  100% { opacity: 0; transform: none; }
+}
+.anim-slide-in .eye {
+  animation-name: ap-slide-in;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.anim-slide-in .eye.left {
+  --from: -150px;
+  --overshoot: 8px;
+}
+.anim-slide-in .eye.right {
+  --from: 150px;
+  --overshoot: -8px;
+}
+
+/* === power-on — Accensione LED — Gli occhi nascono da un puntino bianco accecante che lampeggia e scatta di colpo a piena dimensione, come un tubo catodico che si accende. === */
+@keyframes ap-power-on {
+  0% {
+    opacity: 0;
+    transform: scale(0.12);
+    filter: brightness(2.6) saturate(1.4);
+  }
+  4% {
+    opacity: 1;
+    transform: scale(0.16);
+    filter: brightness(3.2) saturate(1.5);
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1.12);
+    filter: brightness(1.8) saturate(1.2);
+  }
+  13% {
+    opacity: 1;
+    transform: scale(0.97);
+    filter: brightness(1.15);
+  }
+  16% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  84% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  92% {
+    opacity: 0;
+    transform: none;
+    filter: none;
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+    filter: none;
+  }
+}
+
+.anim-power-on .eye {
+  animation-name: ap-power-on;
+  animation-timing-function: cubic-bezier(0.16, 1.2, 0.3, 1);
+}
+
+/* === drop-bounce — Caduta + rimbalzo — Gli occhi cadono dall'alto, superano il centro e rimbalzano una volta prima di fermarsi. === */
+@keyframes ap-drop-bounce {
+  0% {
+    opacity: 0;
+    transform: translateY(-200px);
+  }
+  4% {
+    opacity: 1;
+    transform: translateY(-120px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(22px);
+  }
+  13% {
+    transform: translateY(-9px);
+  }
+  16% {
+    opacity: 1;
+    transform: none;
+  }
+  84% {
+    opacity: 1;
+    transform: none;
+  }
+  92% {
+    opacity: 0;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+.anim-drop-bounce .eye {
+  animation-name: ap-drop-bounce;
+  animation-timing-function: cubic-bezier(.34, .62, .31, 1);
+}
+
+/* === iris-expand — Iris Expand — Gli occhi si aprono come un'iride: prima una fessura orizzontale piatta, poi si dilatano in altezza fino alla forma piena. === */
+@keyframes ap-iris-expand {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.4) scaleY(0.04);
+    filter: brightness(1.6);
+  }
+  6% {
+    opacity: 1;
+    transform: scaleX(0.85) scaleY(0.06);
+    filter: brightness(1.5);
+  }
+  10% {
+    transform: scaleX(1.06) scaleY(0.6);
+    filter: brightness(1.3);
+  }
+  13% {
+    transform: scaleX(0.98) scaleY(1.08);
+    filter: brightness(1.1);
+  }
+  16% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  84% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  92% {
+    opacity: 0;
+    transform: none;
+    filter: none;
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+    filter: none;
+  }
+}
+
+.anim-iris-expand .eye {
+  animation-name: ap-iris-expand;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* === zoom-rush — Zoom da lontano — Gli occhi sfrecciano da lontano, sfocati, fino a fuoco nitido con un piccolo rimbalzo. === */
+@keyframes ap-zoom-rush {
+  0% {
+    opacity: 0;
+    transform: scale(0.15);
+    filter: blur(6px);
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1.12);
+    filter: blur(0.5px);
+  }
+  16% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  84% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  92% {
+    opacity: 0;
+    transform: none;
+    filter: none;
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+    filter: none;
+  }
+}
+
+.anim-zoom-rush .eye {
+  animation-name: ap-zoom-rush;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* === wipe-up — Wipe verso alto — Gli occhi si svelano dal basso verso l'alto con un nitido effetto tendina. === */
+@keyframes ap-wipe-up {
+  0% {
+    opacity: 0;
+    transform: none;
+    clip-path: inset(100% 0 0 0);
+    filter: brightness(0.85);
+  }
+  4% {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(100% 0 0 0);
+    filter: brightness(1.15);
+  }
+  16% {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0);
+    filter: none;
+  }
+  84% {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0);
+    filter: none;
+  }
+  92% {
+    opacity: 0;
+    transform: none;
+    clip-path: inset(0 0 100% 0);
+    filter: brightness(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+    clip-path: inset(0 0 100% 0);
+    filter: brightness(0.85);
+  }
+}
+
+.anim-wipe-up .eye {
+  animation-name: ap-wipe-up;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EMO Eyes — anteprime animazioni</title>
+  <link rel="stylesheet" href="eyes.css">
+  <link rel="stylesheet" href="keyframes.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1><span class="dot"></span> EMO Eyes — anteprime comparsa</h1>
+
+    <div class="ctrl">
+      <label for="speed">Velocità comparsa</label>
+      <input id="speed" type="range" min="150" max="800" step="10" value="420">
+      <span class="val" id="speedVal"></span>
+    </div>
+
+    <div class="ctrl">
+      <span class="seg" id="shape">
+        <button data-shape="square" class="on">Quadrato</button>
+        <button data-shape="round">Tondo</button>
+      </span>
+    </div>
+
+    <div class="ctrl">
+      <span class="seg" id="blink">
+        <button data-blink="on" class="on">Blink</button>
+        <button data-blink="off">No blink</button>
+      </span>
+    </div>
+
+    <button class="btn" id="replay">↻ Replay</button>
+  </header>
+
+  <main>
+    <section class="featured">
+      <div class="stage square blink" id="featStage">
+        <div class="eyes"><div class="eye left"></div><div class="eye right"></div></div>
+      </div>
+      <div class="featured-meta">
+        <div class="fname" id="fname"></div>
+        <div class="fdesc" id="fdesc"></div>
+      </div>
+    </section>
+
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <script src="anims.js"></script>
+  <script src="eyes.js"></script>
+</body>
+</html>
