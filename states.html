@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maind X Eyes — states (A1–E2)</title>
+  <link rel="stylesheet" href="states.css">
+  <link rel="stylesheet" href="state-keyframes.css">
+</head>
+<body class="tint-cyan">
+  <header class="topbar">
+    <h1><span class="dot-ico"></span> Maind X Eyes — states</h1>
+    <nav class="pages">
+      <a href="index.html">Appear</a>
+      <a href="states.html" class="on">States</a>
+    </nav>
+
+    <div class="ctrl">
+      <label for="spd">Tempo (× duration)</label>
+      <input id="spd" type="range" min="0.6" max="1.6" step="0.05" value="1">
+      <span class="val" id="spdVal"></span>
+    </div>
+
+    <div class="ctrl">
+      <span class="seg" id="shape">
+        <button data-shape="square" class="on">Square</button>
+        <button data-shape="round">Round</button>
+      </span>
+    </div>
+
+    <div class="ctrl">
+      <span class="seg" id="tint">
+        <button data-tint="warm">Warm white</button>
+        <button data-tint="cyan" class="on">EMO cyan</button>
+      </span>
+    </div>
+
+    <button class="btn" id="replay">↻ Replay</button>
+    <button class="btn" id="sound" aria-pressed="true">🔊 Sound</button>
+  </header>
+
+  <main>
+    <section class="featured">
+      <div class="stage square st-A3_idle" id="featStage">
+        <div class="eyes">
+          <div class="eye left"><div class="dot"></div></div>
+          <div class="eye right"><div class="dot"></div></div>
+        </div>
+        <div class="clock"><b class="hh">--</b><b class="cl">:</b><b class="mm">--</b></div>
+        <div class="notes">
+          <div class="pad"></div>
+          <div class="ln l1"></div><div class="ln l2"></div>
+          <div class="write"></div><div class="pen"></div>
+        </div>
+      </div>
+      <div class="featured-meta">
+        <div class="fname" id="fname"></div>
+        <div class="fchips" id="fchips"></div>
+        <div class="fdesc" id="fdesc"></div>
+      </div>
+    </section>
+
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <script src="state-anims.js"></script>
+  <script src="sound.js"></script>
+  <script src="states.js"></script>
+</body>
+</html>

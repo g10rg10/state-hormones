@@ -30,6 +30,13 @@ html, body {
   display: flex; align-items: center; gap: 9px;
 }
 .topbar h1 .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--eye); box-shadow: 0 0 10px var(--eye); }
+.pages { display: inline-flex; gap: 4px; margin-left: 6px; }
+.pages a {
+  color: #9aa6b1; text-decoration: none; font-size: 12px;
+  padding: 5px 10px; border-radius: 8px; border: 1px solid transparent;
+}
+.pages a:hover { color: #fff; border-color: #2a323a; }
+.pages a.on { color: var(--eye); border-color: #2a323a; background: #12171c; }
 .ctrl { display: flex; align-items: center; gap: 8px; }
 .ctrl label { color: #9aa6b1; font-size: 12px; white-space: nowrap; }
 .ctrl input[type=range] { width: 190px; accent-color: var(--eye); }
