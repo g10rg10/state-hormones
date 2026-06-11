@@ -4,8 +4,9 @@
     {
       "name": "eyes",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8123"],
-      "port": 8123
+      "runtimeArgs": ["-c", "import http.server,socketserver,functools\nclass H(http.server.SimpleHTTPRequestHandler):\n    def end_headers(self):\n        self.send_header('Cache-Control','no-store, max-age=0')\n        self.send_header('Pragma','no-cache')\n        super().end_headers()\nsocketserver.TCPServer.allow_reuse_address=True\nsocketserver.TCPServer(('',8123),functools.partial(H,directory='/Users/giorgio/Desktop/REPOS/Hormy')).serve_forever()"],
+      "port": 8123,
+      "autoPort": false
     }
   ]
 }
