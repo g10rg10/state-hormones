@@ -73,8 +73,12 @@ body.tint-cyan .seg button.on { color: #04201e; }
 .btn:hover { border-color: var(--acc); color: #fff; }
 
 /* ---------- Layout ---------- */
-main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
-.featured { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 38px; }
+/* previews (grid) on the LEFT, featured stage on the right (row-reverse: the
+   grid is the 2nd child in the DOM but renders first/left). */
+main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 28px;
+  padding: 22px 22px 60px; max-width: 1240px; margin: 0 auto; }
+.featured { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center;
+  gap: 14px; position: sticky; top: 80px; }
 .featured-meta { text-align: center; }
 .featured-meta .fname { font-size: 16px; font-weight: 650; }
 .featured-meta .fchips { margin-top: 6px; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
@@ -96,8 +100,9 @@ main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
 }
 
 .grid {
-  display: grid; gap: 18px; justify-content: center;
-  grid-template-columns: repeat(auto-fill, 212px);
+  flex: 0 0 auto;
+  display: grid; gap: 16px; align-content: start;
+  grid-template-columns: repeat(2, 174px);   /* 2-column left sidebar */
 }
 .sechead {
   grid-column: 1 / -1;
@@ -117,8 +122,8 @@ main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
 .card .cmeta { color: #8b97a2; font-size: 11px; margin-top: 2px; }
 
 /* thumbnail: 480 stage scaled down to 188 */
-.thumb { position: relative; width: 188px; height: 188px; overflow: hidden; border-radius: 12px; }
-.thumb .stage { position: absolute; top: 0; left: 0; transform-origin: top left; transform: scale(0.39167); }
+.thumb { position: relative; width: 150px; height: 150px; overflow: hidden; border-radius: 12px; }
+.thumb .stage { position: absolute; top: 0; left: 0; transform-origin: top left; transform: scale(0.3125); }
 
 /* ---------- The screen (480x480 stage) ---------- */
 .stage {

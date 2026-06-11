@@ -141,9 +141,9 @@ until you leave them.
 | `B3_thinking` | **loop**: sparse contemplative blips |
 | `C1_confirm` | bright positive two-note (A→D) |
 | `C2_didnt_catch` | questioning upward "hm?" (E→A↗B) |
-| `D1_reminder` | calm bell-ish reminder chime |
+| `D1_reminder` | gentle alarm-bell ring (soft, repeated strikes) |
 | `D2_wakeword` | attentive rising pop (D→A→D) |
-| `E2_quirk` | curious little blips |
+| `E2_quirk` | (silent — no sound) |
 | `E4_wink` | playful upward blip |
 > On the device, the same amplitude envelope drives **eyes + light + audio**
 > together (spec §production notes); here each state restarts on select/replay so

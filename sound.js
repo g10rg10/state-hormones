@@ -165,11 +165,13 @@ window.SoundEngine = (function () {
     },
 
     // D · proactive
-    D1_reminder: function (t, spd) {                   // calm reminder chime (bell-ish)
-      blip(N.D5, t, 0.5 * spd, 0.16);
-      blip(N.D5 * 2, t, 0.4 * spd, 0.03);              // soft harmonic for a bell timbre
-      blip(N.Fs5, t + 0.16 * spd, 0.55 * spd, 0.14);
-      blip(N.A5, t + 0.22 * spd, 0.5 * spd, 0.045);    // shimmer
+    D1_reminder: function (t, spd) {                   // gentle alarm-bell RING (soft, repeated strikes)
+      var hits = [0, 0.13, 0.26, 0.39];
+      for (var i = 0; i < hits.length; i++) {
+        var tt = t + hits[i] * spd;
+        blip(N.D5, tt, 0.18 * spd, 0.13);              // bell strike
+        blip(N.D5 * 2, tt, 0.14 * spd, 0.025);         // soft octave harmonic = bell timbre
+      }
     },
     D2_wakeword: function (t, spd) {                   // attentive, alert pop (rising)
       blip(N.D4, t, 0.09 * spd, 0.17, { sub: true });
@@ -178,11 +180,7 @@ window.SoundEngine = (function () {
     },
 
     // E · personality
-    E2_quirk: function (t, spd) {                      // curious little blips
-      blip(N.A4, t, 0.14 * spd, 0.15, { sub: true });
-      blip(N.Fs4, t + 0.18 * spd, 0.16 * spd, 0.15, { sub: true });
-      blip(N.A4, t + 0.40 * spd, 0.20 * spd, 0.13);
-    },
+    E2_quirk: function () { /* idle micro-quirk is silent — no sound */ },
     E4_wink: function (t, spd) {                       // playful upward blip
       blip(N.A4, t, 0.16 * spd, 0.17, { glideTo: N.E5 });
     }
