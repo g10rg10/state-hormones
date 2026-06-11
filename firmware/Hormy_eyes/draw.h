@@ -163,38 +163,42 @@ static void drawClock() {
 
 // ---------------------------------------------------------------- notepad (B2)
 // bottom-right corner overlay, all timings FIXED seconds (not spd-scaled).
-// notepad (white, spiral on the RIGHT) + a writing hand. Fixed-time (not spd).
+// notepad (white, spiral on the RIGHT). The writing hand + pen sit BEHIND the
+// pad (drawn first, so the pad covers their upper part), peeking from below;
+// the lines are very faint. Fixed-time (not spd).
 static void drawNotepad() {
   int w = 120, h = 100;
   int nx = (SCREEN - w) / 2;   // 180 — centered below the eyes
   int ny = SCREEN - 96 - h;    // 284
   float bp = fmodf(millis() / 2600.0f, 1.0f);
   ny += (int)(-3.0f * sinf(bp * (float)M_PI));        // bob
+
   RGB white = {235, 252, 249};
+  RGB nibC  = {36, 31, 27};
+  RGB pen   = lerpRGB(G1, nibC, 0.45f);
+
+  // 1) the writing hand FIRST, so the pad (drawn next) covers its upper part
+  float wp = fmodf(millis() / 1900.0f, 1.0f);
+  float hp = wp < 0.7f ? (wp / 0.7f) : 1.0f;
+  int hx = nx + 40 + (int)(20 * hp);                 // sweeps behind the pad
+  int py = ny + h - 6;                               // palm top just under the pad
+  for (int o = -1; o <= 1; o++) gfx->drawLine(hx + 6 + o, py + 4, hx + 20 + o, py - 46, pack565(pen)); // pen rises behind
+  gfx->fillRoundRect(hx, py, 38, 26, 13, pack565(white));   // palm
+  gfx->fillCircle(hx - 2, py + 12, 7, pack565(white));      // thumb
+
+  // 2) the pad ON TOP (covers the hand)
   RGB pad = lerpRGB(white, G1, 0.10f);
   gfx->fillRoundRect(nx, ny, w, h, 13, pack565(pad));
-  // spiral binding loops on the RIGHT edge
-  int ry[4] = {14, 36, 58, 78};
+  int ry[4] = {14, 36, 58, 78};                      // spiral binding on the RIGHT
   for (int i = 0; i < 4; i++)
     gfx->fillRoundRect(nx + w - 8, ny + ry[i], 16, 7, 4, pack565(G2));
-  // already-written lines
-  RGB ln = lerpRGB(pad, ISH, 0.5f);
-  gfx->fillRoundRect(nx + 16, ny + 20, (int)(w * 0.54f), 6, 3, pack565(ln));
-  gfx->fillRoundRect(nx + 16, ny + 38, (int)(w * 0.66f), 6, 3, pack565(ln));
-  // active write line (1.9s, 8% -> 74%)
-  float wp = fmodf(millis() / 1900.0f, 1.0f);
+
+  // 3) very faint written lines + the active write line
+  RGB ln = lerpRGB(pad, ISH, 0.16f);
+  gfx->fillRoundRect(nx + 16, ny + 22, (int)(w * 0.54f), 5, 3, pack565(ln));
+  gfx->fillRoundRect(nx + 16, ny + 40, (int)(w * 0.66f), 5, 3, pack565(ln));
   float frac = wp < 0.64f ? (0.08f + (0.74f - 0.08f) * (wp / 0.64f)) : 0.74f;
-  gfx->fillRoundRect(nx + 16, ny + 56, (int)(w * frac), 6, 3, pack565(lerpRGB(pad, ISH, 0.72f)));
-  // writing hand (white mitten + pen) sweeping along the line
-  float hp = wp < 0.7f ? (wp / 0.7f) : 1.0f;
-  int hx = nx - 8 + (int)(24 * hp);
-  int hy = ny + h + 2;
-  RGB nibC = {36, 31, 27};
-  RGB pen = lerpRGB(G1, nibC, 0.45f);
-  for (int o = -1; o <= 1; o++) gfx->drawLine(hx + 22 + o, hy - 8, hx + 38 + o, hy - 46, pack565(pen));
-  gfx->fillCircle(hx + 38, hy - 46, 3, pack565(nibC));               // nib
-  gfx->fillRoundRect(hx + 2, hy - 28, 40, 30, 14, pack565(white));   // palm
-  gfx->fillCircle(hx, hy - 16, 8, pack565(white));                   // thumb
+  gfx->fillRoundRect(nx + 16, ny + 58, (int)(w * frac), 5, 3, pack565(lerpRGB(pad, ISH, 0.26f)));
 }
 
 // ---------------------------------------------------------------- light feedback

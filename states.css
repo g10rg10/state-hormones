@@ -239,7 +239,7 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
   filter: drop-shadow(0 0 16px rgba(var(--glow), .42));
 }
 .notes .pad {
-  position: absolute; inset: 0; border-radius: 13px;
+  position: absolute; inset: 0; border-radius: 13px; z-index: 2;   /* pad ON TOP of the hand */
   background: linear-gradient(180deg, #f3fffe, #d6faf5);
   box-shadow: inset 0 -9px 16px rgba(var(--ish), .22);
 }
@@ -250,36 +250,38 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 }
 .notes .ring.r1 { top: 15px; } .notes .ring.r2 { top: 39px; }
 .notes .ring.r3 { top: 63px; } .notes .ring.r4 { top: 84px; }
-.notes .ln {                           /* already-written lines */
-  position: absolute; left: 16px; height: 6px; border-radius: 3px;
-  background: rgba(var(--ish), .5);
+.notes .ln {                           /* already-written lines — very faint */
+  position: absolute; left: 16px; height: 5px; border-radius: 3px;
+  background: rgba(var(--ish), .16);
 }
-.notes .ln.l1 { top: 22px; width: 54%; }
-.notes .ln.l2 { top: 40px; width: 66%; }
-.notes .write {                        /* the active line being written */
-  position: absolute; left: 16px; top: 58px; height: 6px; width: 8%;
-  border-radius: 3px; background: rgba(var(--ish), .72);
+.notes .ln.l1 { top: 23px; width: 54%; }
+.notes .ln.l2 { top: 41px; width: 66%; }
+.notes .write {                        /* the active line being written — faint */
+  position: absolute; left: 16px; top: 59px; height: 5px; width: 8%;
+  border-radius: 3px; background: rgba(var(--ish), .26);
 }
-/* the writing hand (stylized white mitten + pen), sweeps along the active line */
+/* writing hand + pen — z-index 1 so it sits BEHIND the pad (z 2): it peeks from
+   below/behind the pad and the pen tip disappears behind it while writing */
 .notes .hand {
-  position: absolute; left: -10px; bottom: -16px; width: 62px; height: 60px;
+  position: absolute; z-index: 1;
+  left: 30px; bottom: -30px; width: 56px; height: 66px;
 }
 .notes .palm {
-  position: absolute; left: 12px; bottom: 0; width: 42px; height: 32px;
-  background: linear-gradient(180deg, #f3fffe, #d6faf5); border-radius: 18px 20px 13px 16px;
+  position: absolute; left: 0; bottom: 0; width: 40px; height: 28px;
+  background: linear-gradient(180deg, #f3fffe, #d6faf5); border-radius: 16px 18px 13px 15px;
   box-shadow: inset 0 -4px 7px rgba(var(--ish), .2);
 }
 .notes .palm::before {                 /* thumb */
-  content: ""; position: absolute; left: -5px; top: 5px; width: 17px; height: 14px;
+  content: ""; position: absolute; left: -5px; top: 4px; width: 16px; height: 13px;
   background: inherit; border-radius: 10px; transform: rotate(-20deg);
 }
-.notes .pen2 {                         /* the pen, hand → paper */
-  position: absolute; left: 31px; bottom: 19px; width: 7px; height: 46px;
-  border-radius: 4px; transform: rotate(33deg); transform-origin: bottom center;
+.notes .pen2 {                         /* the pen — shaft peeks below, tip rises behind the pad */
+  position: absolute; left: 22px; bottom: 20px; width: 6px; height: 56px;
+  border-radius: 4px; transform: rotate(16deg); transform-origin: bottom center;
   background: linear-gradient(180deg, var(--g1) 0%, var(--g3) 55%, #241f1b 100%);
 }
 .notes .pen2::after {                  /* nib */
-  content: ""; position: absolute; left: 1px; bottom: -4px; width: 5px; height: 6px;
+  content: ""; position: absolute; left: 0; bottom: -4px; width: 5px; height: 6px;
   background: #241f1b; border-radius: 0 0 3px 3px;
 }
 
