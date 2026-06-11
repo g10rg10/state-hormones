@@ -44,7 +44,7 @@ or the clock auto-wakes so the loop repeats. The firmware runs the same logic in
 | `B3_thinking` | gaze slips away and back (~2 s) + slow half-blink | sparse contemplative blips (loop) | **idle** breathe |
 | `C1_confirm` | the eyes **morph into a check ✓**, hold, then return to eyes | bright positive two-note (A→D) | **confirm**: single pulse |
 | `C2_didnt_catch` | slow blink + gentle tilt (one dot up, one down) | questioning upward "hm?" (E→A↗B) | **speak** pulse → cools toward listen |
-| `D1_reminder` | the eyes **morph into a bell that rings**, then return to eyes | gentle **alarm-bell ring** (soft repeated strikes) | **speak** pulse |
+| `D1_reminder` | the eyes **morph into a bell that rings**, then return to eyes | gentle **alarm-bell ring** (3 soft strikes) | **speak** pulse |
 | `D2_wakeword` | attentive pop, settles at the listening size (B2 pose) | attentive rising pop (D→A→D) | **listen** (cooler) |
 | `E2_quirk` | looks around (left, right) and back + one natural blink | — *(silent)* | **idle** |
 | `E4_wink` | right eye flattens to a line and holds, left squints, both reopen | playful upward blip | **idle** |

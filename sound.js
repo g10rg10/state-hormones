@@ -165,8 +165,8 @@ window.SoundEngine = (function () {
     },
 
     // D · proactive
-    D1_reminder: function (t, spd) {                   // gentle alarm-bell RING (soft, repeated strikes)
-      var hits = [0, 0.13, 0.26, 0.39];
+    D1_reminder: function (t, spd) {                   // gentle alarm-bell RING — 3 soft strikes
+      var hits = [0, 0.17, 0.34];
       for (var i = 0; i < hits.length; i++) {
         var tt = t + hits[i] * spd;
         blip(N.D5, tt, 0.18 * spd, 0.13);              // bell strike

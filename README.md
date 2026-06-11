@@ -143,7 +143,7 @@ until you leave them.
 | `B3_thinking` | **loop**: sparse contemplative blips |
 | `C1_confirm` | bright positive two-note (A→D) |
 | `C2_didnt_catch` | questioning upward "hm?" (E→A↗B) |
-| `D1_reminder` | gentle alarm-bell ring (soft, repeated strikes) |
+| `D1_reminder` | gentle alarm-bell ring (3 soft strikes) |
 | `D2_wakeword` | attentive rising pop (D→A→D) |
 | `E2_quirk` | (silent — no sound) |
 | `E4_wink` | playful upward blip |
