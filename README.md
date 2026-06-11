@@ -93,19 +93,14 @@ Controls: **Tempo** (global `--spd` duration multiplier), **Square/Round**,
 | `B3_thinking` | loop ~2 s | gaze slips away and back + one slow half blink |
 | `C1_confirm` | one-shot ~1.9 s | the eyes morph into a check ✓, hold, then return to eyes |
 | `C2_didnt_catch` | one-shot ~600 ms | slow blink + tilt (one dot up, one down), then back |
-| `D1_reminder` | one-shot ~500 ms | scale "perk up" + one soft blink |
+| `D1_reminder` | one-shot ~1.9 s | the eyes morph into a little bell that rings, then return to eyes |
 | `D2_wakeword` | one-shot ~400 ms | attentive pop, settles at the listening size (B2) |
-| `E1_dizzy` | one-shot ~1.4 s | out-of-phase dizzy wobble, then recovery |
 | `E2_quirk` | one-shot ~1 s | looks around and back, natural double blink |
-| `E3_happy` | one-shot ~3.6 s | eyes squish into short rounded bars (a smile of eyes) + small lift |
 | `E4_wink` | one-shot ~2.6 s | right eye flattens to a line and holds shut, left squints, then both reopen |
-| `E5_content` | one-shot ~4.2 s | both eyes lower to half-lidded bars (calm), hold, reopen |
-
-> **Dynamic expressions (E3–E5)** are built *only* by squashing the eye's height
-> (`scaleY` on the rounded rectangle) — no nose, no extra parts. Same two eyes,
-> different shape = different mood. The **B2 notepad** and the **A4 clock** are the
-> only overlays that add an element beside the eyes, and both sit in their own
-> region (corner / full-screen), never between the eyes.
+> The personality states kept are **E2 quirk** (look-around) and **E4 wink** —
+> life from motion + height only, no extra parts. The overlays that add an element
+> are the **centered notepad** (listening), the **clock**, the **confirm check ✓**
+> and the **reminder bell** — each in its own region, never a "nose".
 
 ### States contract (3 composable layers)
 
@@ -148,12 +143,8 @@ until you leave them.
 | `C2_didnt_catch` | questioning upward "hm?" (E→A↗B) |
 | `D1_reminder` | calm bell-ish reminder chime |
 | `D2_wakeword` | attentive rising pop (D→A→D) |
-| `E1_dizzy` | playful wobble (vibrato + glissando) |
 | `E2_quirk` | curious little blips |
-| `E3_happy` | bright little giggle (rising) |
 | `E4_wink` | playful upward blip |
-| `E5_content` | warm, settling sigh (downward) |
-
 > On the device, the same amplitude envelope drives **eyes + light + audio**
 > together (spec §production notes); here each state restarts on select/replay so
 > motion and sound stay in sync.
@@ -170,7 +161,7 @@ pulses **in time with the eyes**. Per state (`lightDesc` in `state-anims.js`, th
 
 | light | states | behavior |
 |-------|--------|----------|
-| **idle** | A3, A4, B3, E1–E5 | slow breathe around a low floor (not audio-driven) |
+| **idle** | A3, A4, B3, E2, E4 | slow breathe around a low floor (not audio-driven) |
 | **speak** | B1, C2, D1 | pulses with the speech envelope — floor 0.55, fast attack / slow release |
 | **listen** | B2, D2 | brighter floor (0.65) + **cooler tint** → "your turn" |
 | **wake** | A2 | fade-in from off, settle to floor |

@@ -190,8 +190,10 @@ main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
    as the time changes. This same tall-digit look is mirrored in the firmware. */
 .clock b {
   display: inline-block;
-  font: 800 96px/1 "SF Mono", "Segoe UI Mono", "Roboto Mono", ui-monospace, monospace;
-  transform: scaleY(1.62) scaleX(0.86);
+  /* rounded font = rounded digit corners; tabular-nums keeps the columns fixed */
+  font: 800 104px/1 ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", "Quicksand", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  transform: scaleY(1.5) scaleX(0.92);
   transform-origin: center center;
 }
 .clock .cl { opacity: 1; transform: scaleY(1.18); }   /* blinking colon, a touch shorter */
@@ -267,6 +269,22 @@ main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
   stroke-dasharray: 80; stroke-dashoffset: 80;
 }
 
+/* ---------- Reminder bell overlay (D1_reminder) ----------
+   On a reminder the eyes morph into a little bell that rings, then back. */
+.bell {
+  display: none;                       /* shown only for .st-D1_reminder */
+  position: absolute; inset: 0; z-index: 2;
+  align-items: center; justify-content: center;
+  /* glow on the (non-rotating) container — a filter on the rotating <svg>/path
+     leaves a visible filter-region box, this doesn't */
+  filter: drop-shadow(0 0 14px rgba(var(--glow), .8)) drop-shadow(0 0 32px rgba(var(--glow), .4));
+}
+.bell svg {
+  width: 156px; height: 156px;
+  transform-origin: 50% 16%;           /* pivot near the top handle, like a real bell */
+}
+.bell svg path { fill: var(--g0); }
+
 /* ---------- Ambient light feedback (Maind X spec §0 · Light states) ----------
    EXTERNAL halo around the device — like a shadow of light — whose LEVEL + TINT
    follow the state (idle breathe, speak pulse in time with the eyes, listen
@@ -289,8 +307,6 @@ main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
   .stage .notes, .stage .notes * { animation: none !important; }
   /* Expression states live only in their keyframes — without animation they
      would read as plain neutral eyes. Pin the static pose so the mood survives. */
-  .st-E3_happy .dot   { transform: scaleY(.42); transform-origin: center bottom; }
   .st-E4_wink .eye.right .dot { transform: scaleY(.07); }
-  .st-E5_content .dot { transform: scaleY(.55); }
   /* The clock is a layout swap, not motion — it still shows; just stop the colon. */
 }

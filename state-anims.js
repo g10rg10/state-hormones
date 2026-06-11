@@ -67,9 +67,9 @@ window.STATES = [
   },
   {
     id: "D1_reminder", sec: "D", name: "Reminder",
-    light: "[SPEAK] · reminder-chime", type: "one-shot → B1", dur: "~500 ms",
+    light: "[SPEAK] · reminder-chime", type: "one-shot → B1", dur: "~1.9 s",
     lightDesc: "Calm speak pulse for the reminder (never alarming).",
-    desc: "“Perk up”: a small scale pop + one soft blink to draw attention — calm, not alarming."
+    desc: "The eyes morph into a little bell that rings, then return to eyes — a calm reminder, never alarming."
   },
   {
     id: "D2_wakeword", sec: "D", name: "Wake word",
@@ -78,33 +78,15 @@ window.STATES = [
     desc: "Attentive pop: scales up with a little overshoot and settles at the listening size (the B2 pose)."
   },
   {
-    id: "E1_dizzy", sec: "E", name: "Shaken (dizzy)",
-    light: "playful · brief", type: "one-shot", dur: "~1–1.5 s",
-    lightDesc: "Stays on the idle floor (never bouncy — anti-hyperfocus).",
-    desc: "Dizzy wobble: zig-zag out of phase between the two dots, briefly destabilized, then recovers."
-  },
-  {
     id: "E2_quirk", sec: "E", name: "Idle micro-quirk",
     light: "[IDLE]", type: "one-shot · rare", dur: "~1.3 s",
     lightDesc: "Idle floor.",
     desc: "Slowly looks around (left, then right) and back to center, with one natural blink. Alive without distracting."
   },
   {
-    id: "E3_happy", sec: "E", name: "Happy",
-    light: "playful", type: "one-shot", dur: "~3.6 s",
-    lightDesc: "Idle floor.",
-    desc: "Expression by shape only: the eyes squish down into short rounded bars — a smile made of eyes — with a small upward lift. No nose."
-  },
-  {
     id: "E4_wink", sec: "E", name: "Wink",
     light: "playful", type: "one-shot", dur: "~2.6 s",
     lightDesc: "Idle floor.",
     desc: "The right eye flattens to a line and holds shut while the left does a small sympathetic squint, then both reopen."
-  },
-  {
-    id: "E5_content", sec: "E", name: "Content",
-    light: "calm", type: "one-shot", dur: "~4.2 s",
-    lightDesc: "Idle floor.",
-    desc: "Both eyes slowly lower to half-lidded rounded bars (calm / satisfied) and hold, then reopen. Height-only expression."
   }
 ];

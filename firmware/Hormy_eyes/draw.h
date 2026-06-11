@@ -267,6 +267,21 @@ static void drawCheck(float drawn, float alpha) {
   }
 }
 
+// reminder: the eyes morph into a bell that rings. swing -1..1 = the bell tilt.
+static void drawBell(float swing, float alpha) {
+  if (alpha <= 0.01f) return;
+  RGB col = lerpRGB(BG, G0, alpha);
+  RGB glo = lerpRGB(BG, GLOW, alpha * 0.45f);
+  int sx = (int)(swing * 24);
+  int cx = CXC + sx, cy = 214;
+  gfx->fillCircle(cx, cy + 6, 84, pack565(glo));                    // glow halo
+  gfx->fillCircle(cx, cy - 60, 11, pack565(col));                   // top handle
+  gfx->fillCircle(cx, cy - 4, 54, pack565(col));                    // dome
+  gfx->fillRoundRect(cx - 66, cy + 28, 132, 36, 16, pack565(col));  // flared rim
+  gfx->fillRoundRect(cx - 44, cy + 40, 88, 12, 6, pack565(BG));     // rim separation
+  gfx->fillCircle(cx + (int)(swing * 9), cy + 80, 13, pack565(col));// clapper
+}
+
 // ---------------------------------------------------------------- background
 static void drawBackground() {
   gfx->fillScreen(pack565(BG));
@@ -297,6 +312,22 @@ static void renderFrame(int stateIdx, uint32_t now, uint32_t startMs) {
                 : (pr < 0.82f ? 1.0f - (pr - 0.70f) / 0.12f : 0.0f));
     float drawn = pr < 0.12f ? 0.0f : (pr < 0.40f ? (pr - 0.12f) / 0.28f : 1.0f);
     drawCheck(drawn, alpha);
+    return;
+  }
+
+  if (stateIdx == 9) {                  // D1_reminder: eyes fade → bell rings → eyes
+    drawEyes(p);
+    uint32_t dur = (uint32_t)(s->baseDurMs * g_spd);
+    float pr = (float)(now - startMs) / dur; if (pr > 0.94f) pr = 0.94f;
+    float alpha = pr < 0.10f ? pr / 0.10f
+                : (pr < 0.82f ? 1.0f
+                : (pr < 0.92f ? 1.0f - (pr - 0.82f) / 0.10f : 0.0f));
+    float swing = 0.0f;
+    if (pr >= 0.10f && pr < 0.58f) {
+      float u = (pr - 0.10f) / 0.48f;
+      swing = cosf(u * (float)M_PI * 5.0f) * (1.0f - u);   // damped ring
+    }
+    drawBell(swing, alpha);
     return;
   }
 

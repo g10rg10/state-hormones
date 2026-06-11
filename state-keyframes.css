@@ -242,32 +242,42 @@
 
 /* ============ D · Proactive moments ============ */
 
-/* === D1_reminder — Reminder — one-shot ~500ms: "perk up" (quick scale pop)
-   + one soft blink; calm, not alarming. Then chains into B1.
-   Action: 0–25% of 3200ms. === */
-@keyframes D1r-grp {
-  0%   { transform: none; }
-  7.5% { transform: scale(1.11) translateY(-5px); }
-  12%  { transform: scale(1.03) translateY(-1px); }
-  16%  { transform: scale(1.06) translateY(-2px); }
-  25%  { transform: none; }              /* settle to rest by 25% — clean cut into B1 (scale 1) */
-  100% { transform: none; }
+/* === D1_reminder — Reminder — one-shot: the eyes morph into a little BELL that
+   RINGS (rotates back and forth), holds, then return to eyes. Calm, not alarming.
+   Action ~0–82% of the 3200ms cycle. === */
+@keyframes D1eyes {           /* eyes shrink + fade while the bell rings, then back */
+  0%   { opacity: 1; transform: scale(1); }
+  12%  { opacity: 0; transform: scale(.5); }
+  82%  { opacity: 0; transform: scale(.5); }
+  94%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1); }
 }
-@keyframes D1r-dot {
-  0%, 17% { transform: scaleY(1); }
-  20.5%   { transform: scaleY(.1); }   /* soft blink */
-  25%     { transform: scaleY(1); }
-  100%    { transform: scaleY(1); }
+@keyframes D1ring {           /* bell appears, rings (damped swing), holds, fades */
+  0%   { opacity: 0; transform: rotate(0); }
+  10%  { opacity: 1; transform: rotate(0); }
+  16%  { transform: rotate(17deg); }
+  23%  { transform: rotate(-15deg); }
+  30%  { transform: rotate(12deg); }
+  37%  { transform: rotate(-9deg); }
+  44%  { transform: rotate(6deg); }
+  51%  { transform: rotate(-3deg); }
+  58%  { transform: rotate(0); }
+  82%  { opacity: 1; transform: rotate(0); }
+  92%  { opacity: 0; }
+  100% { opacity: 0; transform: rotate(0); }
 }
-.st-D1_reminder .eyes {
-  animation-name: D1r-grp;
-  animation-duration: calc(var(--spd) * 3200ms);
-  animation-timing-function: cubic-bezier(.22, 1.2, .36, 1);
-}
+.st-D1_reminder .bell { display: flex; }
 .st-D1_reminder .dot {
-  animation-name: D1r-dot;
+  animation-name: D1eyes;
+  animation-duration: calc(var(--spd) * 3200ms);
+  animation-timing-function: cubic-bezier(.4, 0, .3, 1);
+}
+.st-D1_reminder .bell svg {
+  animation-name: D1ring;
   animation-duration: calc(var(--spd) * 3200ms);
   animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
 }
 
 /* === D2_wakeword — Wake word — one-shot ~400ms: attentive pop (scale up with
@@ -300,54 +310,6 @@
 }
 
 /* ============ E · Personality / easter eggs ============ */
-
-/* === E1_dizzy — Shaken — one-shot ~1.4s: dizzy wobble, out-of-phase zig-zag
-   between the two dots, then recovers. Action: 0–40% of 3800ms. === */
-@keyframes E1d-grp {
-  0%    { transform: rotate(0) translateX(0); }
-  5%    { transform: rotate(4deg)    translateX(9px); }
-  12%   { transform: rotate(-5deg)   translateX(-11px); }
-  19%   { transform: rotate(4deg)    translateX(9px); }
-  25.5% { transform: rotate(-2.5deg) translateX(-5px); }
-  31.5% { transform: rotate(1.2deg)  translateX(2px); }
-  38%   { transform: rotate(0) translateX(0); }
-  100%  { transform: rotate(0) translateX(0); }
-}
-@keyframes E1d-eyeL {
-  0%   { transform: none; }
-  6%   { transform: translateY(-9px); }
-  13%  { transform: translateY(7px); }
-  20%  { transform: translateY(-6px); }
-  26%  { transform: translateY(4px); }
-  32%  { transform: translateY(-1.5px); }
-  38%  { transform: none; }
-  100% { transform: none; }
-}
-@keyframes E1d-eyeR {
-  0%   { transform: none; }
-  6%   { transform: translateY(9px); }
-  13%  { transform: translateY(-7px); }
-  20%  { transform: translateY(6px); }
-  26%  { transform: translateY(-4px); }
-  32%  { transform: translateY(1.5px); }
-  38%  { transform: none; }
-  100% { transform: none; }
-}
-.st-E1_dizzy .eyes {
-  animation-name: E1d-grp;
-  animation-duration: calc(var(--spd) * 3800ms);
-  animation-timing-function: ease-in-out;
-}
-.st-E1_dizzy .eye.left {
-  animation-name: E1d-eyeL;
-  animation-duration: calc(var(--spd) * 3800ms);
-  animation-timing-function: ease-in-out;
-}
-.st-E1_dizzy .eye.right {
-  animation-name: E1d-eyeR;
-  animation-duration: calc(var(--spd) * 3800ms);
-  animation-timing-function: ease-in-out;
-}
 
 /* === E2_quirk — Idle micro-quirk — rare one-shot ~1.3s: slowly looks around
    (left, then right) and back to center, with one natural blink on the way home.
@@ -422,11 +384,8 @@
 .st-A3_idle,
 .st-A4_clock,
 .st-B3_thinking,
-.st-E1_dizzy,
 .st-E2_quirk,
-.st-E3_happy,
-.st-E4_wink,
-.st-E5_content     { animation: lumIdle    calc(var(--spd) * 4600ms) ease-in-out infinite; }
+.st-E4_wink        { animation: lumIdle    calc(var(--spd) * 4600ms) ease-in-out infinite; }
 .st-B1_speaking    { animation: lumSpeak   calc(var(--spd) * 3400ms) ease-in-out infinite; }
 .st-C2_didnt_catch,
 .st-D1_reminder    { animation: lumSpeak   calc(var(--spd) * 3400ms) ease-in-out infinite; }
@@ -435,39 +394,7 @@
 .st-C1_confirm     { animation: lumConfirm calc(var(--spd) * 2400ms) ease-in-out infinite; }
 /* A1_off: no stage animation → --lumeLevel 0 = light off */
 
-/* ============ E · Personality — dynamic expressions ============
-   Built only by squashing the rounded-rectangle height (scaleY) — no nose, no
-   extra parts. Same eyes, different shape = different mood. === */
-
-/* === E3_happy — Happy — one-shot ~3.6s: eyes squish down into short rounded
-   bars (a smile made of eyes), with a small upward lift. Action: 0–24%. === */
-@keyframes E3h-grp {
-  0%   { transform: translateY(0); }
-  20%  { transform: translateY(-5px); }
-  82%  { transform: translateY(-5px); }
-  92%  { transform: translateY(0); }
-  100% { transform: translateY(0); }
-}
-@keyframes E3h-dot {
-  0%   { transform: scaleY(1); }
-  12%  { transform: scaleY(.34); }    /* fast squish toward the bottom */
-  18%  { transform: scaleY(.50); }    /* tiny elastic rebound */
-  24%  { transform: scaleY(.42); }    /* settle: the "smile" bar */
-  82%  { transform: scaleY(.42); }    /* hold */
-  92%  { transform: scaleY(1); }      /* reopen */
-  100% { transform: scaleY(1); }
-}
-.st-E3_happy .eyes {
-  animation-name: E3h-grp;
-  animation-duration: calc(var(--spd) * 3600ms);
-  animation-timing-function: cubic-bezier(.3, 1.2, .5, 1);
-}
-.st-E3_happy .dot {
-  transform-origin: center bottom;    /* squish leaves a bar at the BOTTOM = smile */
-  animation-name: E3h-dot;
-  animation-duration: calc(var(--spd) * 3600ms);
-  animation-timing-function: cubic-bezier(.3, 1.25, .5, 1);
-}
+/* ============ E · Personality — expression (height-only) ============ */
 
 /* === E4_wink — Wink — one-shot ~2.6s: the right eye flattens to a line and
    holds shut while the left does a small sympathetic squint. Action: 0–56%. === */
@@ -495,19 +422,4 @@
   animation-name: E4w-dotL;
   animation-duration: calc(var(--spd) * 2600ms);
   animation-timing-function: ease-in-out;
-}
-
-/* === E5_content — Content — one-shot ~4.2s: both eyes slowly lower to
-   half-lidded rounded bars (calm / satisfied), long hold. Action: 0–22%. === */
-@keyframes E5c-dot {
-  0%   { transform: scaleY(1); }
-  22%  { transform: scaleY(.55); }    /* lids lower, slow */
-  84%  { transform: scaleY(.55); }    /* hold content */
-  94%  { transform: scaleY(1); }
-  100% { transform: scaleY(1); }
-}
-.st-E5_content .dot {
-  animation-name: E5c-dot;
-  animation-duration: calc(var(--spd) * 4200ms);
-  animation-timing-function: cubic-bezier(.4, 0, .4, 1);
 }

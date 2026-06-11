@@ -83,14 +83,11 @@ static const Track c2_tracks[] = {
 
 // ========================== D · proactive moments ===========================
 
-// D1_reminder — one-shot 3200ms, action 0-25%, chain -> B1_speaking
-static const Kf d1_scale[] = {{0,1},{7.5f,1.11f},{12,1.03f},{16,1.06f},{25,1},{100,1}};
-static const Kf d1_ty[]    = {{0,0},{7.5f,-5},{12,-1},{16,-2},{25,0},{100,0}};
-static const Kf d1_dot[]   = {{0,1},{17,1},{20.5f,.1f},{25,1},{100,1}};
+// D1_reminder — one-shot: eyes fade out, a bell rings, then eyes return.
+// (the bell is drawn in draw.h's renderFrame from the D1 progress; chains -> B1)
+static const Kf d1_op[] = {{0,1},{12,0},{82,0},{94,1},{100,1}};
 static const Track d1_tracks[] = {
-  {CH_G_SCALE, EASE_D1_GRP, 6, 3200, d1_scale},
-  {CH_G_TY,    EASE_D1_GRP, 6, 3200, d1_ty},
-  {CH_DSY,     EASE_IN_OUT, 5, 3200, d1_dot},
+  {CH_DOP, EASE_IN_OUT, 5, 3200, d1_op},
 };
 
 // D2_wakeword — one-shot 3400ms, action 0-15% (holds B2 pose), chain -> B2_listening
@@ -103,18 +100,6 @@ static const Track d2_tracks[] = {
 
 // ===================== E · personality / expressions ========================
 
-// E1_dizzy — one-shot 3800ms, action 0-40%. rotate + tx group, out-of-phase eye ty
-static const Kf e1_rot[]  = {{0,0},{5,4},{12,-5},{19,4},{25.5f,-2.5f},{31.5f,1.2f},{38,0},{100,0}};
-static const Kf e1_tx[]   = {{0,0},{5,9},{12,-11},{19,9},{25.5f,-5},{31.5f,2},{38,0},{100,0}};
-static const Kf e1_tyL[]  = {{0,0},{6,-9},{13,7},{20,-6},{26,4},{32,-1.5f},{38,0},{100,0}};
-static const Kf e1_tyR[]  = {{0,0},{6,9},{13,-7},{20,6},{26,-4},{32,1.5f},{38,0},{100,0}};
-static const Track e1_tracks[] = {
-  {CH_G_ROT, EASE_IN_OUT, 8, 3800, e1_rot},
-  {CH_G_TX,  EASE_IN_OUT, 8, 3800, e1_tx},
-  {CH_ETY_L, EASE_IN_OUT, 8, 3800, e1_tyL},
-  {CH_ETY_R, EASE_IN_OUT, 8, 3800, e1_tyR},
-};
-
 // E2_quirk — one-shot 4200ms, action 0-30%. look-around + blink
 static const Kf e2_tx[]  = {{0,0},{9,-17},{16,-15},{24,15},{30,0},{100,0}};
 static const Kf e2_ty[]  = {{0,0},{9,2},{16,3},{24,-2},{30,0},{100,0}};
@@ -125,14 +110,6 @@ static const Track e2_tracks[] = {
   {CH_DSY,  EASE_DOT_46, 5, 4200, e2_dot},
 };
 
-// E3_happy — one-shot 3600ms, action 0-24%. squish from BOTTOM (both)
-static const Kf e3_ty[]  = {{0,0},{20,-5},{82,-5},{92,0},{100,0}};
-static const Kf e3_dot[] = {{0,1},{12,.34f},{18,.50f},{24,.42f},{82,.42f},{92,1},{100,1}};
-static const Track e3_tracks[] = {
-  {CH_G_TY, EASE_E3_GRP, 5, 3600, e3_ty},
-  {CH_DSY,  EASE_E3_DOT, 7, 3600, e3_dot},
-};
-
 // E4_wink — one-shot 2600ms, action 0-56%. right shuts, left squints from bottom
 static const Kf e4_dotR[] = {{0,1},{14,1},{20,.07f},{46,.07f},{54,1},{100,1}};
 static const Kf e4_dotL[] = {{0,1},{18,1},{30,.78f},{46,.78f},{56,1},{100,1}};
@@ -141,16 +118,10 @@ static const Track e4_tracks[] = {
   {CH_DSY_L, EASE_IN_OUT,  6, 2600, e4_dotL},
 };
 
-// E5_content — one-shot 4200ms, action 0-22%. half-lid both
-static const Kf e5_dot[] = {{0,1},{22,.55f},{84,.55f},{94,1},{100,1}};
-static const Track e5_tracks[] = {
-  {CH_DSY, EASE_E5_DOT, 5, 4200, e5_dot},
-};
-
 // ============================== state table =================================
 // index order matches states.js. chainTo uses these indices:
 //   A3_idle = 2, B1_speaking = 4, B2_listening = 5
-#define NUM_STATES 16
+#define NUM_STATES 13
 static const StateDef STATES[NUM_STATES] = {
 //  id              mode          baseDur action chain nTr tracks       sScale ovl  pivot dotsOff
   { "A1_off",       MODE_STATIC,     0,    0,   0xFF, 0,  nullptr,     0,    OV_NONE,    0, true  },
@@ -162,11 +133,8 @@ static const StateDef STATES[NUM_STATES] = {
   { "B3_thinking",  MODE_LOOP,    2000,  100,   0xFF, 3,  b3_tracks,   0,    OV_NONE,    0, false },
   { "C1_confirm",   MODE_ONESHOT, 2400,  92,   0xFF, 1,  c1_tracks,   0,    OV_NONE,    0, false },
   { "C2_didnt_catch", MODE_ONESHOT, 3600, 17,  0xFF, 3,  c2_tracks,   0,    OV_NONE,    0, false },
-  { "D1_reminder",  MODE_ONESHOT, 3200,   25,    4,   3,  d1_tracks,   0,    OV_NONE,    0, false },
+  { "D1_reminder",  MODE_ONESHOT, 3200,   94,    4,   1,  d1_tracks,   0,    OV_NONE,    0, false },
   { "D2_wakeword",  MODE_ONESHOT, 3400,   15,    5,   2,  d2_tracks,   1.12f, OV_NONE,   0, false },
-  { "E1_dizzy",     MODE_ONESHOT, 3800,   40,   0xFF, 4,  e1_tracks,   0,    OV_NONE,    0, false },
   { "E2_quirk",     MODE_ONESHOT, 4200,   30,   0xFF, 3,  e2_tracks,   0,    OV_NONE,    0, false },
-  { "E3_happy",     MODE_ONESHOT, 3600,   24,   0xFF, 2,  e3_tracks,   0,    OV_NONE,    3, false },
   { "E4_wink",      MODE_ONESHOT, 2600,   56,   0xFF, 2,  e4_tracks,   0,    OV_NONE,    1, false },
-  { "E5_content",   MODE_ONESHOT, 4200,   22,   0xFF, 1,  e5_tracks,   0,    OV_NONE,    0, false },
 };

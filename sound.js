@@ -184,39 +184,13 @@ window.SoundEngine = (function () {
     },
 
     // E · personality
-    E1_dizzy: function (t, spd) {                      // playful wobble (vibrato + glissando)
-      var o = ctx.createOscillator(); o.type = "triangle";
-      var g = ctx.createGain();
-      var d = 0.95 * spd;
-      o.frequency.setValueAtTime(N.A4, t);
-      o.frequency.linearRampToValueAtTime(N.D4, t + d * 0.4);
-      o.frequency.linearRampToValueAtTime(N.Fs4, t + d * 0.7);
-      o.frequency.linearRampToValueAtTime(N.E4, t + d);
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.16, t + 0.03);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + d);
-      var lfo = ctx.createOscillator(); lfo.frequency.value = 9; // wobble
-      var lg = ctx.createGain(); lg.gain.value = 22;
-      lfo.connect(lg); lg.connect(o.frequency);
-      o.connect(g); g.connect(bus);
-      o.start(t); lfo.start(t); o.stop(t + d + 0.05); lfo.stop(t + d + 0.05);
-    },
     E2_quirk: function (t, spd) {                      // curious little blips
       blip(N.A4, t, 0.14 * spd, 0.15, { sub: true });
       blip(N.Fs4, t + 0.18 * spd, 0.16 * spd, 0.15, { sub: true });
       blip(N.A4, t + 0.40 * spd, 0.20 * spd, 0.13);
     },
-    E3_happy: function (t, spd) {                      // bright little giggle (rising)
-      blip(N.D5, t, 0.12 * spd, 0.16);
-      blip(N.Fs5, t + 0.10 * spd, 0.16 * spd, 0.15);
-      blip(N.A5, t + 0.20 * spd, 0.30 * spd, 0.06);    // shimmer
-    },
     E4_wink: function (t, spd) {                       // playful upward blip
       blip(N.A4, t, 0.16 * spd, 0.17, { glideTo: N.E5 });
-    },
-    E5_content: function (t, spd) {                    // warm, settling sigh (downward)
-      blip(N.A4, t, 0.6 * spd, 0.15, { sub: true, glideTo: N.Fs4 });
-      blip(N.D4, t + 0.05 * spd, 0.7 * spd, 0.10, { sub: true });
     }
   };
 
