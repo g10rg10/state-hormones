@@ -136,8 +136,8 @@ until you leave them.
 | `A2_wake` | gentle rising arpeggio (D→F#→A) + shimmer |
 | `A3_idle` | (silent — no sound) |
 | `A4_clock` | **loop**: soft tick / tock at ~1 Hz |
-| `B1_speaking` | short voiced cue |
-| `B2_listening` | short entry chime |
+| `B1_speaking` | (silent — no sound) |
+| `B2_listening` | (silent — no sound) |
 | `B3_thinking` | **loop**: sparse contemplative blips |
 | `C1_confirm` | bright positive two-note (A→D) |
 | `C2_didnt_catch` | questioning upward "hm?" (E→A↗B) |

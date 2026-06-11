@@ -146,14 +146,8 @@ window.SoundEngine = (function () {
     },
 
     // B · conversation
-    B1_speaking: function (t, spd) {                   // SHORT voiced cue (not a loop)
-      blip(N.Fs4, t, 0.10 * spd, 0.10, { sub: true });
-      blip(N.A4, t + 0.09 * spd, 0.12 * spd, 0.10, { sub: true });
-    },
-    B2_listening: function (t, spd) {                  // SHORT entry chime (no sustained pad)
-      blip(N.D4, t, 0.12 * spd, 0.12);
-      blip(N.A4, t + 0.09 * spd, 0.16 * spd, 0.13);
-    },
+    B1_speaking: function () { /* speaking is silent — no sound */ },
+    B2_listening: function () { /* listening is silent — no sound */ },
     B3_thinking: function (t, spd) {                   // LOOP: sparse contemplative blips
       return pattern([
         { at: 0.05, f: N.Fs4 }, { at: 0.22, f: N.E4 }, { at: 0.58, f: N.A4 }, { at: 0.74, f: N.Fs4 }
