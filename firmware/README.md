@@ -18,10 +18,13 @@ Sketch folder: [`Hormy_eyes/`](Hormy_eyes/).
 
 ## What it does out of the box
 
-Runs a **demo** that cycles through all 16 states like the web gallery
-(idle → clock → speaking → listening+notepad → … → expressions), ~5–8 s each.
-A host can instead call `setState(i)` to drive a specific state; the chain info
-(`A2→A3`, `D1→B1`, `D2→B2`) lives in the state table for that use.
+Runs the **device lifecycle**: power on → **Wake** → **Idle** (face). After
+**5 min** of inactivity → **Clock**. The **wake word** ("Hey Arduino" — call
+`wakeWord()` from the mic) → Wake word → Listening → back to the face. For the
+demo without a mic, the clock auto-wakes after 15 s so the loop repeats
+(`CLOCK_AUTOWAKE_MS`; set `0` for a real mic). `setStateIdx(i)` pins any single
+state for host control / testing; `resumeLifecycle()` returns to the lifecycle.
+Full flow: [docs/animations-sounds-lights.md](../docs/animations-sounds-lights.md).
 
 ## Files
 

@@ -30,10 +30,16 @@
 
     <button class="btn" id="replay">↻ Replay</button>
     <button class="btn" id="sound" aria-pressed="true">🔊 Sound</button>
+    <button class="btn flow-btn" id="flow">▶ Simulate flow</button>
   </header>
 
   <main>
     <section class="featured">
+      <div class="flowbar" id="flowbar" hidden>
+        <span class="dotpulse"></span>
+        <span class="phase" id="flowphase"></span>
+        <button class="btn mic" id="wake">🎤 “Hey Arduino”</button>
+      </div>
       <div class="stage round st-A3_idle" id="featStage">
         <div class="eyes">
           <div class="eye left"><div class="dot"></div></div>

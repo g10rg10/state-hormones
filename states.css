@@ -71,6 +71,23 @@ body.tint-cyan .seg button.on { color: #04201e; }
   padding: 7px 14px; font-size: 12px; cursor: pointer;
 }
 .btn:hover { border-color: var(--acc); color: #fff; }
+.btn:disabled { opacity: .4; cursor: default; }
+
+/* ---------- Lifecycle flow simulation ---------- */
+.flow-btn.on { background: var(--acc); color: #04201e; font-weight: 650; border-color: var(--acc); }
+.flowbar {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-bottom: 10px; padding: 7px 16px;
+  background: #10171c; border: 1px solid rgba(var(--glow), .25); border-radius: 999px;
+}
+.flowbar[hidden] { display: none; }
+.flowbar .phase { color: var(--acc); font-size: 13px; font-weight: 600; }
+.flowbar .dotpulse {
+  width: 9px; height: 9px; border-radius: 50%; background: var(--acc); flex: none;
+  box-shadow: 0 0 10px var(--acc); animation: fpulse 1.4s ease-in-out infinite;
+}
+@keyframes fpulse { 0%,100% { opacity: .4; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.1); } }
+.btn.mic { border-color: rgba(var(--glow), .4); }
 
 /* ---------- Layout ---------- */
 /* previews (grid) on the LEFT, featured stage on the right (row-reverse: the

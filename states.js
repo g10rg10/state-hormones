@@ -20,6 +20,12 @@
   var soundBtn = document.getElementById("sound");
   var SE = window.SoundEngine;
 
+  var flowBtn = document.getElementById("flow");
+  var flowbar = document.getElementById("flowbar");
+  var flowphase = document.getElementById("flowphase");
+  var wakeBtn = document.getElementById("wake");
+  var flow = { running: false, timers: [] };
+
   var state = {
     id: STATES.length ? STATES[2].id : null, // start on A3_idle: the "home" state
     spd: parseFloat(spd.value),
@@ -131,7 +137,7 @@
     return null;
   }
 
-  function select(id) { state.id = id; applyFeatured(); playCurrent(); }
+  function select(id) { if (flow.running) flowStop(); state.id = id; applyFeatured(); playCurrent(); }
 
   function restart(el) {
     el.style.animation = "none";
@@ -181,10 +187,76 @@
     soundBtn.title = "Web Audio non disponibile in questo browser";
   }
 
+  // --- lifecycle flow simulation ---
+  // Power on → Wake → Idle (face). After ~5 min of inactivity → Clock. The wake
+  // word ("Hey Arduino") from clock/idle → Wake word → Listening → back to face.
+  // Timings are compressed for the demo (5 min ≈ a few seconds).
+  var IDLE_TO_CLOCK = 6000;   // stands in for 5 min of inactivity
+  var CLOCK_AUTOWAKE = 6000;  // the demo auto-fires the wake word so it loops
+
+  function flowClear() { flow.timers.forEach(clearTimeout); flow.timers = []; }
+  function flowAt(ms, fn) { flow.timers.push(setTimeout(fn, ms)); }
+  function flowPhase(txt) { if (flowphase) flowphase.textContent = txt; }
+  function flowShow(id) { state.id = id; applyFeatured(); playCurrent(); }
+
+  function flowStart() {
+    flow.running = true;
+    flowBtn.textContent = "■ Stop flow";
+    flowBtn.classList.add("on");
+    flowbar.hidden = false;
+    flowPowerOn();
+  }
+  function flowStop() {
+    flow.running = false; flowClear();
+    flowBtn.textContent = "▶ Simulate flow";
+    flowBtn.classList.remove("on");
+    flowbar.hidden = true;
+  }
+  function flowPowerOn() {
+    flowPhase("Power on…"); flowShow("A1_off");
+    flowAt(800, function () {
+      flowPhase("Waking up"); flowShow("A2_wake");
+      flowAt(1700, flowIdle);
+    });
+  }
+  function flowIdle() {
+    flowClear();
+    flowShow("A3_idle");
+    wakeBtn.disabled = false;
+    var left = Math.round(IDLE_TO_CLOCK / 1000);
+    (function tick() {
+      if (!flow.running) return;
+      flowPhase("Idle / waiting — sleeps to clock in " + left + " s");
+      if (left-- > 0) flowAt(1000, tick);
+    })();
+    flowAt(IDLE_TO_CLOCK, flowClock);
+  }
+  function flowClock() {
+    flowClear();
+    flowShow("A4_clock");
+    wakeBtn.disabled = false;
+    flowPhase("Clock mode (5 min idle) — say “Hey Arduino”");
+    flowAt(CLOCK_AUTOWAKE, function () { if (flow.running) flowWake(); });
+  }
+  function flowWake() {
+    flowClear();
+    wakeBtn.disabled = true;
+    flowPhase("Wake word → back to face");
+    flowShow("D2_wakeword");
+    flowAt(1100, function () {
+      flowPhase("Listening…"); flowShow("B2_listening");
+      flowAt(2400, flowIdle);   // back to the face, restart the 5-min timer
+    });
+  }
+
+  flowBtn.addEventListener("click", function () { flow.running ? flowStop() : flowStart(); });
+  wakeBtn.addEventListener("click", function () { if (flow.running) flowWake(); });
+
   // --- init ---
   applySpd();
   renderGrid();
   applyFeatured();
   tickClock();
   setInterval(tickClock, 1000);
+  wakeBtn.disabled = true;
 })();
