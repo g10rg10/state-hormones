@@ -139,10 +139,10 @@ until you leave them.
 |-------|-------|
 | `A1_off` | soft descending power-down |
 | `A2_wake` | gentle rising arpeggio (D→F#→A) + shimmer |
-| `A3_idle` | **loop**: slow breathing pad (synced to the ~4.6 s breath) |
+| `A3_idle` | (silent — no sound) |
 | `A4_clock` | **loop**: soft tick / tock at ~1 Hz |
-| `B1_speaking` | **loop**: soft voiced pulses in speech cadence |
-| `B2_listening` | entry chime → quiet sustained presence pad |
+| `B1_speaking` | short voiced cue |
+| `B2_listening` | short entry chime |
 | `B3_thinking` | **loop**: sparse contemplative blips |
 | `C1_confirm` | bright positive two-note (A→D) |
 | `C2_didnt_catch` | questioning upward "hm?" (E→A↗B) |

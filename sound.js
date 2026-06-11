@@ -137,9 +137,7 @@ window.SoundEngine = (function () {
       blip(N.A4, t + 0.24 * spd, 0.40 * spd, 0.20, { sub: true });
       blip(N.A5, t + 0.30 * spd, 0.50 * spd, 0.05);   // shimmer
     },
-    A3_idle: function (t, spd) {                       // LOOP: slow breathing pad
-      return pad([N.D3, N.A3, N.D4], 0.045, 0.035, 4.6 * spd, t);
-    },
+    A3_idle: function () { /* idle / waiting is silent — no sound */ },
     A4_clock: function (t, spd) {                      // LOOP: soft tick / tock, ~1 Hz
       return pattern([
         { at: 0.00, f: N.D4, g: 0.05, dur: 0.035 },
@@ -148,17 +146,13 @@ window.SoundEngine = (function () {
     },
 
     // B · conversation
-    B1_speaking: function (t, spd) {                   // LOOP: soft voiced speech cadence
-      return pattern([
-        { at: 0.00, f: N.Fs4 }, { at: 0.10, f: N.A4 }, { at: 0.20, f: N.Fs4 }, { at: 0.30, f: N.E4 },
-        { at: 0.50, f: N.Fs4 }, { at: 0.60, f: N.A4 }, { at: 0.70, f: N.Fs4 },
-        { at: 0.86, f: N.E4 }, { at: 0.94, f: N.Fs4 }
-      ], 3.4, spd, 0.075, 0.10, { sub: true });
+    B1_speaking: function (t, spd) {                   // SHORT voiced cue (not a loop)
+      blip(N.Fs4, t, 0.10 * spd, 0.10, { sub: true });
+      blip(N.A4, t + 0.09 * spd, 0.12 * spd, 0.10, { sub: true });
     },
-    B2_listening: function (t, spd) {                  // entry chime, then quiet presence pad
-      blip(N.D4, t, 0.18 * spd, 0.12);
-      blip(N.A4, t + 0.10 * spd, 0.5 * spd, 0.13);
-      return pad([N.D4, N.A4], 0.038, 0.012, 6 * spd, t + 0.3);
+    B2_listening: function (t, spd) {                  // SHORT entry chime (no sustained pad)
+      blip(N.D4, t, 0.12 * spd, 0.12);
+      blip(N.A4, t + 0.09 * spd, 0.16 * spd, 0.13);
     },
     B3_thinking: function (t, spd) {                   // LOOP: sparse contemplative blips
       return pattern([
