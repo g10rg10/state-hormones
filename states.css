@@ -112,22 +112,17 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 }
 .featured-meta .firow { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #9aa6b1; }
 .featured-meta .firow b { color: #cdd6df; font-weight: 650; min-width: 46px; }
-.featured-meta .firow .ic { width: 10px; height: 10px; border-radius: 50%; flex: none; }
-.featured-meta .firow.light .ic {
-  background: radial-gradient(circle at 35% 30%, #fff, var(--acc));
-  box-shadow: 0 0 8px var(--acc), 0 0 16px rgba(var(--glow), .6);
-}
-.featured-meta .firow.sound .ic {
-  background: radial-gradient(circle at 35% 30%, #fff, #ffce7a);
-  box-shadow: 0 0 8px #ffce7a;
-}
+.featured-meta .firow .ic { width: 17px; height: 17px; flex: none; display: inline-flex; }
+.featured-meta .firow .ic svg { width: 100%; height: 100%; fill: currentColor; display: block; }
+.featured-meta .firow.light .ic { color: var(--acc); filter: drop-shadow(0 0 6px rgba(var(--glow), .6)); }
+.featured-meta .firow.sound .ic { color: #ffce7a; filter: drop-shadow(0 0 5px rgba(255,206,122,.5)); }
 .featured-meta .firow.silent { color: #69727b; }
-.featured-meta .firow.silent .ic { background: #3a424a; box-shadow: none; }
+.featured-meta .firow.silent .ic { color: #69727b; filter: none; }
 
 .grid {
   flex: 0 0 auto;
   display: grid; gap: 16px; align-content: start;
-  grid-template-columns: repeat(3, 156px);   /* 3-column left sidebar */
+  grid-template-columns: repeat(4, 128px);   /* 4-column left sidebar */
 }
 .sechead {
   grid-column: 1 / -1;
@@ -147,8 +142,8 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 .card .cmeta { color: #8b97a2; font-size: 11px; margin-top: 2px; }
 
 /* thumbnail: 480 stage scaled down to 188 */
-.thumb { position: relative; width: 132px; height: 132px; overflow: visible; border-radius: 12px; }
-.thumb .stage { position: absolute; top: 0; left: 0; transform-origin: top left; transform: scale(0.275); }
+.thumb { position: relative; width: 104px; height: 104px; overflow: visible; border-radius: 12px; }
+.thumb .stage { position: absolute; top: 0; left: 0; transform-origin: top left; transform: scale(0.21667); }
 
 /* ---------- The screen (480x480 stage) ---------- */
 .stage {

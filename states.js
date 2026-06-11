@@ -105,7 +105,7 @@
         card.insertAdjacentHTML(
           "beforeend",
           '<div class="cname">' + a.name + "</div>" +
-          '<div class="cmeta">' + a.id + " · " + a.type + "</div>"
+          '<div class="cmeta">' + a.type + "</div>"
         );
         card.addEventListener("click", function () { select(a.id); });
         grid.appendChild(card);
@@ -118,12 +118,7 @@
     featStage.className = stageClass(state.id);
     var a = find(state.id);
     if (a) {
-      fname.textContent = a.id + " · " + a.name;
-      fchips.innerHTML =
-        '<span class="chip">' + a.type + "</span>" +
-        '<span class="chip">' + a.dur + "</span>" +
-        '<span class="chip light">light ' + a.light + "</span>";
-      fdesc.textContent = a.desc;
+      fname.textContent = a.name;
       if (flight) flight.textContent = a.lightDesc || "—";
       if (fsound) {
         var silent = !a.soundDesc;

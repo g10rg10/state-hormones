@@ -90,4 +90,4 @@ room, the eyes still say whose turn it is. Speaking vs Listening must be unmista
 
 ---
 
-*Julie Alme, Giorgio Gaudio, Mattia Piatti, A. M. Luz Varela — Maind X Healthcare*
+*Julie Alme, Giorgio Gaudio, Mattia Piatti, A. M. Luz Vanella — Maind X Healthcare*

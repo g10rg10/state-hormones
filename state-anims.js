@@ -2,11 +2,11 @@
    Each state carries, beyond its motion: `lightDesc` (ambient light behavior,
    Maind X spec §0) and `soundDesc` (sound.js; empty string = silent). */
 window.STATE_SECTIONS = [
-  { key: "A", title: "A · System & power" },
-  { key: "B", title: "B · Conversation (turn-taking)" },
-  { key: "C", title: "C · Feedback & confirmation" },
-  { key: "D", title: "D · Proactive moments" },
-  { key: "E", title: "E · Personality / easter eggs" }
+  { key: "A", title: "System & power" },
+  { key: "B", title: "Conversation (turn-taking)" },
+  { key: "C", title: "Feedback & confirmation" },
+  { key: "D", title: "Proactive moments" },
+  { key: "E", title: "Personality" }
 ];
 
 window.STATES = [
