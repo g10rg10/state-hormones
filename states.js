@@ -17,6 +17,7 @@
   var spdVal = document.getElementById("spdVal");
 
   var flight = document.getElementById("flight");
+  var fsound = document.getElementById("fsound");
   var soundBtn = document.getElementById("sound");
   var SE = window.SoundEngine;
 
@@ -123,9 +124,12 @@
         '<span class="chip">' + a.dur + "</span>" +
         '<span class="chip light">light ' + a.light + "</span>";
       fdesc.textContent = a.desc;
-      if (flight) flight.innerHTML = a.lightDesc
-        ? '<span class="licon"></span><b>Light feedback</b> · ' + a.lightDesc
-        : "";
+      if (flight) flight.textContent = a.lightDesc || "—";
+      if (fsound) {
+        var silent = !a.soundDesc;
+        fsound.textContent = silent ? "silent (no sound)" : a.soundDesc;
+        fsound.parentNode.classList.toggle("silent", silent);
+      }
     }
     Array.prototype.forEach.call(grid.querySelectorAll(".card"), function (c) {
       c.classList.toggle("active", c.dataset.id === state.id);
