@@ -10,9 +10,11 @@ designed to run even on embedded displays:
   glossy EMO eyes as the Appear gallery, all expression carried by rhythm.
   **Round-only** (the hardware screen is round).
 - **`firmware/` — device port**: a faithful C++ / Arduino_GFX port of the States
-  gallery for the **Waveshare ESP32-S3 2.8″ 480×480 round** display. All 16
+  gallery for the **Waveshare ESP32-S3 2.8″ 480×480 round** display. All 13
   states + the tall clock, ~30 fps eased motion. See
   [firmware/README.md](firmware/README.md).
+- **[docs/animations-sounds-lights.md](docs/animations-sounds-lights.md)** —
+  single reference for every **animation, sound and light** (kept in sync).
 
 ## Run
 
