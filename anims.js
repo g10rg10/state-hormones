@@ -1,56 +1,56 @@
 window.ANIMS = [
   {
     "id": "pop",
-    "name": "Pop molla",
-    "desc": "Gli occhi scattano dal minuscolo con un rimbalzo elastico e si stabilizzano.",
+    "name": "Spring pop",
+    "desc": "The eyes snap up from tiny with an elastic bounce and settle.",
     "appearMs": 380
   },
   {
     "id": "eye-open",
-    "name": "Apertura occhi",
-    "desc": "Gli occhi si aprono da una sottile fessura orizzontale espandendosi in verticale con un piccolo rimbalzo, come al risveglio.",
+    "name": "Eye open",
+    "desc": "The eyes open from a thin horizontal slit, expanding vertically with a small bounce, like waking up.",
     "appearMs": 320
   },
   {
     "id": "fade-scale",
-    "name": "Fade + scala",
-    "desc": "Gli occhi appaiono dolcemente in dissolvenza ingrandendosi da piccoli a pieni, senza rimbalzo.",
+    "name": "Fade + scale",
+    "desc": "The eyes fade in gently, scaling from small to full, with no bounce.",
     "appearMs": 480
   },
   {
     "id": "slide-in",
-    "name": "Scivola dai lati",
-    "desc": "Gli occhi entrano scivolando orizzontalmente dai bordi esterni fino al centro.",
+    "name": "Slide in",
+    "desc": "The eyes slide in horizontally from the outer edges to the center.",
     "appearMs": 420
   },
   {
     "id": "power-on",
-    "name": "Accensione LED",
-    "desc": "Gli occhi nascono da un puntino bianco accecante che lampeggia e scatta di colpo a piena dimensione, come un tubo catodico che si accende.",
+    "name": "LED power-on",
+    "desc": "The eyes are born from a blinding white dot that flashes and snaps to full size, like a CRT powering on.",
     "appearMs": 360
   },
   {
     "id": "drop-bounce",
-    "name": "Caduta + rimbalzo",
-    "desc": "Gli occhi cadono dall'alto, superano il centro e rimbalzano una volta prima di fermarsi.",
+    "name": "Drop + bounce",
+    "desc": "The eyes drop from above, overshoot the center, and bounce once before settling.",
     "appearMs": 560
   },
   {
     "id": "iris-expand",
-    "name": "Iris Expand",
-    "desc": "Gli occhi si aprono come un'iride: prima una fessura orizzontale piatta, poi si dilatano in altezza fino alla forma piena.",
+    "name": "Iris expand",
+    "desc": "The eyes open like an iris: first a flat horizontal slit, then dilating in height to the full shape.",
     "appearMs": 420
   },
   {
     "id": "zoom-rush",
-    "name": "Zoom da lontano",
-    "desc": "Gli occhi sfrecciano da lontano, sfocati, fino a fuoco nitido con un piccolo rimbalzo.",
+    "name": "Zoom rush",
+    "desc": "The eyes rush in from afar, blurred, into sharp focus with a small bounce.",
     "appearMs": 300
   },
   {
     "id": "wipe-up",
-    "name": "Wipe verso alto",
-    "desc": "Gli occhi si svelano dal basso verso l'alto con un nitido effetto tendina.",
+    "name": "Wipe up",
+    "desc": "The eyes are revealed bottom-to-top with a crisp wipe effect.",
     "appearMs": 440
   }
 ];

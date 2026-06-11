@@ -1,9 +1,9 @@
-/* eyes.css — base look dello schermo 480x480 + occhi EMO-style + blink + UI gallery.
-   Le animazioni di comparsa sono in keyframes.css (una per variante). */
+/* eyes.css — base look of the 480x480 screen + EMO-style eyes + blink + gallery UI.
+   The appear animations live in keyframes.css (one per variant). */
 
 :root {
-  --loop: 2625ms;          /* ciclo completo: comparsa(~16%) + hold + reset. Impostato da eyes.js */
-  --eye: #3ce9de;          /* ciano EMO */
+  --loop: 2625ms;          /* full cycle: appear(~16%) + hold + reset. Set by eyes.js */
+  --eye: #3ce9de;          /* EMO cyan */
   --bg: #0a0d10;
 }
 
@@ -16,7 +16,7 @@ html, body {
   font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* ---------- Top bar / controlli ---------- */
+/* ---------- Top bar / controls ---------- */
 .topbar {
   position: sticky; top: 0; z-index: 10;
   display: flex; flex-wrap: wrap; align-items: center; gap: 18px;
@@ -73,11 +73,11 @@ main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
 .card .cname { font-weight: 600; margin-top: 10px; font-size: 13px; }
 .card .cmeta { color: #8b97a2; font-size: 11px; margin-top: 2px; }
 
-/* miniatura: stage 480 scalato a 188 */
+/* thumbnail: 480 stage scaled to 188 */
 .thumb { position: relative; width: 188px; height: 188px; overflow: hidden; border-radius: 12px; }
 .thumb .stage { position: absolute; top: 0; left: 0; transform-origin: top left; transform: scale(0.39167); }
 
-/* ---------- Lo schermo (stage 480x480) ---------- */
+/* ---------- The screen (480x480 stage) ---------- */
 .stage {
   position: relative;
   width: 480px; height: 480px;
@@ -88,13 +88,13 @@ main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
 }
 .stage.square { border-radius: 74px; }
 .stage.round  { border-radius: 50%; }
-/* riflesso lucido in alto, come lo schermo EMO */
+/* glossy reflection at the top, like the EMO screen */
 .stage::before {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 22%);
 }
 
-/* ---------- Gli occhi ---------- */
+/* ---------- The eyes ---------- */
 .eyes {
   display: flex; align-items: center; gap: 62px;
   transform-origin: center center;
@@ -111,14 +111,14 @@ main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
   will-change: transform, opacity, filter;
 }
 
-/* props comuni a tutte le animazioni di comparsa; il nome (ap-<id>) arriva da keyframes.css */
+/* shared props for all appear animations; the name (ap-<id>) comes from keyframes.css */
 .stage .eye {
   animation-duration: var(--loop);
   animation-iteration-count: infinite;
   animation-fill-mode: both;
 }
 
-/* blink idle (opzionale): squash verticale veloce a meta ciclo */
+/* idle blink (optional): quick vertical squash mid-cycle */
 .stage.blink .eyes {
   animation: blink var(--loop) infinite both;
   transform-origin: center center;

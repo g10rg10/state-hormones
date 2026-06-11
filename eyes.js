@@ -1,11 +1,11 @@
-/* eyes.js — controller della gallery di anteprime.
-   Legge window.ANIMS (anims.js), costruisce featured + griglia, gestisce
-   velocità / forma schermo / blink / replay. Nessuna dipendenza. */
+/* eyes.js — preview gallery controller.
+   Reads window.ANIMS (anims.js), builds the featured stage + grid, handles
+   speed / screen shape / blink / replay. No dependencies. */
 (function () {
   "use strict";
 
   var ANIMS = window.ANIMS || [];
-  var APPEAR_FRACTION = 0.16; // la comparsa occupa ~16% del ciclo (settle al 16% nei keyframes)
+  var APPEAR_FRACTION = 0.16; // the appear takes ~16% of the cycle (settles at 16% in the keyframes)
 
   var root = document.documentElement;
   var featStage = document.getElementById("featStage");
@@ -29,7 +29,7 @@
   function applyLoop() {
     var loop = Math.round(state.appearMs / APPEAR_FRACTION);
     root.style.setProperty("--loop", loop + "ms");
-    speedVal.textContent = state.appearMs + " ms · ciclo " + (loop / 1000).toFixed(1) + " s";
+    speedVal.textContent = state.appearMs + " ms · cycle " + (loop / 1000).toFixed(1) + " s";
   }
 
   function eyesEl() {
@@ -90,7 +90,7 @@
 
   function restart(el) {
     el.style.animation = "none";
-    void el.offsetWidth; // forza reflow
+    void el.offsetWidth; // force reflow
     el.style.animation = "";
   }
   function replay() {
