@@ -18,12 +18,12 @@
   var state = {
     id: ANIMS.length ? ANIMS[0].id : null,
     appearMs: parseInt(speed.value, 10),
-    shape: "square",
     blink: true,
   };
 
+  // Round-only (the device screen is round).
   function stageClass(id) {
-    return "stage " + state.shape + " anim-" + id + (state.blink ? " blink" : "");
+    return "stage round anim-" + id + (state.blink ? " blink" : "");
   }
 
   function applyLoop() {
@@ -104,16 +104,6 @@
   speed.addEventListener("input", function () {
     state.appearMs = parseInt(speed.value, 10);
     applyLoop();
-  });
-
-  document.getElementById("shape").addEventListener("click", function (e) {
-    var b = e.target.closest("button[data-shape]");
-    if (!b) return;
-    state.shape = b.dataset.shape;
-    Array.prototype.forEach.call(this.querySelectorAll("button"), function (x) {
-      x.classList.toggle("on", x === b);
-    });
-    refreshAllStages();
   });
 
   document.getElementById("blink").addEventListener("click", function (e) {
