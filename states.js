@@ -161,15 +161,6 @@
     if (state.sound && SE && /loop/i.test((find(state.id) || {}).type || "")) playCurrent();
   });
 
-  document.getElementById("tint").addEventListener("click", function (e) {
-    var b = e.target.closest("button[data-tint]");
-    if (!b) return;
-    document.body.classList.toggle("tint-cyan", b.dataset.tint === "cyan");
-    Array.prototype.forEach.call(this.querySelectorAll("button"), function (x) {
-      x.classList.toggle("on", x === b);
-    });
-  });
-
   document.getElementById("replay").addEventListener("click", replay);
 
   if (SE && SE.available()) {

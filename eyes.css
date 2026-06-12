@@ -3,7 +3,7 @@
 
 :root {
   --loop: 2625ms;          /* full cycle: appear(~16%) + hold + reset. Set by eyes.js */
-  --eye: #3ce9de;          /* EMO cyan */
+  --eye: #fffefb;          /* warm white */
   --bg: #0a0d10;
 }
 

@@ -14,17 +14,6 @@
   --acc: #ffd9a0;                 /* UI accent */
   --bg: #0a0d10;
 }
-/* EMO cyan eye — matte cyan, no phosphorescence */
-body.tint-cyan {
-  --g0: #3ce9de;
-  --g1: #3ce9de;
-  --g2: #3ce9de;
-  --g3: #2bbab1;
-  --glow: 60, 233, 222;
-  --ish: 2, 70, 68;
-  --acc: #3ce9de;
-}
-
 * { box-sizing: border-box; }
 
 html, body {
@@ -65,7 +54,6 @@ html, body {
   font-size: 12px; cursor: pointer;
 }
 .seg button.on { background: var(--acc); color: #221604; font-weight: 650; }
-body.tint-cyan .seg button.on { color: #04201e; }
 .btn {
   background: #161c22; color: #cdd6df; border: 1px solid #2a323a; border-radius: 9px;
   padding: 7px 14px; font-size: 12px; cursor: pointer;
