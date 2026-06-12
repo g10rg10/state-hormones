@@ -101,12 +101,7 @@ main { padding: 26px 22px 60px; max-width: 1180px; margin: 0 auto; }
 }
 .eye {
   width: 118px; height: 150px; border-radius: 46px;
-  background: radial-gradient(125% 100% at 50% 22%, #cafff9 0%, #5ee9df 30%, #25d4cb 66%, #12b1aa 100%);
-  box-shadow:
-    0 0 26px 3px rgba(60,233,222,.55),
-    0 0 72px 10px rgba(60,233,222,.24),
-    inset 0 7px 16px rgba(255,255,255,.45),
-    inset 0 -13px 22px rgba(2,70,68,.55);
+  background: var(--eye);
   transform-origin: center center;
   will-change: transform, opacity, filter;
 }

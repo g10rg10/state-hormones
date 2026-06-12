@@ -14,12 +14,12 @@
   --acc: #ffd9a0;                 /* UI accent */
   --bg: #0a0d10;
 }
-/* EMO cyan eye — matches the Appear gallery look (eyes.css) */
+/* EMO cyan eye — matte cyan, no phosphorescence */
 body.tint-cyan {
-  --g0: #cafff9;
-  --g1: #5ee9df;
-  --g2: #25d4cb;
-  --g3: #12b1aa;
+  --g0: #3ce9de;
+  --g1: #3ce9de;
+  --g2: #3ce9de;
+  --g3: #2bbab1;
   --glow: 60, 233, 222;
   --ish: 2, 70, 68;
   --acc: #3ce9de;
@@ -182,18 +182,10 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 .eye {
   width: 124px; height: 132px;   /* rounded-square like the real EMO (was 118x150 tall) */
   transform-origin: center center;
-  /* bloom: drop-shadow follows the eye shape (and the blink squash) */
-  filter:
-    drop-shadow(0 0 26px rgba(var(--glow), .55))
-    drop-shadow(0 0 72px rgba(var(--glow), .24));
 }
 .dot {
   width: 100%; height: 100%; border-radius: 44px;
-  background: radial-gradient(125% 100% at 50% 22%,
-    var(--g0) 0%, var(--g1) 30%, var(--g2) 66%, var(--g3) 100%);
-  box-shadow:
-    inset 0 7px 16px rgba(255,255,255,.45),
-    inset 0 -13px 22px rgba(var(--ish), .55);
+  background: var(--g0);
   transform-origin: center center;
   will-change: transform, opacity;
 }
@@ -206,9 +198,6 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
   position: absolute; inset: 0; z-index: 2;
   align-items: center; justify-content: center; gap: 8px;
   color: var(--g0);
-  text-shadow:
-    0 0 16px rgba(var(--glow), .9),
-    0 0 48px rgba(var(--glow), .5);
 }
 /* "font allungato verticale": monospace digits stretched TALL and narrowed,
    like the watch-face reference. Monospace keeps the columns from jittering
@@ -231,17 +220,14 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
   /* centered below the eyes (margin-left, not transform — the bob uses transform) */
   position: absolute; left: 50%; margin-left: -61px; bottom: 36px; z-index: 2;
   width: 122px; height: 104px;
-  filter: drop-shadow(0 0 16px rgba(var(--glow), .42));
 }
 .notes .pad {
   position: absolute; inset: 0; border-radius: 13px; z-index: 2;   /* pad ON TOP of the hand */
-  background: linear-gradient(180deg, #f3fffe, #d6faf5);
-  box-shadow: inset 0 -9px 16px rgba(var(--ish), .22);
+  background: #eaf6f3;
 }
 .notes .ring {                         /* spiral binding loops on the RIGHT edge */
   position: absolute; right: -6px; width: 16px; height: 7px; border-radius: 4px;
   background: var(--g2);
-  box-shadow: inset 0 1px 2px rgba(255,255,255,.5), 0 1px 2px rgba(var(--ish), .4);
 }
 .notes .ring.r1 { top: 15px; } .notes .ring.r2 { top: 39px; }
 .notes .ring.r3 { top: 63px; } .notes .ring.r4 { top: 84px; }
@@ -263,8 +249,7 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 }
 .notes .palm {
   position: absolute; left: 0; bottom: 0; width: 40px; height: 28px;
-  background: linear-gradient(180deg, #f3fffe, #d6faf5); border-radius: 16px 18px 13px 15px;
-  box-shadow: inset 0 -4px 7px rgba(var(--ish), .2);
+  background: #eaf6f3; border-radius: 16px 18px 13px 15px;
 }
 .notes .palm::before {                 /* thumb */
   content: ""; position: absolute; left: -5px; top: 4px; width: 16px; height: 13px;
@@ -273,7 +258,7 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 .notes .pen2 {                         /* the pen — shaft peeks below, tip rises behind the pad */
   position: absolute; left: 22px; bottom: 20px; width: 6px; height: 56px;
   border-radius: 4px; transform: rotate(16deg); transform-origin: bottom center;
-  background: linear-gradient(180deg, var(--g1) 0%, var(--g3) 55%, #241f1b 100%);
+  background: #241f1b;
 }
 .notes .pen2::after {                  /* nib */
   content: ""; position: absolute; left: 0; bottom: -4px; width: 5px; height: 6px;
@@ -292,7 +277,6 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 .check path {
   fill: none; stroke: var(--g0); stroke-width: 15;
   stroke-linecap: round; stroke-linejoin: round;
-  filter: drop-shadow(0 0 14px rgba(var(--glow), .85)) drop-shadow(0 0 34px rgba(var(--glow), .4));
   stroke-dasharray: 80; stroke-dashoffset: 80;
 }
 
@@ -302,9 +286,6 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
   display: none;                       /* shown only for .st-D1_reminder */
   position: absolute; inset: 0; z-index: 2;
   align-items: center; justify-content: center;
-  /* glow on the (non-rotating) container — a filter on the rotating <svg>/path
-     leaves a visible filter-region box, this doesn't */
-  filter: drop-shadow(0 0 14px rgba(var(--glow), .8)) drop-shadow(0 0 32px rgba(var(--glow), .4));
 }
 .bell svg {
   width: 156px; height: 156px;
