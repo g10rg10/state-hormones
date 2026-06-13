@@ -169,24 +169,23 @@
   animation: face-B1-open calc(var(--spd) * 3400ms) cubic-bezier(.3, 0, .4, 1) infinite both;
 }
 
-/* === B2_listening — alert: face leans + ear-twitches, eyes pulse, mouth quivers === */
+/* === B2_listening — alert but eyes at NORMAL size (same as other states): a gentle
+   attentive lean (rotation only, no enlargement) + a rare crisp blink === */
 @keyframes face-B2-grp {
-  0%, 100% { transform: scale(1.12) rotate(0); }
-  25%      { transform: scale(1.14) rotate(1deg); }
-  50%      { transform: scale(1.16) rotate(0); }      /* lean further IN */
-  75%      { transform: scale(1.14) rotate(-1deg); }
+  0%, 100% { transform: rotate(0); }
+  25%      { transform: rotate(1.2deg); }
+  50%      { transform: rotate(0); }
+  75%      { transform: rotate(-1.2deg); }
 }
 .st-B2_listening .face {
   animation: face-B2-grp calc(var(--spd) * 2400ms) ease-in-out infinite both;
 }
 .st-B2_listening .eyes { animation: none; transform: scale(1); }
 @keyframes face-B2-dot {
-  0%, 54% { transform: scale(1.18); }
-  54.8%   { transform: scale(1.18) scaleY(.07); }
-  55.6%   { transform: scale(1.18); }
-  60%     { transform: scale(1.22); }     /* tiny pulse / dilate */
-  68%     { transform: scale(1.18); }
-  100%    { transform: scale(1.18); }
+  0%, 54% { transform: scaleY(1); }      /* eyes rest at normal size */
+  54.8%   { transform: scaleY(.07); }    /* rare crisp blink */
+  55.6%   { transform: scaleY(1); }
+  100%    { transform: scaleY(1); }
 }
 .st-B2_listening .dot {
   animation: face-B2-dot calc(var(--spd) * 9000ms) cubic-bezier(.4, 0, .6, 1) infinite both;
