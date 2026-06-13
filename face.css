@@ -124,7 +124,7 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
     radial-gradient(58% 50% at 50% 24%, rgba(150,182,205,.13) 0%, rgba(150,182,205,0) 56%),  /* top sheen */
     radial-gradient(135% 130% at 50% 40%, #0f171c 0%, #070d11 56%, #02060a 84%, #010406 100%); /* sphere body */
   overflow: hidden;
-  --lumeRGB: var(--glow);
+  --lumeRGB: 217, 119, 87;            /* warm neutral light — Claude-logo orange (no blue) */
   --lumeLevel: 0;
   box-shadow:
     inset 0 18px 34px rgba(180,210,230,.07),       /* top inner light */
@@ -278,7 +278,7 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 @property --lumeLevel {
   syntax: "<number>"; initial-value: 0; inherits: false;
 }
-.st-B2_listening, .st-D2_wakeword { --lumeRGB: 86, 198, 255; }
+/* listening / wake word keep the same warm Claude-orange light (no blue tint) */
 
 .stage .eyes, .stage .eye, .stage .dot,
 .stage .mouth, .stage .smile, .stage .open {

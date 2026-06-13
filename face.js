@@ -202,7 +202,9 @@
     if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = lang; }
     return u;
   }
-  // --- speaking mouth driven by the actual voice (word boundaries) so it moves in time ---
+  // --- speaking mouth: a continuous talking loop (always visible) that also pulses on
+  // each real word boundary, so it moves in time with the voice when audio is playing ---
+  var speechMouthTimer = null;
   function speechMouthEls() { return { open: featStage.querySelector(".open"), smile: featStage.querySelector(".smile") }; }
   function speechMouthStart() {
     var e = speechMouthEls();
@@ -213,13 +215,21 @@
     if (state.id !== "B1_speaking") return;
     var e = speechMouthEls();
     if (!e.open || !e.open.animate) return;
+    var openY = 0.8 + Math.random() * 0.45;     // vary the open height per syllable
     e.open.animate([
-      { transform: "translate(-50%,-50%) scale(.62,.2)" },
-      { transform: "translate(-50%,-50%) scale(1.05,.95)", offset: .4 },
-      { transform: "translate(-50%,-50%) scale(.62,.2)" }
-    ], { duration: 200, easing: "ease-out" });
+      { transform: "translate(-50%,-50%) scale(.6,.2)" },
+      { transform: "translate(-50%,-50%) scale(1.05," + openY.toFixed(2) + ")", offset: .4 },
+      { transform: "translate(-50%,-50%) scale(.6,.2)" }
+    ], { duration: 190, easing: "ease-out" });
+  }
+  function speechMouthLoop() {
+    if (speechMouthTimer) { clearTimeout(speechMouthTimer); speechMouthTimer = null; }
+    if (state.id !== "B1_speaking" || !state.sound || flow.running) return;
+    speechMouthPulse();
+    speechMouthTimer = setTimeout(speechMouthLoop, (150 + Math.random() * 130) * state.spd);  // talking rhythm
   }
   function speechMouthRestore() {
+    if (speechMouthTimer) { clearTimeout(speechMouthTimer); speechMouthTimer = null; }
     var e = speechMouthEls();
     if (e.open) { e.open.style.animation = ""; e.open.style.opacity = ""; e.open.style.transform = ""; }
     if (e.smile) { e.smile.style.animation = ""; e.smile.style.opacity = ""; }
@@ -228,8 +238,7 @@
     if (!TTS || !state.sound || state.id !== "B1_speaking") return;
     var u = speakPhrase(HORMONE_LINES[Math.floor(Math.random() * HORMONE_LINES.length)], "en");
     if (!u) return;
-    speechMouthStart();
-    u.onboundary = speechMouthPulse;            // open the mouth on each word → moves in time with the voice
+    // the visible talking mouth is the CSS face-B1-open loop (reliable in every browser)
     u.onend = function () { if (state.id === "B1_speaking" && state.sound) speech.timer = setTimeout(speakHormones, 350); };
     TTS.speak(u);
   }
