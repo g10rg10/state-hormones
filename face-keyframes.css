@@ -202,23 +202,22 @@
   animation: face-B1-open calc(var(--spd) * 3400ms) cubic-bezier(.3, 0, .4, 1) infinite both;
 }
 
-/* === B2_listening — alert but eyes at NORMAL size: a gentle attentive sway, and
-   every so often an "I'm with you" NOD — a quick 3D double-bob (rotateX) — once per
-   the long cycle, so it nods occasionally while listening, not constantly. === */
+/* === B2_listening — alert, eyes at NORMAL size: a gentle attentive sway, and every
+   so often an "I'm with you" NOD — the WHOLE face moves down then up (translateY),
+   a smooth double-nod, no bounce — once per the long cycle (not constantly). === */
 @keyframes face-B2-grp {
-  0%   { transform: perspective(700px) translateY(0) rotateX(0) rotate(0); }
-  14%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(1deg); }     /* gentle sway */
-  28%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(0); }
-  33%  { transform: perspective(700px) translateY(5px) rotateX(20deg) rotate(0); }  /* nod down */
-  38%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(0); }         /* up */
-  43%  { transform: perspective(700px) translateY(4px) rotateX(15deg) rotate(0); }   /* nod down again */
-  48%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(0); }         /* up */
-  64%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(-1deg); }     /* sway back */
-  82%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(.6deg); }
-  100% { transform: perspective(700px) translateY(0) rotateX(0) rotate(0); }
+  0%   { transform: translateY(0) rotate(0); }
+  14%  { transform: translateY(0) rotate(1deg); }      /* gentle sway */
+  28%  { transform: translateY(0) rotate(0); }
+  33%  { transform: translateY(14px) rotate(0); }      /* nod down (whole face) */
+  40%  { transform: translateY(0) rotate(0); }          /* up */
+  45%  { transform: translateY(12px) rotate(0); }       /* down again */
+  52%  { transform: translateY(0) rotate(0); }          /* up */
+  64%  { transform: translateY(0) rotate(-1deg); }      /* sway back */
+  82%  { transform: translateY(0) rotate(.6deg); }
+  100% { transform: translateY(0) rotate(0); }
 }
 .st-B2_listening .face {
-  transform-style: preserve-3d;
   animation: face-B2-grp calc(var(--spd) * 7000ms) ease-in-out infinite both;
 }
 .st-B2_listening .eyes { animation: none; transform: scale(1); }

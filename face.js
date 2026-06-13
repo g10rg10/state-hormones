@@ -181,7 +181,7 @@
     var x = rand(-20, 20), y = rand(-9, 7);
     if (Math.random() < 0.28) { x = rand(-5, 5); y = rand(-3, 3); }   // sometimes back to center
     var move = rand(240, 430) * state.spd;        // saccade
-    var hold = rand(850, 2700) * state.spd;       // fixation
+    var hold = rand(450, 1300) * state.spd;       // shorter fixation → looks around more often
     var ease = "cubic-bezier(.45,0,.25,1)";
     e.eyes.style.transition = "transform " + move + "ms " + ease;
     e.eyes.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
