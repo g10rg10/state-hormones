@@ -351,12 +351,13 @@
   80%  { width: 74%; opacity: 1; }
   100% { width: 74%; opacity: 0; }      /* fades, then snaps back = next line */
 }
-@keyframes handWrite {                  /* the hand sweeps along the line, then returns */
+@keyframes handWrite {                  /* the hand travels LEFT→RIGHT across the pad as
+                                           it writes, then carriage-returns to the left */
   0%   { transform: translate(0, 0); }
-  22%  { transform: translate(7px, -1px); }
-  46%  { transform: translate(14px, 1px); }
-  70%  { transform: translate(21px, -1px); }
-  80%  { transform: translate(24px, 0); }
+  22%  { transform: translate(22px, -1px); }
+  46%  { transform: translate(44px, 1px); }
+  70%  { transform: translate(64px, -1px); }
+  80%  { transform: translate(72px, 0); }
   100% { transform: translate(0, 0); }  /* carriage return = next line */
 }
 @keyframes noteBob {                    /* tiny lively bob of the whole pad + hand */

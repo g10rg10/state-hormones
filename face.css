@@ -222,27 +222,27 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
   position: absolute; left: 16px; top: 59px; height: 5px; width: 8%;
   border-radius: 3px; background: rgba(var(--ish), .26);
 }
-/* Hand + pen ON TOP of the pad — wrist from bottom-right of the pad,
-   pen held tilted up-left so the nib touches the active writing line. */
+/* Hand + pen ON TOP of the pad — starts at the LEFT, pen tip leads up-right so the
+   nib draws the line as the hand travels rightward (handWrite). */
 .notes .hand {
   position: absolute; z-index: 3;          /* above .pad (z 2) */
-  right: -8px; bottom: -10px; width: 60px; height: 72px;
+  left: -6px; bottom: 6px; width: 60px; height: 72px;
 }
 .notes .palm {
-  position: absolute; right: 0; bottom: 0; width: 44px; height: 30px;
-  background: #eaf6f3; border-radius: 18px 16px 13px 15px;
+  position: absolute; left: 0; bottom: 0; width: 44px; height: 30px;
+  background: #eaf6f3; border-radius: 16px 18px 15px 13px;
 }
-.notes .palm::before {                     /* thumb wraps the pen on the left */
-  content: ""; position: absolute; left: -4px; top: 6px; width: 16px; height: 13px;
-  background: inherit; border-radius: 10px; transform: rotate(-22deg);
+.notes .palm::before {                     /* thumb wraps the pen on the right */
+  content: ""; position: absolute; right: -4px; top: 6px; width: 16px; height: 13px;
+  background: inherit; border-radius: 10px; transform: rotate(22deg);
 }
-.notes .pen2 {                             /* pen tilted up-left, tip on the writing line */
-  position: absolute; left: 2px; bottom: 14px; width: 6px; height: 56px;
-  border-radius: 3px; transform: rotate(-30deg); transform-origin: bottom right;
+.notes .pen2 {                             /* pen tilted up-right, nib leads ahead */
+  position: absolute; right: 6px; bottom: 16px; width: 6px; height: 56px;
+  border-radius: 3px; transform: rotate(34deg); transform-origin: bottom left;
   background: #241f1b;
 }
 .notes .pen2::after {                      /* nib at the TOP of the shaft = writing tip */
-  content: ""; position: absolute; left: 0; top: -5px; width: 5px; height: 6px;
+  content: ""; position: absolute; right: 0; top: -5px; width: 5px; height: 6px;
   background: #241f1b; border-radius: 3px 3px 0 0;
 }
 

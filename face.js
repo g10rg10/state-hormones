@@ -135,7 +135,34 @@
     return null;
   }
 
-  function select(id) { if (flow.running) flowStop(); state.id = id; applyFeatured(); playCurrent(); }
+  function select(id) { if (flow.running) flowStop(); state.id = id; applyFeatured(); playCurrent(); idleManage(); }
+
+  // --- idle interludes ---
+  // While the device sits on Idle, occasionally sneak in a micro-quirk (look-around)
+  // and — more rarely — a wink, then slip straight back to idle. The selected state
+  // stays "Idle" (card + info panel unchanged); only the featured stage borrows the
+  // quirk animation for its short action window.
+  var idle = { timer: null };
+  function idleClear() { if (idle.timer) { clearTimeout(idle.timer); idle.timer = null; } }
+  function idleManage() {
+    idleClear();
+    if (state.id !== "A3_idle" || flow.running) return;
+    var delay = (4000 + Math.random() * 6000) * state.spd;   // next interlude in 4–10 s
+    idle.timer = setTimeout(function () {
+      if (state.id !== "A3_idle" || flow.running) return;
+      var wink = Math.random() < 0.18;                       // wink is the rare one
+      var id = wink ? "E4_wink" : "E2_quirk";
+      var win = (wink ? 1700 : 1500) * state.spd;            // show the action, then home
+      featStage.className = stageClass(id);
+      if (SE && state.sound) SE.enter(id, state.spd);
+      idle.timer = setTimeout(function () {
+        if (state.id === "A3_idle" && !flow.running) {
+          featStage.className = stageClass("A3_idle");
+          idleManage();                                      // queue the next interlude
+        }
+      }, win);
+    }, delay);
+  }
 
   function restart(el) {
     el.style.animation = "none";
@@ -182,6 +209,7 @@
   function flowShow(id) { state.id = id; applyFeatured(); playCurrent(); }
 
   function flowStart() {
+    idleClear();
     flow.running = true;
     flowBtn.textContent = "■ Stop flow";
     flowBtn.classList.add("on");
@@ -238,6 +266,7 @@
   applySpd();
   renderGrid();
   applyFeatured();
+  idleManage();          // start interspersing quirks while we sit on the idle home state
   tickClock();
   setInterval(tickClock, 1000);
   wakeBtn.disabled = true;
