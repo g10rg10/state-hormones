@@ -202,16 +202,24 @@
   animation: face-B1-open calc(var(--spd) * 3400ms) cubic-bezier(.3, 0, .4, 1) infinite both;
 }
 
-/* === B2_listening — alert but eyes at NORMAL size (same as other states): a gentle
-   attentive lean (rotation only, no enlargement) + a rare crisp blink === */
+/* === B2_listening — alert but eyes at NORMAL size: a gentle attentive sway, and
+   every so often an "I'm with you" NOD — a quick 3D double-bob (rotateX) — once per
+   the long cycle, so it nods occasionally while listening, not constantly. === */
 @keyframes face-B2-grp {
-  0%, 100% { transform: rotate(0); }
-  25%      { transform: rotate(1.2deg); }
-  50%      { transform: rotate(0); }
-  75%      { transform: rotate(-1.2deg); }
+  0%   { transform: perspective(700px) translateY(0) rotateX(0) rotate(0); }
+  14%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(1deg); }     /* gentle sway */
+  28%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(0); }
+  33%  { transform: perspective(700px) translateY(5px) rotateX(20deg) rotate(0); }  /* nod down */
+  38%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(0); }         /* up */
+  43%  { transform: perspective(700px) translateY(4px) rotateX(15deg) rotate(0); }   /* nod down again */
+  48%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(0); }         /* up */
+  64%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(-1deg); }     /* sway back */
+  82%  { transform: perspective(700px) translateY(0) rotateX(0) rotate(.6deg); }
+  100% { transform: perspective(700px) translateY(0) rotateX(0) rotate(0); }
 }
 .st-B2_listening .face {
-  animation: face-B2-grp calc(var(--spd) * 2400ms) ease-in-out infinite both;
+  transform-style: preserve-3d;
+  animation: face-B2-grp calc(var(--spd) * 7000ms) ease-in-out infinite both;
 }
 .st-B2_listening .eyes { animation: none; transform: scale(1); }
 @keyframes face-B2-dot {
