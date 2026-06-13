@@ -212,39 +212,16 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 }
 .notes .ring.r1 { top: 15px; } .notes .ring.r2 { top: 39px; }
 .notes .ring.r3 { top: 63px; } .notes .ring.r4 { top: 84px; }
+/* the written lines — no hand; they draw themselves in from the bottom up */
 .notes .ln {
   position: absolute; left: 16px; height: 5px; border-radius: 3px;
-  background: rgba(var(--ish), .16);
+  background: rgba(var(--ish), .22);
+  transform-origin: left center;
 }
-.notes .ln.l1 { top: 23px; width: 54%; }
-.notes .ln.l2 { top: 41px; width: 66%; }
-.notes .write {
-  position: absolute; left: 16px; top: 59px; height: 5px; width: 8%;
-  border-radius: 3px; background: rgba(var(--ish), .26);
-}
-/* Hand + pen ON TOP of the pad — starts at the LEFT, pen tip leads up-right so the
-   nib draws the line as the hand travels rightward (handWrite). */
-.notes .hand {
-  position: absolute; z-index: 3;          /* above .pad (z 2) */
-  left: -6px; bottom: 6px; width: 60px; height: 72px;
-}
-.notes .palm {
-  position: absolute; left: 0; bottom: 0; width: 44px; height: 30px;
-  background: #eaf6f3; border-radius: 16px 18px 15px 13px;
-}
-.notes .palm::before {                     /* thumb wraps the pen on the right */
-  content: ""; position: absolute; right: -4px; top: 6px; width: 16px; height: 13px;
-  background: inherit; border-radius: 10px; transform: rotate(22deg);
-}
-.notes .pen2 {                             /* pen tilted up-right, nib leads ahead */
-  position: absolute; right: 6px; bottom: 16px; width: 6px; height: 56px;
-  border-radius: 3px; transform: rotate(34deg); transform-origin: bottom left;
-  background: #241f1b;
-}
-.notes .pen2::after {                      /* nib at the TOP of the shaft = writing tip */
-  content: ""; position: absolute; right: 0; top: -5px; width: 5px; height: 6px;
-  background: #241f1b; border-radius: 3px 3px 0 0;
-}
+.notes .ln.l1 { top: 22px; width: 60%; }
+.notes .ln.l2 { top: 40px; width: 70%; }
+.notes .ln.l3 { top: 58px; width: 52%; }
+.notes .ln.l4 { top: 76px; width: 46%; }
 
 /* ---------- Confirm check overlay (C1_confirm) ---------- */
 .check {

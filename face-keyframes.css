@@ -79,21 +79,45 @@
 .st-A3_idle .eyes {
   animation: face-A3-eyes calc(var(--spd) * 7200ms) ease-in-out infinite both;   /* co-prime */
 }
-.st-A3_idle .eye  { animation: none; }
-@keyframes face-A3-mouth {       /* mouth bob on its own short period */
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(3px); }
+@keyframes face-A3-saccade {     /* tiny eye micro-darts on top of the slow wander */
+  0%, 11% { transform: translate(0,0); }
+  12%     { transform: translate(2px,-1px); }   /* quick dart */
+  16%     { transform: translate(2px,-1px); }
+  18%     { transform: translate(0,0); }
+  44%,46% { transform: translate(-2px,1px); }
+  49%     { transform: translate(0,0); }
+  76%,78% { transform: translate(1px,1px); }
+  81%     { transform: translate(0,0); }
+  100%    { transform: translate(0,0); }
+}
+.st-A3_idle .eye {
+  animation: face-A3-saccade calc(var(--spd) * 5300ms) ease-in-out infinite both;  /* co-prime */
+}
+@keyframes face-A3-mouth {       /* the mouth follows the eyes' horizontal gaze
+                                    (same timing + direction as face-A3-eyes, smaller) */
+  0%   { transform: translate(0,0); }
+  14%  { transform: translate(-9px, 1px); }    /* follow left */
+  26%  { transform: translate(-9px, 1px); }
+  40%  { transform: translate(-2px, -1px); }
+  54%  { transform: translate(8px, 1px); }     /* follow right */
+  66%  { transform: translate(8px, 1px); }
+  82%  { transform: translate(1px, 2px); }
+  100% { transform: translate(0,0); }
 }
 .st-A3_idle .mouth {
-  animation: face-A3-mouth calc(var(--spd) * 3300ms) ease-in-out infinite both;
+  animation: face-A3-mouth calc(var(--spd) * 7200ms) ease-in-out infinite both;   /* matches the eyes */
 }
-@keyframes face-A3-smile {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.12) translateY(-2px); }
-  100% { transform: scale(1); }
+@keyframes face-A3-smile {       /* lively micro-movements: gentle breath + bob + jitter */
+  0%   { transform: scale(1) translateY(0) rotate(0); }
+  20%  { transform: scale(1.05) translateY(-1px) rotate(.8deg); }
+  40%  { transform: scale(.98) translateY(1px)  rotate(-.6deg); }
+  55%  { transform: scale(1.09) translateY(-2px) rotate(.4deg); }
+  72%  { transform: scale(1)    translateY(1px)  rotate(-.8deg); }
+  88%  { transform: scale(1.03) translateY(-1px) rotate(.3deg); }
+  100% { transform: scale(1) translateY(0) rotate(0); }
 }
 .st-A3_idle .smile {
-  animation: face-A3-smile calc(var(--spd) * 4600ms) ease-in-out infinite both;
+  animation: face-A3-smile calc(var(--spd) * 2600ms) ease-in-out infinite both;   /* short, co-prime */
 }
 
 /* === A4_clock === */
