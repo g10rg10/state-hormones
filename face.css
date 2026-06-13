@@ -148,6 +148,9 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 .face {
   display: flex; flex-direction: column; align-items: center; gap: 36px;
   position: relative; z-index: 1;
+  /* the face sits dead-centre by default; face.js lifts it (inline `top`) only for
+     listening and tweens it back to centre fluidly via the Web Animations API */
+  top: 0;
 }
 
 .eyes {
@@ -172,6 +175,7 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 }
 .mouth .smile {
   width: 100%; height: 100%; display: block;
+  overflow: visible;                 /* never clip the mouth arc (e.g. the wide thinking arc) */
   transform-origin: center center;
 }
 .mouth .smile path {

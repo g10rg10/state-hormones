@@ -35,6 +35,24 @@
 
   function stageClass(id) { return "stage round st-" + id; }
 
+  // lift the featured face (inline `top`) and tween it smoothly via the Web Animations
+  // API — used to raise the face for listening and ease it back to centre.
+  var liftAnim = null;
+  function setFaceLift(target) {
+    var faceEl = featStage.querySelector(".face");
+    if (!faceEl) return;
+    var from = parseFloat(faceEl.style.top) || 0;
+    if (from === target) { faceEl.style.top = target + "px"; return; }
+    if (liftAnim) { try { liftAnim.cancel(); } catch (e) {} }
+    faceEl.style.top = target + "px";   // hold the final value
+    if (faceEl.animate) {
+      liftAnim = faceEl.animate(
+        [{ top: from + "px" }, { top: target + "px" }],
+        { duration: 430, easing: "cubic-bezier(.4,0,.2,1)" }
+      );
+    }
+  }
+
   function playCurrent() {
     if (!SE || !state.sound || !state.id) return;
     SE.enter(state.id, state.spd);
@@ -115,6 +133,7 @@
   function applyFeatured() {
     if (!state.id) return;
     featStage.className = stageClass(state.id);
+    setFaceLift(state.id === "B2_listening" ? -42 : 0);   // lift for listening, centre otherwise
     var a = find(state.id);
     if (a) {
       fname.textContent = a.name;
@@ -204,6 +223,8 @@
   // Occasionally a bigger quirk (double-take) or — rarely — a wink interrupts,
   // then the random look-around resumes. (Grid thumbnails keep the CSS loop.)
   var rand = function (a, b) { return a + Math.random() * (b - a); };
+  var IDLE_TEMPO = 0.7;   // idle runs a bit quicker than the global tempo (like Tempo ×0.70)
+  var idleSpd = function () { return state.spd * IDLE_TEMPO; };
   var gaze = { look: null, blink: null, smile: null, els: null };
 
   function gazeStop() {
@@ -235,8 +256,8 @@
     };
     ["eyes", "mouth", "smile"].forEach(function (k) { if (gaze.els[k]) gaze.els[k].style.animation = "none"; });
     gaze.els.dots.forEach(function (d) { d.style.animation = "none"; });
-    // the face gently breathes (CSS) — quicker than before
-    if (gaze.els.face) gaze.els.face.style.animation = "idleBreath " + Math.round(2600 * state.spd) + "ms ease-in-out infinite";
+    // the face gently breathes (CSS) — idle runs a bit quicker than the global tempo
+    if (gaze.els.face) gaze.els.face.style.animation = "idleBreath " + Math.round(2600 * idleSpd()) + "ms ease-in-out infinite";
     // ultra-fluid smile <-> neutral: morph the path's curve (CSS d transition, Chrome)
     if (gaze.els.smilePath) gaze.els.smilePath.style.transition = "d 480ms ease";
     gazeLook();
@@ -248,8 +269,8 @@
     if (!e || state.id !== "A3_idle" || flow.running) return;
     var x = rand(-28, 28), y = rand(-12, 9);                          // wider look-around
     if (Math.random() < 0.28) { x = rand(-6, 6); y = rand(-4, 4); }   // sometimes back to center
-    var move = rand(240, 430) * state.spd;        // saccade
-    var hold = rand(450, 1300) * state.spd;       // shorter fixation → looks around more often
+    var move = rand(240, 430) * idleSpd();        // saccade
+    var hold = rand(450, 1300) * idleSpd();       // shorter fixation → looks around more often
     var ease = "cubic-bezier(.45,0,.25,1)";
     e.eyes.style.transition = "transform " + move + "ms " + ease;
     e.eyes.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
@@ -272,7 +293,7 @@
   }
   function gazeBlinkLoop() {
     if (!gaze.els || state.id !== "A3_idle" || flow.running) return;
-    gaze.blink = setTimeout(function () { gazeBlink(); gazeBlinkLoop(); }, rand(2600, 6500) * state.spd);
+    gaze.blink = setTimeout(function () { gazeBlink(); gazeBlinkLoop(); }, rand(2600, 6500) * idleSpd());
   }
   function gazeSmileLoop() {
     if (!gaze.els || state.id !== "A3_idle" || flow.running) return;
@@ -280,7 +301,7 @@
     // ultra-fluid morph between a smile and a calm neutral mouth: same M..Q.. path
     // structure, so the curve eases smoothly between the two and never thins out.
     if (gaze.els.smilePath) gaze.els.smilePath.style.d = smiling ? MOUTH_SMILE : MOUTH_NEUTRAL;
-    gaze.smile = setTimeout(gazeSmileLoop, (smiling ? rand(2800, 5400) : rand(900, 1800)) * state.spd);
+    gaze.smile = setTimeout(gazeSmileLoop, (smiling ? rand(2800, 5400) : rand(900, 1800)) * idleSpd());
   }
   var MOUTH_SMILE = "path('M28 22 Q 100 110 172 22')";   // the smile arc (markup default)
   var MOUTH_NEUTRAL = "path('M30 33 Q 100 41 170 33')";  // calm, nearly-flat neutral mouth

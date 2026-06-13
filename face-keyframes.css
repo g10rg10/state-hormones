@@ -218,6 +218,8 @@
   86%  { transform: translateY(0) rotate(0); }          /* back upright */
   100% { transform: translateY(0) rotate(0); }
 }
+/* listening lifts the face up (room for the notepad) — applied via JS inline `top`
+   in face.js (applyFeatured); the `top` transition on .face eases it back fluidly. */
 .st-B2_listening .face {
   animation: face-B2-grp calc(var(--spd) * 7000ms) ease-in-out infinite both;
 }
