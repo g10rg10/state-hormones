@@ -60,6 +60,11 @@ html, body {
 }
 .btn:hover { border-color: var(--acc); color: #fff; }
 .btn:disabled { opacity: .4; cursor: default; }
+.alt-link {
+  color: #aeb8c2; text-decoration: none; font-size: 12px;
+  padding: 6px 12px; border: 1px solid #2a323a; border-radius: 9px;
+}
+.alt-link:hover { color: #fff; border-color: var(--acc); }
 
 /* ---------- Lifecycle flow simulation ---------- */
 .flow-btn.on { background: var(--acc); color: #04201e; font-weight: 650; border-color: var(--acc); }
