@@ -130,9 +130,11 @@
   50%      { transform: scale(1.04); }
 }
 
-/* === A4_clock === */
-.st-A4_clock .face  { display: none; }
-.st-A4_clock .mouth { display: none; }
+/* === A4_clock — fluid hand-off: the face fades out while the clock fades in (and
+   back when leaving), like the reminder's eyes-fade morph rather than a hard swap === */
+.st-A4_clock .face  { opacity: 0; }            /* fades out (transition on .face) */
+.st-A4_clock .eyes  { display: flex; }         /* cancel state-keyframes' display:none so it fades, not snaps */
+.st-A4_clock .clock { opacity: 1; }            /* fades in over the face */
 
 /* ============ B · Conversation turn-taking ============ */
 
@@ -153,8 +155,18 @@
   92%  { transform: scale(1.04) translateY(-2px) rotate(0); }
   100% { transform: scale(1)   translateY(0)   rotate(0); }
 }
+/* occasional head turn left/right while speaking — on the `rotate` property (independent
+   of the bob's `transform`), on a co-prime period so it reads as casual/random */
+@keyframes face-B1-turn {
+  0%, 16%   { rotate: 0deg; }
+  24%, 36%  { rotate: 6deg; }    /* turn a little right, hold */
+  44%, 58%  { rotate: 0deg; }
+  66%, 78%  { rotate: -6deg; }   /* turn a little left, hold */
+  86%, 100% { rotate: 0deg; }
+}
 .st-B1_speaking .face {
-  animation: face-B1-grp calc(var(--spd) * 3400ms) ease-in-out infinite both;
+  animation: face-B1-grp calc(var(--spd) * 3400ms) ease-in-out infinite both,
+             face-B1-turn calc(var(--spd) * 8700ms) ease-in-out infinite both;
 }
 .st-B1_speaking .eyes { animation: none; }
 @keyframes face-B1-dot {         /* eyes squint slightly on the biggest beats */
@@ -281,45 +293,41 @@
 
 /* ============ C · Feedback & confirmation ============ */
 
-/* === C1_confirm — joyful: squash → BIG pop → 3 bounces → settle, BIG smile === */
+/* === C1_confirm — like the reminder: the face is gently "sucked in", the check
+   appears in its place, holds, then the face snaps back smoothly (no jarring pop) === */
 @keyframes face-C1-grp {
   0%   { transform: scale(1); }
-  8%   { transform: scale(.78); }       /* big anticipation squash */
-  18%  { transform: scale(1.28); }      /* big overshoot */
-  26%  { transform: scale(.92); }
-  34%  { transform: scale(1.12); }      /* bounce 2 */
-  42%  { transform: scale(.97); }
-  50%  { transform: scale(1.05); }      /* bounce 3 */
-  58%  { transform: scale(1); }
-  85%  { transform: scale(1); }
-  92%  { transform: scale(1.07); }
-  100% { transform: scale(1); }
+  12%  { transform: scale(.55); }      /* sucked in (anticipation) — the check appears */
+  80%  { transform: scale(.55); }      /* hold while the check shows */
+  90%  { transform: scale(1.1); }      /* snap back, slight overshoot */
+  96%  { transform: scale(.98); }
+  100% { transform: scale(1); }        /* settle at normal — no loop jump */
 }
 .st-C1_confirm .face {
-  animation: face-C1-grp calc(var(--spd) * 2400ms) cubic-bezier(.34, 1.7, .4, 1) infinite both;
+  animation: face-C1-grp calc(var(--spd) * 2400ms) cubic-bezier(.4, 0, .2, 1) infinite both;
 }
 .st-C1_confirm .eyes { animation: none; }
 @keyframes face-C1-dot {
   0%   { opacity: 1; transform: scale(1); }
-  12%  { opacity: 0; transform: scale(.5); }     /* eyes hide while check shows */
+  12%  { opacity: 0; transform: scale(.5); }     /* eyes fade while the check shows */
   80%  { opacity: 0; transform: scale(.5); }
-  88%  { opacity: 1; transform: scale(1.3); }    /* pop wide on return */
-  93%  { transform: scale(.85); }
+  90%  { opacity: 1; transform: scale(1.1); }    /* fade back with the face */
+  96%  { transform: scale(.98); }
   100% { opacity: 1; transform: scale(1); }
 }
 .st-C1_confirm .dot {
-  animation: face-C1-dot calc(var(--spd) * 2400ms) cubic-bezier(.4, 1.6, .4, 1) infinite both;
+  animation: face-C1-dot calc(var(--spd) * 2400ms) cubic-bezier(.4, 0, .2, 1) infinite both;
 }
 @keyframes face-C1-smile {
   0%   { opacity: 1; transform: scale(1); }
-  12%  { opacity: 0; transform: scale(.4); }
-  80%  { opacity: 0; transform: scale(.4); }
-  88%  { opacity: 1; transform: scale(1.45); }   /* HUGE smile pop */
-  93%  { transform: scale(1.2); }
-  100% { opacity: 1; transform: scale(1.35); }
+  12%  { opacity: 0; transform: scale(.5); }
+  80%  { opacity: 0; transform: scale(.5); }
+  90%  { opacity: 1; transform: scale(1.1); }    /* return, slight overshoot */
+  96%  { transform: scale(.98); }
+  100% { opacity: 1; transform: scale(1); }       /* settle at normal */
 }
 .st-C1_confirm .smile {
-  animation: face-C1-smile calc(var(--spd) * 2400ms) cubic-bezier(.34, 1.7, .4, 1) infinite both;
+  animation: face-C1-smile calc(var(--spd) * 2400ms) cubic-bezier(.4, 0, .2, 1) infinite both;
 }
 
 /* === C2_didnt_catch — confused: bigger wobble, eyes tilt, mouth shakes === */

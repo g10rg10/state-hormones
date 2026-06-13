@@ -89,20 +89,20 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 
 .grid {
   flex: 0 0 auto;
-  display: grid; gap: 16px; align-content: start;
+  display: grid; gap: 10px; align-content: start;
   grid-template-columns: repeat(4, 128px);
 }
 .sechead {
   grid-column: 1 / -1;
-  margin: 14px 0 0;
+  margin: 6px 0 0;
   font-size: 12px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase;
   color: #8b97a2;
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center;
 }
-.sechead::after { content: ""; flex: 1; height: 1px; background: #1c2228; }
 .card {
+  align-self: start;                 /* don't stretch to the row's tallest card — keeps it compact */
   background: #0e1216; border: 1px solid #1c2228; border-radius: 14px;
-  padding: 12px; cursor: pointer; transition: border-color .15s, transform .15s;
+  padding: 10px; cursor: pointer; transition: border-color .15s, transform .15s;
 }
 .card:hover { border-color: #34404a; transform: translateY(-2px); }
 .card.active { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc), 0 10px 30px rgba(var(--glow), .12); }
@@ -151,6 +151,9 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
   /* the face sits dead-centre by default; face.js lifts it (inline `top`) only for
      listening and tweens it back to centre fluidly via the Web Animations API */
   top: 0;
+  /* fade the whole face in/out for a fluid hand-off to the clock (and back) */
+  opacity: 1;
+  transition: opacity 380ms ease;
 }
 
 .eyes {
@@ -191,9 +194,10 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
   opacity: 0;
 }
 
-/* ---------- Clock overlay (A4_clock) ---------- */
+/* ---------- Clock overlay (A4_clock) — crossfades in over the fading face ---------- */
 .clock {
-  display: none;
+  display: flex; opacity: 0; pointer-events: none;
+  transition: opacity 380ms ease;
   position: absolute; inset: 0; z-index: 2;
   align-items: center; justify-content: center; gap: 8px;
   color: var(--g0);

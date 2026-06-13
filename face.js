@@ -53,8 +53,17 @@
     }
   }
 
+  var winkSound = null;
+  // play the playful wink blip exactly when the eye actually closes (~21% of the
+  // 2600ms wink), not the instant the state is entered
+  function playWinkSoundDelayed() {
+    if (!SE || !state.sound) return;
+    if (winkSound) clearTimeout(winkSound);
+    winkSound = setTimeout(function () { if (SE && state.sound && !flow.running) SE.enter("E4_wink", state.spd); }, 540 * state.spd);
+  }
   function playCurrent() {
     if (!SE || !state.sound || !state.id) return;
+    if (state.id === "E4_wink") { playWinkSoundDelayed(); return; }   // sound only when it actually winks
     SE.enter(state.id, state.spd);
   }
 
@@ -193,10 +202,34 @@
     if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = lang; }
     return u;
   }
+  // --- speaking mouth driven by the actual voice (word boundaries) so it moves in time ---
+  function speechMouthEls() { return { open: featStage.querySelector(".open"), smile: featStage.querySelector(".smile") }; }
+  function speechMouthStart() {
+    var e = speechMouthEls();
+    if (e.smile) { e.smile.style.animation = "none"; e.smile.style.opacity = "0"; }
+    if (e.open) { e.open.style.animation = "none"; e.open.style.opacity = "1"; e.open.style.transform = "translate(-50%,-50%) scale(.62,.2)"; }
+  }
+  function speechMouthPulse() {
+    if (state.id !== "B1_speaking") return;
+    var e = speechMouthEls();
+    if (!e.open || !e.open.animate) return;
+    e.open.animate([
+      { transform: "translate(-50%,-50%) scale(.62,.2)" },
+      { transform: "translate(-50%,-50%) scale(1.05,.95)", offset: .4 },
+      { transform: "translate(-50%,-50%) scale(.62,.2)" }
+    ], { duration: 200, easing: "ease-out" });
+  }
+  function speechMouthRestore() {
+    var e = speechMouthEls();
+    if (e.open) { e.open.style.animation = ""; e.open.style.opacity = ""; e.open.style.transform = ""; }
+    if (e.smile) { e.smile.style.animation = ""; e.smile.style.opacity = ""; }
+  }
   function speakHormones() {
     if (!TTS || !state.sound || state.id !== "B1_speaking") return;
     var u = speakPhrase(HORMONE_LINES[Math.floor(Math.random() * HORMONE_LINES.length)], "en");
     if (!u) return;
+    speechMouthStart();
+    u.onboundary = speechMouthPulse;            // open the mouth on each word → moves in time with the voice
     u.onend = function () { if (state.id === "B1_speaking" && state.sound) speech.timer = setTimeout(speakHormones, 350); };
     TTS.speak(u);
   }
@@ -214,6 +247,7 @@
       if (!TTS.speaking && !TTS.pending) speakDidntCatch();
     } else {
       try { TTS.cancel(); } catch (e) {}
+      speechMouthRestore();             // leaving speaking → hand the mouth back to CSS
     }
   }
 
@@ -327,7 +361,7 @@
       var win = (wink ? 1700 : 1500) * state.spd;
       gazeStop();                                            // release JS control so the CSS quirk shows
       featStage.className = stageClass(id);
-      if (SE && state.sound) SE.enter(id, state.spd);
+      if (SE && state.sound) { if (wink) playWinkSoundDelayed(); else SE.enter(id, state.spd); }
       idle.timer = setTimeout(function () {
         if (state.id === "A3_idle" && !flow.running) {
           featStage.className = stageClass("A3_idle");
