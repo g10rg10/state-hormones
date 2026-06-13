@@ -1,9 +1,17 @@
-/* face.css — alternative look: simple round eyes + smile arc on the round stage.
-   Same flat warm-white aesthetic as the rest of the project, kept separate so the
-   main states gallery is untouched. */
+/* face.css — alternative face look: round eye dots + animated mouth.
+   Reuses state-keyframes.css for the eye / overlay / light animations
+   and adds face-keyframes.css for the per-state mouth movement.
+   Layout mirrors states.css so the gallery feels identical. */
 
 :root {
-  --eye: #fffefb;          /* warm white */
+  --spd: 1;                       /* global duration multiplier (face.js) */
+  --g0: #fffefb;                  /* bright highlight / core (warm white) */
+  --g1: #fff1d6;
+  --g2: #ffdca6;
+  --g3: #f3c587;
+  --glow: 255, 224, 184;          /* outer bloom (rgb) — used by light feedback */
+  --ish: 96, 58, 14;              /* dark ink for notepad lines */
+  --acc: #ffd9a0;                 /* UI accent */
   --bg: #0a0d10;
 }
 
@@ -14,13 +22,12 @@ html, body {
   background: radial-gradient(120% 120% at 50% 0%, #14181d 0%, #0a0d10 55%, #06080a 100%);
   color: #e7edf2;
   font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  min-height: 100vh;
 }
 
-/* ---------- Topbar ---------- */
+/* ---------- Top bar / controls ---------- */
 .topbar {
   position: sticky; top: 0; z-index: 10;
-  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 18px;
   padding: 14px 22px;
   background: rgba(10, 13, 16, .82);
   backdrop-filter: blur(10px);
@@ -30,23 +37,80 @@ html, body {
   font-size: 15px; font-weight: 650; margin: 0; letter-spacing: .2px;
   display: flex; align-items: center; gap: 9px;
 }
-.topbar h1 .dot-ico {
-  width: 9px; height: 9px; border-radius: 50%; background: var(--eye);
-}
-.topbar .back {
+.topbar h1 .dot-ico { width: 9px; height: 9px; border-radius: 50%; background: var(--acc); }
+.alt-link {
   color: #aeb8c2; text-decoration: none; font-size: 12px;
   padding: 6px 12px; border: 1px solid #2a323a; border-radius: 9px;
 }
-.topbar .back:hover { color: #fff; border-color: var(--eye); }
+.alt-link:hover { color: #fff; border-color: var(--acc); }
+.ctrl { display: flex; align-items: center; gap: 8px; }
+.ctrl label { color: #9aa6b1; font-size: 12px; white-space: nowrap; }
+.ctrl input[type=range] { width: 150px; accent-color: var(--acc); }
+.val { font-variant-numeric: tabular-nums; color: var(--acc); min-width: 52px; font-size: 12px; }
+.btn {
+  background: #161c22; color: #cdd6df; border: 1px solid #2a323a; border-radius: 9px;
+  padding: 7px 14px; font-size: 12px; cursor: pointer;
+}
+.btn:hover { border-color: var(--acc); color: #fff; }
+.btn:disabled { opacity: .4; cursor: default; }
 
-/* ---------- Layout ---------- */
-main {
-  display: flex; flex-direction: column; align-items: center; gap: 20px;
-  padding: 48px 22px 60px;
+/* ---------- Lifecycle flow simulation ---------- */
+.flow-btn.on { background: var(--acc); color: #221604; font-weight: 650; border-color: var(--acc); }
+.flowbar {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-bottom: 10px; padding: 7px 16px;
+  background: #10171c; border: 1px solid rgba(var(--glow), .25); border-radius: 999px;
 }
-.note {
-  color: #9aa6b1; max-width: 560px; text-align: center; margin: 0;
+.flowbar[hidden] { display: none; }
+.flowbar .phase { color: var(--acc); font-size: 13px; font-weight: 600; }
+.flowbar .dotpulse {
+  width: 9px; height: 9px; border-radius: 50%; background: var(--acc); flex: none;
+  animation: fpulse 1.4s ease-in-out infinite;
 }
+@keyframes fpulse { 0%,100% { opacity: .4; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.1); } }
+
+/* ---------- Layout (mirror states.css) ---------- */
+main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 28px;
+  padding: 22px 22px 60px; max-width: 1340px; margin: 0 auto; }
+.featured { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center;
+  gap: 14px; position: sticky; top: 80px; }
+.featured-meta { text-align: center; }
+.featured-meta .fname { font-size: 16px; font-weight: 650; }
+.featured-meta .finfo { margin: 16px auto 0; width: fit-content;
+  display: flex; flex-direction: column; gap: 9px; text-align: left; }
+.featured-meta .firow { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #9aa6b1; }
+.featured-meta .firow b { color: #cdd6df; font-weight: 650; min-width: 46px; }
+.featured-meta .firow .ic { width: 17px; height: 17px; flex: none; display: inline-flex; }
+.featured-meta .firow .ic svg { width: 100%; height: 100%; fill: currentColor; display: block; }
+.featured-meta .firow.light .ic { color: var(--acc); }
+.featured-meta .firow.sound .ic { color: #ffce7a; }
+.featured-meta .firow.silent { color: #69727b; }
+.featured-meta .firow.silent .ic { color: #69727b; }
+
+.grid {
+  flex: 0 0 auto;
+  display: grid; gap: 16px; align-content: start;
+  grid-template-columns: repeat(4, 128px);
+}
+.sechead {
+  grid-column: 1 / -1;
+  margin: 14px 0 0;
+  font-size: 12px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase;
+  color: #8b97a2;
+  display: flex; align-items: center; gap: 10px;
+}
+.sechead::after { content: ""; flex: 1; height: 1px; background: #1c2228; }
+.card {
+  background: #0e1216; border: 1px solid #1c2228; border-radius: 14px;
+  padding: 12px; cursor: pointer; transition: border-color .15s, transform .15s;
+}
+.card:hover { border-color: #34404a; transform: translateY(-2px); }
+.card.active { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc), 0 10px 30px rgba(var(--glow), .12); }
+.card .cname { font-weight: 600; margin-top: 10px; font-size: 13px; }
+.card .cmeta { color: #8b97a2; font-size: 11px; margin-top: 2px; }
+
+.thumb { position: relative; width: 104px; height: 104px; overflow: visible; border-radius: 12px; }
+.thumb .stage { position: absolute; top: 0; left: 0; transform-origin: top left; transform: scale(0.21667); }
 
 /* ---------- The 480x480 round stage ---------- */
 .stage {
@@ -55,9 +119,12 @@ main {
   display: flex; align-items: center; justify-content: center;
   background: radial-gradient(125% 120% at 50% 32%, #0c1417 0%, #05090b 62%, #02060a 100%);
   overflow: hidden;
+  --lumeRGB: var(--glow);
+  --lumeLevel: 0;
   box-shadow:
     inset 0 0 0 2px rgba(255,255,255,.03),
-    inset 0 0 60px rgba(0,0,0,.6);
+    inset 0 0 60px rgba(0,0,0,.6),
+    0 0 44px 6px rgba(var(--lumeRGB), var(--lumeLevel));
 }
 .stage.round { border-radius: 50%; }
 .stage::before {
@@ -65,45 +132,158 @@ main {
   background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 22%);
 }
 
-/* ---------- The face: round eyes + smile arc ----------
-   .face is a fixed box that breathes; the children sit absolutely inside.
-   The two eyes blink on their own slow track; the smile is a flat SVG stroke. */
+/* ---------- The face: round eyes + smile mouth ----------
+   - .face groups eyes + mouth so they sit together (eyes on top, mouth below)
+   - .eyes / .eye / .dot mirror the states.html structure so state-keyframes.css
+     animations (blink, drift, breath, wink, ...) apply unchanged
+   - .mouth has two shapes: a smile arc (default) + an oval "open mouth"
+     (used by face-keyframes.css to make the mouth move per state) */
 .face {
-  position: relative; width: 320px; height: 240px;
-  animation: breath 4.6s ease-in-out infinite;
-  transform-origin: center center;
-}
-@keyframes breath {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.04); }
+  display: flex; flex-direction: column; align-items: center; gap: 36px;
+  position: relative; z-index: 1;
 }
 
-.face .eye {
-  position: absolute; top: 10px;
-  width: 62px; height: 62px; border-radius: 50%;
-  background: var(--eye);
+.eyes {
+  display: flex; align-items: center; gap: 86px;
   transform-origin: center center;
-  animation: blink 5.4s ease-in-out infinite;
 }
-.face .eye.left  { left: 56px; }
-.face .eye.right { right: 56px; }
-@keyframes blink {
-  0%, 92% { transform: scaleY(1); }
-  95%     { transform: scaleY(.08); }
-  98%     { transform: scaleY(1); }
-  100%    { transform: scaleY(1); }
+.eye {
+  width: 60px; height: 60px;
+  transform-origin: center center;
+}
+.dot {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: var(--g0);
+  transform-origin: center center;
+  will-change: transform, opacity;
 }
 
-.face .smile {
-  position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
-  width: 240px; height: 120px;
-  display: block;
+.mouth {
+  position: relative; width: 220px; height: 96px;
+  display: flex; align-items: center; justify-content: center;
+  transform-origin: center center;
 }
-.face .smile path {
-  fill: none; stroke: var(--eye); stroke-width: 16;
+.mouth .smile {
+  width: 100%; height: 100%; display: block;
+  transform-origin: center center;
+}
+.mouth .smile path {
+  fill: none; stroke: var(--g0); stroke-width: 16;
   stroke-linecap: round; stroke-linejoin: round;
+}
+.mouth .open {
+  position: absolute; left: 50%; top: 50%;
+  width: 56px; height: 64px; border-radius: 50%;
+  background: var(--g0);
+  transform: translate(-50%, -50%) scaleY(.4);
+  transform-origin: center center;
+  opacity: 0;
+}
+
+/* ---------- Clock overlay (A4_clock) ---------- */
+.clock {
+  display: none;
+  position: absolute; inset: 0; z-index: 2;
+  align-items: center; justify-content: center; gap: 8px;
+  color: var(--g0);
+}
+.clock b {
+  display: inline-block;
+  font: 800 104px/1 ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", "Quicksand", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  transform: scaleY(1.5) scaleX(0.92);
+  transform-origin: center center;
+}
+.clock .cl { opacity: 1; transform: scaleY(1.18); }
+
+/* ---------- Listening overlay: notepad + writing hand (B2_listening) ---------- */
+.notes {
+  display: none;
+  position: absolute; left: 50%; margin-left: -61px; bottom: 36px; z-index: 2;
+  width: 122px; height: 104px;
+}
+.notes .pad {
+  position: absolute; inset: 0; border-radius: 13px; z-index: 2;
+  background: #eaf6f3;
+}
+.notes .ring {
+  position: absolute; right: -6px; width: 16px; height: 7px; border-radius: 4px;
+  background: var(--g2);
+}
+.notes .ring.r1 { top: 15px; } .notes .ring.r2 { top: 39px; }
+.notes .ring.r3 { top: 63px; } .notes .ring.r4 { top: 84px; }
+.notes .ln {
+  position: absolute; left: 16px; height: 5px; border-radius: 3px;
+  background: rgba(var(--ish), .16);
+}
+.notes .ln.l1 { top: 23px; width: 54%; }
+.notes .ln.l2 { top: 41px; width: 66%; }
+.notes .write {
+  position: absolute; left: 16px; top: 59px; height: 5px; width: 8%;
+  border-radius: 3px; background: rgba(var(--ish), .26);
+}
+.notes .hand {
+  position: absolute; z-index: 1;
+  left: 30px; bottom: -30px; width: 56px; height: 66px;
+}
+.notes .palm {
+  position: absolute; left: 0; bottom: 0; width: 40px; height: 28px;
+  background: #eaf6f3; border-radius: 16px 18px 13px 15px;
+}
+.notes .palm::before {
+  content: ""; position: absolute; left: -5px; top: 4px; width: 16px; height: 13px;
+  background: inherit; border-radius: 10px; transform: rotate(-20deg);
+}
+.notes .pen2 {
+  position: absolute; left: 22px; bottom: 20px; width: 6px; height: 56px;
+  border-radius: 4px; transform: rotate(16deg); transform-origin: bottom center;
+  background: #241f1b;
+}
+.notes .pen2::after {
+  content: ""; position: absolute; left: 0; bottom: -4px; width: 5px; height: 6px;
+  background: #241f1b; border-radius: 0 0 3px 3px;
+}
+
+/* ---------- Confirm check overlay (C1_confirm) ---------- */
+.check {
+  display: none;
+  position: absolute; inset: 0; z-index: 2;
+  align-items: center; justify-content: center;
+}
+.check svg { width: 210px; height: 210px; overflow: visible; }
+.check path {
+  fill: none; stroke: var(--g0); stroke-width: 15;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 80; stroke-dashoffset: 80;
+}
+
+/* ---------- Reminder bell overlay (D1_reminder) ---------- */
+.bell {
+  display: none;
+  position: absolute; inset: 0; z-index: 2;
+  align-items: center; justify-content: center;
+}
+.bell svg {
+  width: 156px; height: 156px;
+  transform-origin: 50% 16%;
+}
+.bell svg path { fill: var(--g0); }
+
+/* ---------- Ambient light feedback (same as states.css) ---------- */
+@property --lumeLevel {
+  syntax: "<number>"; initial-value: 0; inherits: false;
+}
+.st-B2_listening, .st-D2_wakeword { --lumeRGB: 86, 198, 255; }
+
+.stage .eyes, .stage .eye, .stage .dot,
+.stage .mouth, .stage .smile, .stage .open {
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .face, .face .eye { animation: none !important; }
+  .stage .eyes, .stage .eye, .stage .dot,
+  .stage .mouth, .stage .smile, .stage .open,
+  .stage .notes, .stage .notes * { animation: none !important; }
+  .st-E4_wink .eye.right .dot { transform: scaleY(.07); }
 }
