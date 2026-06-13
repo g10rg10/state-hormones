@@ -152,36 +152,47 @@
     "A little progesterone helps you sleep better tonight."
   ];
   var speech = { timer: null };
-  // pick a natural, neutral voice — prefer "Koko", then enhanced/natural English voices,
-  // then any English voice (avoids the robotic system default where possible)
-  function pickVoice() {
+  // pick a natural, neutral voice for a language — prefer "Koko", then enhanced/natural
+  // voices, then any voice for that language (avoids the robotic system default)
+  function pickVoiceLang(lang) {
     var voices = TTS && TTS.getVoices ? TTS.getVoices() : [];
     if (!voices.length) return null;
-    var en = voices.filter(function (v) { return /^en[-_]/i.test(v.lang); });
-    var byName = function (re, list) { return (list || en).filter(function (v) { return re.test(v.name); }); };
+    var m = voices.filter(function (v) { return v.lang && v.lang.toLowerCase().indexOf(lang.toLowerCase()) === 0; });
+    var byName = function (re, list) { return (list || m).filter(function (v) { return re.test(v.name); }); };
     return (byName(/koko/i, voices)[0] ||                       // requested voice (if installed)
             byName(/(natural|neural|enhanced|premium)/i)[0] ||  // higher-quality = less robotic
             byName(/google/i)[0] ||                             // Google voices are natural
-            byName(/\b(samantha|alex|allison|ava|joanna|nicky|aria)\b/i)[0] ||  // neutral, natural
-            en.filter(function (v) { return /^en-US/i.test(v.lang); })[0] ||
-            en[0] || null);
+            byName(/\b(samantha|alex|allison|ava|joanna|nicky|aria|alice|federica|luca)\b/i)[0] ||
+            m[0] || null);
+  }
+  function speakPhrase(text, lang) {
+    if (!TTS) return;
+    try { TTS.cancel(); } catch (e) {}
+    var u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95; u.pitch = 1;                 // calm, neutral, less robotic delivery
+    var v = pickVoiceLang(lang);
+    if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = lang; }
+    return u;
   }
   function speakHormones() {
     if (!TTS || !state.sound || state.id !== "B1_speaking") return;
-    try { TTS.cancel(); } catch (e) {}
-    var line = HORMONE_LINES[Math.floor(Math.random() * HORMONE_LINES.length)];
-    var u = new SpeechSynthesisUtterance(line);
-    u.rate = 0.95; u.pitch = 1;                 // calm, neutral, less robotic delivery
-    var v = pickVoice();
-    if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = "en-US"; }
+    var u = speakPhrase(HORMONE_LINES[Math.floor(Math.random() * HORMONE_LINES.length)], "en");
+    if (!u) return;
     u.onend = function () { if (state.id === "B1_speaking" && state.sound) speech.timer = setTimeout(speakHormones, 350); };
     TTS.speak(u);
+  }
+  function speakDidntCatch() {
+    if (!TTS || !state.sound || state.id !== "C2_didnt_catch") return;
+    var u = speakPhrase("Non ho capito.", "it");   // "I didn't understand" — talks via the mouth
+    if (u) TTS.speak(u);
   }
   function manageSpeech() {
     if (speech.timer) { clearTimeout(speech.timer); speech.timer = null; }
     if (!TTS) return;
-    if (state.id === "B1_speaking" && state.sound && !flow.running) {
+    if (state.sound && !flow.running && state.id === "B1_speaking") {
       if (!TTS.speaking && !TTS.pending) speakHormones();
+    } else if (state.sound && !flow.running && state.id === "C2_didnt_catch") {
+      if (!TTS.speaking && !TTS.pending) speakDidntCatch();
     } else {
       try { TTS.cancel(); } catch (e) {}
     }
@@ -200,9 +211,10 @@
     gaze.look = gaze.blink = gaze.smile = null;
     if (gaze.els) {
       var e = gaze.els;
-      [e.eyes, e.face, e.mouth, e.smile, e.open].forEach(function (el) {
+      [e.eyes, e.face, e.mouth, e.smile].forEach(function (el) {
         if (el) { el.style.animation = ""; el.style.transition = ""; el.style.transform = ""; el.style.opacity = ""; }
       });
+      if (e.smilePath) { e.smilePath.style.d = ""; e.smilePath.style.transition = ""; }
       e.dots.forEach(function (d) { d.style.animation = ""; d.style.transition = ""; d.style.transform = ""; });
       gaze.els = null;
     }
@@ -212,18 +224,21 @@
     if (state.id !== "A3_idle" || flow.running) return;
     var eyes = featStage.querySelector(".eyes");
     if (!eyes) return;
+    var smile = featStage.querySelector(".smile");
     gaze.els = {
       eyes: eyes,
       face: featStage.querySelector(".face"),
       mouth: featStage.querySelector(".mouth"),
-      smile: featStage.querySelector(".smile"),
-      open: featStage.querySelector(".open"),
+      smile: smile,
+      smilePath: smile && smile.querySelector("path"),
       dots: Array.prototype.slice.call(featStage.querySelectorAll(".dot"))
     };
-    ["eyes", "mouth", "smile", "open"].forEach(function (k) { if (gaze.els[k]) gaze.els[k].style.animation = "none"; });
+    ["eyes", "mouth", "smile"].forEach(function (k) { if (gaze.els[k]) gaze.els[k].style.animation = "none"; });
     gaze.els.dots.forEach(function (d) { d.style.animation = "none"; });
-    // the face gently breathes (CSS) — a touch quicker than the old idle rhythm
-    if (gaze.els.face) gaze.els.face.style.animation = "idleBreath " + Math.round(3400 * state.spd) + "ms ease-in-out infinite";
+    // the face gently breathes (CSS) — quicker than before
+    if (gaze.els.face) gaze.els.face.style.animation = "idleBreath " + Math.round(2600 * state.spd) + "ms ease-in-out infinite";
+    // ultra-fluid smile <-> neutral: morph the path's curve (CSS d transition, Chrome)
+    if (gaze.els.smilePath) gaze.els.smilePath.style.transition = "d 480ms ease";
     gazeLook();
     gazeBlinkLoop();
     gazeSmileLoop();
@@ -231,8 +246,8 @@
   function gazeLook() {
     var e = gaze.els;
     if (!e || state.id !== "A3_idle" || flow.running) return;
-    var x = rand(-20, 20), y = rand(-9, 7);
-    if (Math.random() < 0.28) { x = rand(-5, 5); y = rand(-3, 3); }   // sometimes back to center
+    var x = rand(-28, 28), y = rand(-12, 9);                          // wider look-around
+    if (Math.random() < 0.28) { x = rand(-6, 6); y = rand(-4, 4); }   // sometimes back to center
     var move = rand(240, 430) * state.spd;        // saccade
     var hold = rand(450, 1300) * state.spd;       // shorter fixation → looks around more often
     var ease = "cubic-bezier(.45,0,.25,1)";
@@ -262,19 +277,13 @@
   function gazeSmileLoop() {
     if (!gaze.els || state.id !== "A3_idle" || flow.running) return;
     var smiling = Math.random() < 0.8;            // smiles very often, but not perpetually
-    // smiling = the smile arc; neutral = a flat FILLED lozenge (a thick closed mouth,
-    // never a thin sliver) via the .open oval squashed wide-and-short.
-    if (gaze.els.smile) {
-      gaze.els.smile.style.transition = "opacity 320ms ease";
-      gaze.els.smile.style.opacity = smiling ? "1" : "0";
-    }
-    if (gaze.els.open) {
-      gaze.els.open.style.transition = "opacity 320ms ease";
-      gaze.els.open.style.transform = "translate(-50%, -50%) scale(1.5, .34)";   // wide flat mouth bar
-      gaze.els.open.style.opacity = smiling ? "0" : "1";
-    }
+    // ultra-fluid morph between a smile and a calm neutral mouth: same M..Q.. path
+    // structure, so the curve eases smoothly between the two and never thins out.
+    if (gaze.els.smilePath) gaze.els.smilePath.style.d = smiling ? MOUTH_SMILE : MOUTH_NEUTRAL;
     gaze.smile = setTimeout(gazeSmileLoop, (smiling ? rand(2800, 5400) : rand(900, 1800)) * state.spd);
   }
+  var MOUTH_SMILE = "path('M28 22 Q 100 110 172 22')";   // the smile arc (markup default)
+  var MOUTH_NEUTRAL = "path('M30 33 Q 100 41 170 33')";  // calm, nearly-flat neutral mouth
 
   function idleEnter() { gazeStart(); idleManage(); }
   function idleExit() { gazeStop(); idleClear(); }
@@ -344,11 +353,44 @@
     soundBtn.title = "Web Audio non disponibile in questo browser";
   }
 
+  // --- microphone: real voice-activity listening (used after the wake word) ---
+  var mic = { stream: null, ctx: null, timer: null, analyser: null };
+  function micStop() {
+    if (mic.timer) { clearInterval(mic.timer); mic.timer = null; }
+    if (mic.stream) { mic.stream.getTracks().forEach(function (t) { t.stop(); }); mic.stream = null; }
+    if (mic.ctx) { try { mic.ctx.close(); } catch (e) {} mic.ctx = null; }
+    mic.analyser = null;
+  }
+  function micListen(onSpeech, onError) {
+    micStop();
+    var md = navigator.mediaDevices;
+    if (!md || !md.getUserMedia) { if (onError) onError(); return; }
+    md.getUserMedia({ audio: true }).then(function (stream) {
+      mic.stream = stream;
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      mic.ctx = new Ctx();
+      var src = mic.ctx.createMediaStreamSource(stream);
+      mic.analyser = mic.ctx.createAnalyser();
+      mic.analyser.fftSize = 512;
+      src.connect(mic.analyser);
+      var data = new Uint8Array(mic.analyser.fftSize);
+      var heard = 0;
+      mic.timer = setInterval(function () {
+        if (!mic.analyser) return;
+        mic.analyser.getByteTimeDomainData(data);
+        var sum = 0; for (var i = 0; i < data.length; i++) { var d = data[i] - 128; sum += d * d; }
+        var rms = Math.sqrt(sum / data.length);
+        if (rms > 7) heard++; else heard = Math.max(0, heard - 1);   // voice activity
+        if (heard >= 4) { micStop(); if (onSpeech) onSpeech(); }      // sustained speech detected
+      }, 60);
+    }).catch(function () { if (onError) onError(); });
+  }
+
   // --- lifecycle flow simulation (same as states.js) ---
   var IDLE_TO_CLOCK = 6000;
   var CLOCK_AUTOWAKE = 6000;
 
-  function flowClear() { flow.timers.forEach(clearTimeout); flow.timers = []; }
+  function flowClear() { flow.timers.forEach(clearTimeout); flow.timers = []; micStop(); }
   function flowAt(ms, fn) { flow.timers.push(setTimeout(fn, ms)); }
   function flowPhase(txt) { if (flowphase) flowphase.textContent = txt; }
   function flowShow(id) { state.id = id; applyFeatured(); playCurrent(); manageSpeech(); }
@@ -396,11 +438,24 @@
   function flowWake() {
     flowClear();
     wakeBtn.disabled = true;
-    flowPhase("Wake word → back to face");
+    flowPhase("Wake word → listening");
     flowShow("D2_wakeword");
     flowAt(1100, function () {
-      flowPhase("Listening…"); flowShow("B2_listening");
-      flowAt(2400, flowIdle);
+      // after the wake word the device waits for someone to speak — for real, via the mic
+      flowPhase("Listening… say something into the mic");
+      flowShow("B2_listening");
+      micListen(
+        function () {                                  // heard the user speak
+          if (!flow.running) return;
+          flowPhase("Got it — thinking"); flowShow("B3_thinking");
+          flowAt(1400, function () {
+            if (!flow.running) return;
+            flowPhase("Replying"); flowShow("B1_speaking");
+            flowAt(4200, flowIdle);
+          });
+        },
+        function () { flowAt(2600, flowIdle); }        // no mic → fall back to a timed wait
+      );
     });
   }
 
