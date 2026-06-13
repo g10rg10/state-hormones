@@ -188,31 +188,26 @@
   animation: face-B1-dot calc(var(--spd) * 3400ms) cubic-bezier(.4, 0, .6, 1) infinite both;
 }
 @keyframes face-B1-smile-hide { 0%, 100% { opacity: 0; } }
-@keyframes face-B1-open {        /* a real talking mouth: clear open/close beats,
-                                    vowels open wide/tall, consonants snap near-shut */
-  0%   { opacity: 1; transform: translate(-50%, -50%) scale(.5, .18); }   /* near closed */
-  6%   { transform: translate(-50%, -48%) scale(1, .68); }                /* open (EH) */
-  12%  { transform: translate(-50%, -50%) scale(.55, .22); }              /* consonant close */
-  18%  { transform: translate(-50%, -46%) scale(1.28, 1.12); }            /* wide AAH */
-  24%  { transform: translate(-50%, -50%) scale(.5, .2); }                /* close */
-  30%  { transform: translate(-50%, -48%) scale(.92, .6); }               /* mid */
-  36%  { transform: translate(-50%, -50%) scale(.55, .24); }              /* close */
-  42%  { transform: translate(-50%, -47%) scale(1.12, .92); }             /* open */
-  48%  { transform: translate(-50%, -50%) scale(.5, .2); }                /* close */
-  54%  { transform: translate(-50%, -45%) scale(.82, 1.25); }             /* tall OOH */
-  60%  { transform: translate(-50%, -50%) scale(.6, .3); }                /* close-ish */
-  66%  { transform: translate(-50%, -48%) scale(1.06, .78); }             /* open */
-  72%  { transform: translate(-50%, -50%) scale(.5, .2); }                /* close */
-  78%  { transform: translate(-50%, -46%) scale(1.18, 1); }               /* open */
-  84%  { transform: translate(-50%, -50%) scale(.55, .24); }              /* close */
-  90%  { transform: translate(-50%, -48%) scale(.8, .5); }                /* trailing off */
-  100% { opacity: 1; transform: translate(-50%, -50%) scale(.5, .18); }   /* shut */
+@keyframes face-B1-open {        /* a calm talking mouth: ~5 open/close beats per cycle
+                                    (not frantic), vowels open wide/tall between closes */
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(.55, .2); }   /* closed */
+  9%   { transform: translate(-50%, -47%) scale(1.05, .88); }             /* open */
+  18%  { transform: translate(-50%, -50%) scale(.55, .22); }              /* close */
+  27%  { transform: translate(-50%, -46%) scale(.9, 1.05); }              /* tall OOH */
+  36%  { transform: translate(-50%, -50%) scale(.55, .2); }               /* close */
+  45%  { transform: translate(-50%, -46%) scale(1.18, .8); }              /* wide AAH */
+  54%  { transform: translate(-50%, -50%) scale(.55, .22); }              /* close */
+  63%  { transform: translate(-50%, -47%) scale(.95, .92); }              /* open */
+  72%  { transform: translate(-50%, -50%) scale(.55, .2); }               /* close */
+  81%  { transform: translate(-50%, -48%) scale(.85, .62); }              /* small open, trailing */
+  90%  { transform: translate(-50%, -50%) scale(.55, .22); }              /* close */
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(.55, .2); }   /* shut */
 }
 .st-B1_speaking .smile {
-  animation: face-B1-smile-hide calc(var(--spd) * 3400ms) infinite both;
+  animation: face-B1-smile-hide calc(var(--spd) * 3800ms) infinite both;
 }
 .st-B1_speaking .open {
-  animation: face-B1-open calc(var(--spd) * 3400ms) cubic-bezier(.3, 0, .4, 1) infinite both;
+  animation: face-B1-open calc(var(--spd) * 3800ms) cubic-bezier(.3, 0, .4, 1) infinite both;
 }
 
 /* === B2_listening — alert, eyes at NORMAL size. Over a long cycle it does two
