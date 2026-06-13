@@ -18,42 +18,29 @@
 /* === A1_off — Off === */
 .st-A1_off .smile, .st-A1_off .open { opacity: 0; }
 
-/* === A2_wake — sleepy wake-up: face eases in while the eyes open fluidly from
-   thin slits, a soft waking blink, then settle. No hard pops / no static hold. === */
+/* === A2_wake — the head turns around ON the sphere: it starts facing AWAY (rotated
+   behind), swings around the side into view, overshoots slightly past center, and
+   settles facing front. The per-element perspective + rotateY gives the 3D turn;
+   opacity hides the face while it's turned away (the "back of the head"). === */
 @keyframes face-A2-grp {
-  0%        { opacity: 0; transform: scale(.78); }
-  18%       { opacity: 1; transform: scale(1.02); }   /* gentle fade + grow */
-  30%       { transform: scale(1); }                  /* soft settle, no bounce */
-  88%       { opacity: 1; transform: scale(1); }
-  97%, 100% { opacity: 0; transform: scale(.78); }
+  0%        { opacity: 0; transform: perspective(900px) rotateY(-165deg) scale(.86); }
+  18%       { opacity: 0; transform: perspective(900px) rotateY(-120deg) scale(.9); }  /* swinging, still hidden */
+  34%       { opacity: 1; transform: perspective(900px) rotateY(-66deg) scale(.95); }  /* edge comes into view */
+  56%       { opacity: 1; transform: perspective(900px) rotateY(16deg) scale(1.03); }  /* past-center overshoot */
+  72%       { transform: perspective(900px) rotateY(-7deg) scale(1); }                 /* settle back */
+  82%, 88%  { transform: perspective(900px) rotateY(0deg) scale(1); }                  /* face front */
+  96%, 100% { opacity: 0; transform: perspective(900px) rotateY(-165deg) scale(.86); }
 }
 .st-A2_wake .face {
-  animation: face-A2-grp calc(var(--spd) * 4000ms) cubic-bezier(.22, 1, .36, 1) infinite both;
+  transform-style: preserve-3d;
+  animation: face-A2-grp calc(var(--spd) * 4000ms) cubic-bezier(.3, .7, .3, 1) infinite both;
 }
+/* the eyes + smile just ride the turn (open + smiling); the 3D reveal does the work */
 .st-A2_wake .eyes { animation: none; }
 .st-A2_wake .eye  { animation: none; }
-@keyframes face-A2-dot {
-  0%    { transform: scaleY(.06); }                   /* sleepy slit, opens immediately */
-  34%   { transform: scaleY(1.04); }                  /* smooth continuous open */
-  44%   { transform: scaleY(1); }                     /* settle */
-  64%   { transform: scaleY(1); }
-  72%   { transform: scaleY(.16); }                   /* one soft waking blink */
-  80%   { transform: scaleY(1); }
-  100%  { transform: scaleY(1); }
-}
-.st-A2_wake .dot {
-  animation: face-A2-dot calc(var(--spd) * 4000ms) cubic-bezier(.4, .05, .25, 1) infinite both;
-}
-@keyframes face-A2-smile {
-  0%, 16%   { opacity: 0; transform: scale(.6); }
-  40%       { opacity: 1; transform: scale(1.03); }   /* eases in as the eyes finish opening */
-  50%       { transform: scale(1); }
-  88%       { opacity: 1; transform: scale(1); }
-  97%, 100% { opacity: 0; transform: scale(.6); }
-}
-.st-A2_wake .smile {
-  animation: face-A2-smile calc(var(--spd) * 4000ms) cubic-bezier(.22, 1, .36, 1) infinite both;
-}
+.st-A2_wake .dot  { animation: none; }
+.st-A2_wake .smile { animation: none; opacity: 1; }
+.st-A2_wake .open { opacity: 0; }
 
 /* === A3_idle — a curious face looking around. ONE choreographed 9s loop drives
    every layer off the SAME timeline so they read as a single performance, not

@@ -135,29 +135,116 @@
     return null;
   }
 
-  function select(id) { if (flow.running) flowStop(); state.id = id; applyFeatured(); playCurrent(); idleManage(); }
+  function select(id) { if (flow.running) flowStop(); state.id = id; applyFeatured(); playCurrent(); idleSync(); }
 
-  // --- idle interludes ---
-  // While the device sits on Idle, occasionally sneak in a micro-quirk (look-around)
-  // and — more rarely — a wink, then slip straight back to idle. The selected state
-  // stays "Idle" (card + info panel unchanged); only the featured stage borrows the
-  // quirk animation for its short action window.
+  // --- idle: a curious face that looks around at RANDOM (never a fixed loop) ---
+  // JS drives the featured stage's gaze / head-lean / mouth / blink with random
+  // targets and timings; the smile shows very often but relaxes now and then.
+  // Occasionally a bigger quirk (double-take) or — rarely — a wink interrupts,
+  // then the random look-around resumes. (Grid thumbnails keep the CSS loop.)
+  var rand = function (a, b) { return a + Math.random() * (b - a); };
+  var gaze = { look: null, blink: null, smile: null, els: null };
+
+  function gazeStop() {
+    [gaze.look, gaze.blink, gaze.smile].forEach(function (t) { if (t) clearTimeout(t); });
+    gaze.look = gaze.blink = gaze.smile = null;
+    if (gaze.els) {
+      var e = gaze.els;
+      [e.eyes, e.face, e.mouth, e.smile].forEach(function (el) {
+        if (el) { el.style.animation = ""; el.style.transition = ""; el.style.transform = ""; }
+      });
+      e.dots.forEach(function (d) { d.style.animation = ""; d.style.transition = ""; d.style.transform = ""; });
+      gaze.els = null;
+    }
+  }
+  function gazeStart() {
+    gazeStop();
+    if (state.id !== "A3_idle" || flow.running) return;
+    var eyes = featStage.querySelector(".eyes");
+    if (!eyes) return;
+    gaze.els = {
+      eyes: eyes,
+      face: featStage.querySelector(".face"),
+      mouth: featStage.querySelector(".mouth"),
+      smile: featStage.querySelector(".smile"),
+      dots: Array.prototype.slice.call(featStage.querySelectorAll(".dot"))
+    };
+    ["eyes", "face", "mouth", "smile"].forEach(function (k) { if (gaze.els[k]) gaze.els[k].style.animation = "none"; });
+    gaze.els.dots.forEach(function (d) { d.style.animation = "none"; });
+    gazeLook();
+    gazeBlinkLoop();
+    gazeSmileLoop();
+  }
+  function gazeLook() {
+    var e = gaze.els;
+    if (!e || state.id !== "A3_idle" || flow.running) return;
+    var x = rand(-20, 20), y = rand(-9, 7);
+    if (Math.random() < 0.28) { x = rand(-5, 5); y = rand(-3, 3); }   // sometimes back to center
+    var move = rand(240, 430) * state.spd;        // saccade
+    var hold = rand(850, 2700) * state.spd;       // fixation
+    var ease = "cubic-bezier(.45,0,.25,1)";
+    e.eyes.style.transition = "transform " + move + "ms " + ease;
+    e.eyes.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
+    if (e.face) {
+      e.face.style.transition = "transform " + move + "ms " + ease;
+      e.face.style.transform = "translate(" + (x * 0.28).toFixed(1) + "px," + (y * 0.3).toFixed(1) +
+        "px) rotate(" + (x * 0.06).toFixed(2) + "deg) scale(" + rand(1, 1.03).toFixed(3) + ")";
+    }
+    if (e.mouth) {
+      e.mouth.style.transition = "transform " + move + "ms " + ease;
+      e.mouth.style.transform = "translate(" + (x * 0.4).toFixed(1) + "px," + (y * 0.2).toFixed(1) + "px)";
+    }
+    if (Math.random() < 0.55) setTimeout(gazeBlink, move * 0.35);     // blink on the gaze shift
+    gaze.look = setTimeout(gazeLook, move + hold);
+  }
+  function gazeBlink() {
+    if (!gaze.els) return;
+    gaze.els.dots.forEach(function (d) {
+      d.style.transition = "transform 80ms ease-in";
+      d.style.transform = "scaleY(.08)";
+      setTimeout(function () { if (gaze.els) { d.style.transition = "transform 120ms ease-out"; d.style.transform = "scaleY(1)"; } }, 90);
+    });
+  }
+  function gazeBlinkLoop() {
+    if (!gaze.els || state.id !== "A3_idle" || flow.running) return;
+    gaze.blink = setTimeout(function () { gazeBlink(); gazeBlinkLoop(); }, rand(2600, 6500) * state.spd);
+  }
+  function gazeSmileLoop() {
+    if (!gaze.els || state.id !== "A3_idle" || flow.running) return;
+    var smiling = Math.random() < 0.8;            // smiles very often, but not perpetually
+    if (gaze.els.smile) {
+      gaze.els.smile.style.transition = "transform 380ms ease";
+      gaze.els.smile.style.transform = smiling ? "scale(1)" : "scaleY(.16)";   // neutral = flat mouth
+    }
+    gaze.smile = setTimeout(gazeSmileLoop, (smiling ? rand(2800, 5400) : rand(900, 1800)) * state.spd);
+  }
+
+  function idleEnter() { gazeStart(); idleManage(); }
+  function idleExit() { gazeStop(); idleClear(); }
+  function idleSync() {
+    if (state.id === "A3_idle" && !flow.running) idleEnter();
+    else idleExit();
+  }
+
+  // occasional quirk / wink interludes on top of the random look-around
   var idle = { timer: null };
   function idleClear() { if (idle.timer) { clearTimeout(idle.timer); idle.timer = null; } }
   function idleManage() {
     idleClear();
     if (state.id !== "A3_idle" || flow.running) return;
-    var delay = (4000 + Math.random() * 6000) * state.spd;   // next interlude in 4–10 s
+    var delay = rand(6000, 13000) * state.spd;
     idle.timer = setTimeout(function () {
       if (state.id !== "A3_idle" || flow.running) return;
       var wink = Math.random() < 0.18;                       // wink is the rare one
       var id = wink ? "E4_wink" : "E2_quirk";
-      var win = (wink ? 1700 : 1500) * state.spd;            // show the action, then home
+      var win = (wink ? 1700 : 1500) * state.spd;
+      gazeStop();                                            // release JS control so the CSS quirk shows
       featStage.className = stageClass(id);
       if (SE && state.sound) SE.enter(id, state.spd);
       idle.timer = setTimeout(function () {
         if (state.id === "A3_idle" && !flow.running) {
           featStage.className = stageClass("A3_idle");
+          gazeStart();                                       // resume the random look-around
           idleManage();                                      // queue the next interlude
         }
       }, win);
@@ -209,7 +296,7 @@
   function flowShow(id) { state.id = id; applyFeatured(); playCurrent(); }
 
   function flowStart() {
-    idleClear();
+    idleExit();
     flow.running = true;
     flowBtn.textContent = "■ Stop flow";
     flowBtn.classList.add("on");
@@ -266,7 +353,7 @@
   applySpd();
   renderGrid();
   applyFeatured();
-  idleManage();          // start interspersing quirks while we sit on the idle home state
+  idleSync();            // start the random look-around (+ quirk interludes) on the idle home state
   tickClock();
   setInterval(tickClock, 1000);
   wakeBtn.disabled = true;

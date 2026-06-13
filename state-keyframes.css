@@ -409,10 +409,10 @@
 /* === E4_wink — Wink — one-shot ~2.6s: the right eye flattens to a line and
    holds shut while the left does a small sympathetic squint. Action: 0–56%. === */
 @keyframes E4w-dotR {
-  0%, 18% { transform: scaleY(1); }
-  21%     { transform: scaleY(.07); }   /* fast snap shut (~78ms) */
-  46%     { transform: scaleY(.07); }   /* hold the wink */
-  54%     { transform: scaleY(1); }     /* reopen */
+  0%, 20% { transform: scaleY(1); }
+  23%     { transform: scaleY(.07); }   /* fast snap shut */
+  31%     { transform: scaleY(.07); }   /* short hold (was held far too long) */
+  37%     { transform: scaleY(1); }     /* quick reopen */
   100%    { transform: scaleY(1); }
 }
 @keyframes E4w-dotL {
