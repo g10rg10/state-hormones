@@ -330,15 +330,19 @@
   animation: face-C2-grp calc(var(--spd) * 3600ms) cubic-bezier(.4, .2, .3, 1) infinite both;
 }
 /* keep state-keyframes' C2d-eye + C2d-dot (the per-eye tilt + slow blink) */
-@keyframes face-C2-smile {       /* an unsure "hm?" mouth: flattens and wobbles side
-                                    to side, eases through — no hard flip */
-  0%, 2% { transform: translateX(0) scale(1) skewX(0); }
-  5%     { transform: translateX(-3px) scale(.85, .4) skewX(-10deg); }   /* flatten + lean left */
-  8%     { transform: translateX(6px)  scale(.8, .32) skewX(14deg); }    /* sweep right */
-  11%    { transform: translateX(-5px) scale(.82, .36) skewX(-12deg); }  /* wobble back left */
-  14%    { transform: translateX(3px)  scale(.86, .42) skewX(8deg); }    /* settle wobble */
-  17%    { transform: translateX(0) scale(1) skewX(0); }                  /* back to smile */
-  100%   { transform: translateX(0) scale(1) skewX(0); }
+@keyframes face-C2-smile {       /* puzzled "didn't get that": the mouth works like an
+                                    ACCORDION — squeeze narrow, stretch wide, in and out
+                                    a few times — then settles back to the smile */
+  0%, 3% { transform: scale(1, 1); }
+  8%     { transform: scale(.42, .8); }    /* squeeze in (narrow) */
+  13%    { transform: scale(1.18, .5); }   /* stretch out (wide + flat) */
+  18%    { transform: scale(.48, .78); }   /* squeeze */
+  23%    { transform: scale(1.14, .52); }  /* stretch */
+  28%    { transform: scale(.52, .76); }   /* squeeze */
+  33%    { transform: scale(1.08, .56); }  /* stretch */
+  38%    { transform: scale(.8, .72); }    /* easing out of the bellows */
+  45%    { transform: scale(1, 1); }       /* back to the smile */
+  100%   { transform: scale(1, 1); }
 }
 .st-C2_didnt_catch .smile {
   animation: face-C2-smile calc(var(--spd) * 3600ms) ease-in-out infinite both;
