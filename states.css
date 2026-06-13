@@ -234,6 +234,17 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
 .notes .ln.l2 { top: 40px; width: 70%; }
 .notes .ln.l3 { top: 58px; width: 52%; }
 .notes .ln.l4 { top: 76px; width: 46%; }
+/* the pen — writes each line then steps up (penWrite in state-keyframes.css) */
+.notes .pen {
+  position: absolute; z-index: 3;          /* above the pad (z 2) */
+  left: 12px; top: 26px; width: 6px; height: 50px;
+  border-radius: 3px; background: #241f1b;
+  transform-origin: bottom center;
+}
+.notes .pen::after {                        /* nib at the bottom = writing tip */
+  content: ""; position: absolute; left: 0; bottom: -5px; width: 5px; height: 6px;
+  background: #241f1b; border-radius: 0 0 3px 3px;
+}
 
 /* ---------- Confirm check overlay (C1_confirm) ----------
    On confirm the eyes morph into a check, hold, then return to eyes. Hidden by

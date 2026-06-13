@@ -344,24 +344,38 @@
 /* === Listening notepad (B2) — fixed-time, not spd-scaled. White pad, spiral on
    the right; lines write themselves in from the BOTTOM upward. No hand. === */
 .st-B2_listening .notes { display: block; }
-@keyframes lineDraw {                   /* a line writes itself in, left→right */
+@keyframes lineDraw {                   /* a line writes itself in, left→right (quick) */
   0%   { transform: scaleX(0); opacity: 0; }
-  12%  { opacity: 1; }
-  45%  { transform: scaleX(1); opacity: 1; }
-  86%  { transform: scaleX(1); opacity: 1; }
+  3%   { opacity: 1; }
+  14%  { transform: scaleX(1); opacity: 1; }
+  94%  { transform: scaleX(1); opacity: 1; }
   100% { transform: scaleX(1); opacity: 0; }
+}
+@keyframes penWrite {                   /* the pen writes each line, then steps UP to the next */
+  0%   { transform: translate(0, 0)      rotate(26deg); }   /* bottom line, start */
+  12%  { transform: translate(46px, 0)   rotate(26deg); }   /* sweep right */
+  14%  { transform: translate(2px, -18px) rotate(26deg); }  /* carriage-return up a line */
+  25%  { transform: translate(56px, -18px) rotate(26deg); }
+  27%  { transform: translate(2px, -36px) rotate(26deg); }
+  39%  { transform: translate(60px, -36px) rotate(26deg); }
+  41%  { transform: translate(2px, -54px) rotate(26deg); }
+  53%  { transform: translate(50px, -54px) rotate(26deg); } /* top line done */
+  60%  { transform: translate(74px, -60px) rotate(18deg); } /* lift away */
+  90%  { transform: translate(74px, -60px) rotate(18deg); } /* rest while the lines hold */
+  100% { transform: translate(0, 0)      rotate(26deg); }   /* back down to start */
 }
 @keyframes noteBob {                    /* tiny lively bob of the whole pad */
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-3px); }
 }
 .st-B2_listening .notes { animation: noteBob 2.6s ease-in-out infinite; }
-/* the lines fill from the BOTTOM upward: bottom line draws first, then each one above */
+/* the lines fill from the BOTTOM upward, in sequence; the pen writes each one */
 .st-B2_listening .ln    { animation: lineDraw 4.4s ease-in-out infinite both; }
 .st-B2_listening .ln.l4 { animation-delay: 0s; }
-.st-B2_listening .ln.l3 { animation-delay: .5s; }
-.st-B2_listening .ln.l2 { animation-delay: 1s; }
-.st-B2_listening .ln.l1 { animation-delay: 1.5s; }
+.st-B2_listening .ln.l3 { animation-delay: .6s; }
+.st-B2_listening .ln.l2 { animation-delay: 1.2s; }
+.st-B2_listening .ln.l1 { animation-delay: 1.8s; }
+.st-B2_listening .pen   { animation: penWrite 4.4s ease-in-out infinite both; }
 
 /* === Ambient light feedback (Maind X §0) — EXTERNAL halo, animates --lumeLevel
    on the .stage box-shadow (outer glow). Speak pulses IN TIME with the eyes:
