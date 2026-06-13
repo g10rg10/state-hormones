@@ -263,11 +263,13 @@
 .st-B3_thinking .mouth {
   animation: face-B3-mouth calc(var(--spd) * 1400ms) ease-in-out infinite both;
 }
-@keyframes face-B3-smile {
-  0%, 100% { transform: scale(.65); }
-  25%      { transform: scale(.55) translateY(2px); }
-  50%      { transform: scale(.7) translateY(-1px); }
-  75%      { transform: scale(.6) translateY(2px); }
+@keyframes face-B3-smile {       /* pondering: the mouth keeps its size but stretches
+                                    longer then pulls shorter — no growing/shrinking */
+  0%   { transform: scaleX(1) scaleY(.9); }
+  28%  { transform: scaleX(1.45) scaleY(.88); }   /* stretch long */
+  52%  { transform: scaleX(.7) scaleY(.92); }     /* pull short */
+  76%  { transform: scaleX(1.2) scaleY(.88); }    /* long again */
+  100% { transform: scaleX(1) scaleY(.9); }
 }
 .st-B3_thinking .smile {
   animation: face-B3-smile calc(var(--spd) * 2000ms) ease-in-out infinite both;

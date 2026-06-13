@@ -135,7 +135,44 @@
     return null;
   }
 
-  function select(id) { if (flow.running) flowStop(); state.id = id; applyFeatured(); playCurrent(); idleSync(); }
+  function select(id) { if (flow.running) flowStop(); state.id = id; applyFeatured(); playCurrent(); idleSync(); manageSpeech(); }
+
+  // --- Speaking: simulate an English voice talking about hormones (Web Speech API) ---
+  var TTS = window.speechSynthesis || null;
+  var HORMONE_LINES = [
+    "Your estrogen levels are looking nice and steady today.",
+    "Remember to take your progesterone this evening.",
+    "Estradiol works best on a consistent daily schedule.",
+    "Your testosterone is right where we want it.",
+    "Cortisol is naturally highest in the morning.",
+    "Don't forget to change your estrogen patch tomorrow.",
+    "Balanced hormones support your mood and your energy.",
+    "You're doing great staying on track with your therapy.",
+    "Your thyroid hormones look well within range.",
+    "A little progesterone helps you sleep better tonight."
+  ];
+  var speech = { timer: null };
+  function speakHormones() {
+    if (!TTS || !state.sound || state.id !== "B1_speaking") return;
+    try { TTS.cancel(); } catch (e) {}
+    var line = HORMONE_LINES[Math.floor(Math.random() * HORMONE_LINES.length)];
+    var u = new SpeechSynthesisUtterance(line);
+    u.lang = "en-US"; u.rate = 1; u.pitch = 1;
+    var voices = TTS.getVoices ? TTS.getVoices() : [];
+    var en = voices.filter(function (v) { return /^en[-_]/i.test(v.lang); });
+    if (en.length) u.voice = en[0];
+    u.onend = function () { if (state.id === "B1_speaking" && state.sound) speech.timer = setTimeout(speakHormones, 350); };
+    TTS.speak(u);
+  }
+  function manageSpeech() {
+    if (speech.timer) { clearTimeout(speech.timer); speech.timer = null; }
+    if (!TTS) return;
+    if (state.id === "B1_speaking" && state.sound && !flow.running) {
+      if (!TTS.speaking && !TTS.pending) speakHormones();
+    } else {
+      try { TTS.cancel(); } catch (e) {}
+    }
+  }
 
   // --- idle: a curious face that looks around at RANDOM (never a fixed loop) ---
   // JS drives the featured stage's gaze / head-lean / mouth / blink with random
@@ -150,8 +187,8 @@
     gaze.look = gaze.blink = gaze.smile = null;
     if (gaze.els) {
       var e = gaze.els;
-      [e.eyes, e.face, e.mouth, e.smile].forEach(function (el) {
-        if (el) { el.style.animation = ""; el.style.transition = ""; el.style.transform = ""; }
+      [e.eyes, e.face, e.mouth, e.smile, e.open].forEach(function (el) {
+        if (el) { el.style.animation = ""; el.style.transition = ""; el.style.transform = ""; el.style.opacity = ""; }
       });
       e.dots.forEach(function (d) { d.style.animation = ""; d.style.transition = ""; d.style.transform = ""; });
       gaze.els = null;
@@ -167,9 +204,10 @@
       face: featStage.querySelector(".face"),
       mouth: featStage.querySelector(".mouth"),
       smile: featStage.querySelector(".smile"),
+      open: featStage.querySelector(".open"),
       dots: Array.prototype.slice.call(featStage.querySelectorAll(".dot"))
     };
-    ["eyes", "face", "mouth", "smile"].forEach(function (k) { if (gaze.els[k]) gaze.els[k].style.animation = "none"; });
+    ["eyes", "face", "mouth", "smile", "open"].forEach(function (k) { if (gaze.els[k]) gaze.els[k].style.animation = "none"; });
     gaze.els.dots.forEach(function (d) { d.style.animation = "none"; });
     gazeLook();
     gazeBlinkLoop();
@@ -212,9 +250,16 @@
   function gazeSmileLoop() {
     if (!gaze.els || state.id !== "A3_idle" || flow.running) return;
     var smiling = Math.random() < 0.8;            // smiles very often, but not perpetually
+    // smiling = the smile arc; neutral = a flat FILLED lozenge (a thick closed mouth,
+    // never a thin sliver) via the .open oval squashed wide-and-short.
     if (gaze.els.smile) {
-      gaze.els.smile.style.transition = "transform 380ms ease";
-      gaze.els.smile.style.transform = smiling ? "scale(1)" : "scaleY(.16)";   // neutral = flat mouth
+      gaze.els.smile.style.transition = "opacity 320ms ease";
+      gaze.els.smile.style.opacity = smiling ? "1" : "0";
+    }
+    if (gaze.els.open) {
+      gaze.els.open.style.transition = "opacity 320ms ease";
+      gaze.els.open.style.transform = "translate(-50%, -50%) scale(1.5, .34)";   // wide flat mouth bar
+      gaze.els.open.style.opacity = smiling ? "0" : "1";
     }
     gaze.smile = setTimeout(gazeSmileLoop, (smiling ? rand(2800, 5400) : rand(900, 1800)) * state.spd);
   }
@@ -279,6 +324,7 @@
       soundBtn.setAttribute("aria-pressed", String(state.sound));
       if (state.sound) playCurrent();
       else SE.stopAll();
+      manageSpeech();
     });
   } else {
     soundBtn.disabled = true;
@@ -293,7 +339,7 @@
   function flowClear() { flow.timers.forEach(clearTimeout); flow.timers = []; }
   function flowAt(ms, fn) { flow.timers.push(setTimeout(fn, ms)); }
   function flowPhase(txt) { if (flowphase) flowphase.textContent = txt; }
-  function flowShow(id) { state.id = id; applyFeatured(); playCurrent(); }
+  function flowShow(id) { state.id = id; applyFeatured(); playCurrent(); manageSpeech(); }
 
   function flowStart() {
     idleExit();

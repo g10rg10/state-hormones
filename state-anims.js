@@ -33,9 +33,9 @@ window.STATES = [
   },
   {
     id: "A4_clock", sec: "A", name: "Clock",
-    light: "[IDLE] · soft tick", type: "display", dur: "live",
+    light: "[IDLE]", type: "display", dur: "live",
     lightDesc: "Idle floor, slow breathe (on the shelf).",
-    soundDesc: "Soft tick / tock at ~1 Hz (loop).",
+    soundDesc: "",
     desc: "On the shelf: the eyes give way to a glowing digital clock (live HH:MM, colon blinking once a second)."
   },
   {

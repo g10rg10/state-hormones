@@ -138,12 +138,7 @@ window.SoundEngine = (function () {
       blip(N.A5, t + 0.30 * spd, 0.50 * spd, 0.05);   // shimmer
     },
     A3_idle: function () { /* idle / waiting is silent — no sound */ },
-    A4_clock: function (t, spd) {                      // LOOP: soft tick / tock, ~1 Hz
-      return pattern([
-        { at: 0.00, f: N.D4, g: 0.05, dur: 0.035 },
-        { at: 0.50, f: N.A3, g: 0.04, dur: 0.035 }
-      ], 2.0, spd, 0.05, 0.035);
-    },
+    A4_clock: function () { /* clock is silent — no sound */ },
 
     // B · conversation
     B1_speaking: function () { /* speaking is silent — no sound */ },
