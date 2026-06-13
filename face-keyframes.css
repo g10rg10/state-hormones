@@ -1,171 +1,428 @@
-/* face-keyframes.css — mouth animations per state for the face (alt) look.
-   Eye + overlay + light animations are inherited from state-keyframes.css.
-   The mouth has two shapes:
-     .smile  → the smile arc (default visible)
-     .open   → an oval that simulates an open mouth (default invisible)
-   Per state we choose which one is visible and how it moves. */
+/* face-keyframes.css — CARTOON expressions for the face (alt) gallery.
+   MAXIMUM motion: every visible state stacks motion across all 5 layers
+   (.face / .eyes / .eye / .dot / .mouth / .smile / .open) so the face is
+   NEVER perfectly still. Co-prime periods make idle loops feel organic.
+
+   Layering:
+     state-keyframes.css → overlay / light feedback animations (kept)
+     face-keyframes.css  → everything else (loaded LAST, wins on conflict) */
+
+/* === defaults === */
+.face            { transform-origin: center center; }
+.face .smile     { opacity: 1; transform: scale(1); transform-origin: center center; }
+.face .mouth     { transform-origin: center center; }
+.face .mouth .open { opacity: 0; }
 
 /* ============ A · System & power ============ */
 
-/* === A1_off — Off — face hidden === */
-.st-A1_off .smile,
-.st-A1_off .open { opacity: 0; }
+/* === A1_off — Off === */
+.st-A1_off .smile, .st-A1_off .open { opacity: 0; }
 
-/* === A2_wake — Wake — smile fades in with the eyes === */
-@keyframes A2w-smile {
-  0%        { opacity: 0; transform: scale(.92); }
-  17%       { opacity: 1; transform: none; }
-  90%       { opacity: 1; transform: none; }
-  97%, 100% { opacity: 0; transform: scale(.92); }
+/* === A2_wake — wake up: pop in with 4 bounces, eyes burst, smile bursts === */
+@keyframes face-A2-grp {
+  0%        { opacity: 0; transform: scale(.25); }
+  10%       { opacity: 1; transform: scale(.25); }
+  17%       { transform: scale(1.28); }              /* huge overshoot */
+  22%       { transform: scale(.86); }               /* bounce */
+  27%       { transform: scale(1.12); }
+  32%       { transform: scale(.95); }
+  37%       { transform: scale(1.04); }
+  42%       { transform: scale(1); }
+  88%       { opacity: 1; transform: scale(1); }
+  97%, 100% { opacity: 0; transform: scale(.25); }
+}
+.st-A2_wake .face {
+  animation: face-A2-grp calc(var(--spd) * 4000ms) cubic-bezier(.4, 1.7, .5, 1) infinite both;
+}
+.st-A2_wake .eyes { animation: none; }
+.st-A2_wake .eye  { animation: none; }
+@keyframes face-A2-dot {
+  0%, 18%   { transform: scaleY(.04); }
+  25%       { transform: scaleY(1.3); }              /* eyes burst open */
+  30%       { transform: scaleY(.85); }
+  35%       { transform: scaleY(1.1); }
+  40%       { transform: scaleY(1); }
+  100%      { transform: scaleY(1); }
+}
+.st-A2_wake .dot {
+  animation: face-A2-dot calc(var(--spd) * 4000ms) cubic-bezier(.45, 1.7, .3, 1) infinite both;
+}
+@keyframes face-A2-smile {
+  0%, 24%   { opacity: 0; transform: scale(.15); }
+  32%       { opacity: 1; transform: scale(1.4); }   /* smile bursts */
+  37%       { transform: scale(.85); }
+  42%       { transform: scale(1.08); }
+  47%       { transform: scale(1); }
+  88%       { opacity: 1; transform: scale(1); }
+  97%, 100% { opacity: 0; transform: scale(.15); }
 }
 .st-A2_wake .smile {
-  animation-name: A2w-smile;
-  animation-duration: calc(var(--spd) * 4000ms);
-  animation-timing-function: cubic-bezier(.22, 1, .36, 1);
+  animation: face-A2-smile calc(var(--spd) * 4000ms) cubic-bezier(.4, 1.7, .5, 1) infinite both;
 }
 
-/* === A3_idle — Idle — smile breathes subtly on its own short track === */
-@keyframes A3i-smile {
+/* === A3_idle — never still: face breathes, eyes drift, mouth bobs (co-prime) === */
+@keyframes face-A3-grp {
+  0%   { transform: scale(1) translateY(0) rotate(0); }
+  25%  { transform: scale(1.05) translateY(-4px) rotate(.6deg); }
+  50%  { transform: scale(1.1)  translateY(-7px) rotate(0); }
+  75%  { transform: scale(1.05) translateY(-4px) rotate(-.6deg); }
+  100% { transform: scale(1) translateY(0) rotate(0); }
+}
+.st-A3_idle .face {
+  animation: face-A3-grp calc(var(--spd) * 4600ms) cubic-bezier(.4, 0, .2, 1) infinite both;
+}
+@keyframes face-A3-eyes {        /* slow look-around inside the breathing face */
+  0%   { transform: translateX(0); }
+  18%  { transform: translateX(-5px); }
+  32%  { transform: translateX(-5px); }
+  50%  { transform: translateX(0); }
+  68%  { transform: translateX(5px); }
+  82%  { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+.st-A3_idle .eyes {
+  animation: face-A3-eyes calc(var(--spd) * 7200ms) ease-in-out infinite both;   /* co-prime */
+}
+.st-A3_idle .eye  { animation: none; }
+@keyframes face-A3-mouth {       /* mouth bob on its own short period */
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(3px); }
+}
+.st-A3_idle .mouth {
+  animation: face-A3-mouth calc(var(--spd) * 3300ms) ease-in-out infinite both;
+}
+@keyframes face-A3-smile {
   0%   { transform: scale(1); }
-  50%  { transform: scale(1.04); }
+  50%  { transform: scale(1.12) translateY(-2px); }
   100% { transform: scale(1); }
 }
 .st-A3_idle .smile {
-  animation-name: A3i-smile;
-  animation-duration: calc(var(--spd) * 4600ms);
-  animation-timing-function: ease-in-out;
+  animation: face-A3-smile calc(var(--spd) * 4600ms) ease-in-out infinite both;
 }
 
-/* === A4_clock — Clock — mouth hidden (clock overlay takes the screen) === */
+/* === A4_clock === */
+.st-A4_clock .face  { display: none; }
 .st-A4_clock .mouth { display: none; }
 
 /* ============ B · Conversation turn-taking ============ */
 
-/* === B1_speaking — Speaking — smile fades, open oval pulses with TTS envelope ===
-   Peak %s aligned with B1s-grp (state-keyframes.css) so light + eyes + mouth
-   all pulse together. */
-@keyframes B1s-smile-hide { 0%, 100% { opacity: 0; } }
-@keyframes B1s-open {
-  0%   { opacity: 1; transform: translate(-50%, -50%) scaleY(.35); }
-  7%   { transform: translate(-50%, -50%) scaleY(.95); }
-  13%  { transform: translate(-50%, -50%) scaleY(.5); }
-  21%  { transform: translate(-50%, -50%) scaleY(1.05); }
-  28%  { transform: translate(-50%, -50%) scaleY(.55); }
-  36%  { transform: translate(-50%, -50%) scaleY(.9); }
-  44%  { transform: translate(-50%, -50%) scaleY(.45); }
-  52%  { transform: translate(-50%, -50%) scaleY(1.1); }
-  60%  { transform: translate(-50%, -50%) scaleY(.6); }
-  68%  { transform: translate(-50%, -50%) scaleY(.95); }
-  76%  { transform: translate(-50%, -50%) scaleY(.5); }
-  84%  { transform: translate(-50%, -50%) scaleY(.85); }
-  92%  { transform: translate(-50%, -50%) scaleY(.5); }
-  100% { opacity: 1; transform: translate(-50%, -50%) scaleY(.35); }
+/* === B1_speaking — big head bob, eyes squint with bigs, mouth phonemes === */
+@keyframes face-B1-grp {
+  0%   { transform: scale(1)   translateY(0)   rotate(0); }
+  7%   { transform: scale(1.07) translateY(-5px) rotate(.8deg); }
+  13%  { transform: scale(1.02) translateY(-1px) rotate(0); }
+  21%  { transform: scale(1.1)  translateY(-7px) rotate(-1deg); }
+  28%  { transform: scale(1.03) translateY(-2px) rotate(0); }
+  36%  { transform: scale(1.08) translateY(-5px) rotate(.6deg); }
+  44%  { transform: scale(1.02) translateY(-1px) rotate(0); }
+  52%  { transform: scale(1.12) translateY(-8px) rotate(-.8deg); }
+  60%  { transform: scale(1.04) translateY(-2px) rotate(0); }
+  68%  { transform: scale(1.09) translateY(-6px) rotate(.6deg); }
+  76%  { transform: scale(1.03) translateY(-2px) rotate(0); }
+  84%  { transform: scale(1.08) translateY(-5px) rotate(-.6deg); }
+  92%  { transform: scale(1.04) translateY(-2px) rotate(0); }
+  100% { transform: scale(1)   translateY(0)   rotate(0); }
+}
+.st-B1_speaking .face {
+  animation: face-B1-grp calc(var(--spd) * 3400ms) ease-in-out infinite both;
+}
+.st-B1_speaking .eyes { animation: none; }
+@keyframes face-B1-dot {         /* eyes squint slightly on the biggest beats */
+  0%, 6%  { transform: scaleY(1); }
+  8%      { transform: scaleY(.7); }
+  10%     { transform: scaleY(1); }
+  20%     { transform: scaleY(1); }
+  22%     { transform: scaleY(.55); }   /* "AAH" squint */
+  24%     { transform: scaleY(1); }
+  51%     { transform: scaleY(1); }
+  53%     { transform: scaleY(.5); }    /* "OOH" squint */
+  55%     { transform: scaleY(1); }
+  68%     { transform: scaleY(1); }
+  69%     { transform: scaleY(.07); }   /* mid-speech blink */
+  70.5%   { transform: scaleY(1); }
+  100%    { transform: scaleY(1); }
+}
+.st-B1_speaking .dot {
+  animation: face-B1-dot calc(var(--spd) * 3400ms) cubic-bezier(.4, 0, .6, 1) infinite both;
+}
+@keyframes face-B1-smile-hide { 0%, 100% { opacity: 0; } }
+@keyframes face-B1-open {        /* cartoon phoneme shapes */
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(.4, .4); }
+  7%   { transform: translate(-50%, -50%) scale(1.2, 1.1); }      /* EH wide */
+  13%  { transform: translate(-50%, -50%) scale(.55, .3); }
+  21%  { transform: translate(-50%, -50%) scale(1.35, 1.3); }     /* AAH big */
+  28%  { transform: translate(-50%, -50%) scale(.5, .35); }
+  36%  { transform: translate(-50%, -50%) scale(1.1, .95); }
+  44%  { transform: translate(-50%, -50%) scale(.45, .3); }
+  52%  { transform: translate(-50%, -50%) scale(1.2, 1.35); }     /* OOH tall */
+  60%  { transform: translate(-50%, -50%) scale(.7, .55); }
+  68%  { transform: translate(-50%, -50%) scale(1.15, 1.05); }
+  76%  { transform: translate(-50%, -50%) scale(.5, .35); }
+  84%  { transform: translate(-50%, -50%) scale(1.05, .95); }
+  92%  { transform: translate(-50%, -50%) scale(.6, .4); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(.4, .4); }
 }
 .st-B1_speaking .smile {
-  animation-name: B1s-smile-hide;
-  animation-duration: calc(var(--spd) * 3400ms);
+  animation: face-B1-smile-hide calc(var(--spd) * 3400ms) infinite both;
 }
 .st-B1_speaking .open {
-  animation-name: B1s-open;
-  animation-duration: calc(var(--spd) * 3400ms);
-  animation-timing-function: ease-in-out;
+  animation: face-B1-open calc(var(--spd) * 3400ms) cubic-bezier(.3, 0, .4, 1) infinite both;
 }
 
-/* === B2_listening — Listening — small attentive smile, held still === */
-.st-B2_listening .smile { transform: scale(.85); }
+/* === B2_listening — alert: face leans + ear-twitches, eyes pulse, mouth quivers === */
+@keyframes face-B2-grp {
+  0%, 100% { transform: scale(1.12) rotate(0); }
+  25%      { transform: scale(1.14) rotate(1deg); }
+  50%      { transform: scale(1.16) rotate(0); }      /* lean further IN */
+  75%      { transform: scale(1.14) rotate(-1deg); }
+}
+.st-B2_listening .face {
+  animation: face-B2-grp calc(var(--spd) * 2400ms) ease-in-out infinite both;
+}
+.st-B2_listening .eyes { animation: none; transform: scale(1); }
+@keyframes face-B2-dot {
+  0%, 54% { transform: scale(1.18); }
+  54.8%   { transform: scale(1.18) scaleY(.07); }
+  55.6%   { transform: scale(1.18); }
+  60%     { transform: scale(1.22); }     /* tiny pulse / dilate */
+  68%     { transform: scale(1.18); }
+  100%    { transform: scale(1.18); }
+}
+.st-B2_listening .dot {
+  animation: face-B2-dot calc(var(--spd) * 9000ms) cubic-bezier(.4, 0, .6, 1) infinite both;
+}
+@keyframes face-B2-mouth {
+  0%, 100% { transform: translateY(0); }
+  33%      { transform: translateY(-2px); }
+  66%      { transform: translateY(2px); }
+}
+.st-B2_listening .mouth {
+  animation: face-B2-mouth calc(var(--spd) * 2900ms) ease-in-out infinite both;
+}
+@keyframes face-B2-smile {
+  0%, 100% { transform: scale(.78); }
+  50%      { transform: scale(.84) translateY(1px); }
+}
+.st-B2_listening .smile {
+  animation: face-B2-smile calc(var(--spd) * 2900ms) ease-in-out infinite both;
+}
 
-/* === B3_thinking — Thinking — smile shrinks a touch and tilts with the gaze === */
-@keyframes B3t-smile {
-  0%   { transform: scale(.9) translate(0, 0); }
-  28%  { transform: scale(.85) translate(7px, -4px); }
-  55%  { transform: scale(.85) translate(8px, -4px); }
-  78%  { transform: scale(.9) translate(0, 0); }
-  100% { transform: scale(.9) translate(0, 0); }
+/* === B3_thinking — pondering: head tilts both ways, eyes scan, mouth purses === */
+@keyframes face-B3-grp {
+  0%   { transform: rotate(0) translate(0, 0); }
+  15%  { transform: rotate(-11deg) translate(7px, -4px); }
+  30%  { transform: rotate(-10deg) translate(8px, -4px); }   /* hold left tilt */
+  50%  { transform: rotate(0) translate(0, -2px); }          /* through center */
+  65%  { transform: rotate(8deg) translate(-6px, -3px); }    /* swing other way */
+  80%  { transform: rotate(7deg) translate(-6px, -3px); }
+  100% { transform: rotate(0) translate(0, 0); }
+}
+.st-B3_thinking .face {
+  animation: face-B3-grp calc(var(--spd) * 2000ms) cubic-bezier(.4, 0, .2, 1) infinite both;
+}
+.st-B3_thinking .eyes { animation: none; }
+@keyframes face-B3-mouth {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(2px) scale(.92); }
+}
+.st-B3_thinking .mouth {
+  animation: face-B3-mouth calc(var(--spd) * 1400ms) ease-in-out infinite both;
+}
+@keyframes face-B3-smile {
+  0%, 100% { transform: scale(.65); }
+  25%      { transform: scale(.55) translateY(2px); }
+  50%      { transform: scale(.7) translateY(-1px); }
+  75%      { transform: scale(.6) translateY(2px); }
 }
 .st-B3_thinking .smile {
-  animation-name: B3t-smile;
-  animation-duration: calc(var(--spd) * 2000ms);
-  animation-timing-function: cubic-bezier(.4, 0, .2, 1);
+  animation: face-B3-smile calc(var(--spd) * 2000ms) ease-in-out infinite both;
 }
 
 /* ============ C · Feedback & confirmation ============ */
 
-/* === C1_confirm — Confirm — smile shrinks while the check shows, then big-smile back === */
-@keyframes C1-smile {
+/* === C1_confirm — joyful: squash → BIG pop → 3 bounces → settle, BIG smile === */
+@keyframes face-C1-grp {
+  0%   { transform: scale(1); }
+  8%   { transform: scale(.78); }       /* big anticipation squash */
+  18%  { transform: scale(1.28); }      /* big overshoot */
+  26%  { transform: scale(.92); }
+  34%  { transform: scale(1.12); }      /* bounce 2 */
+  42%  { transform: scale(.97); }
+  50%  { transform: scale(1.05); }      /* bounce 3 */
+  58%  { transform: scale(1); }
+  85%  { transform: scale(1); }
+  92%  { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+.st-C1_confirm .face {
+  animation: face-C1-grp calc(var(--spd) * 2400ms) cubic-bezier(.34, 1.7, .4, 1) infinite both;
+}
+.st-C1_confirm .eyes { animation: none; }
+@keyframes face-C1-dot {
+  0%   { transform: scaleY(1); }
+  12%  { transform: scaleY(.35); }       /* happy crescents */
+  80%  { transform: scaleY(.35); }
+  88%  { transform: scaleY(1.3); }       /* pop wide */
+  93%  { transform: scaleY(.85); }
+  100% { transform: scaleY(1); }
+}
+.st-C1_confirm .dot {
+  animation: face-C1-dot calc(var(--spd) * 2400ms) cubic-bezier(.4, 1.6, .4, 1) infinite both;
+}
+@keyframes face-C1-smile {
   0%   { opacity: 1; transform: scale(1); }
-  12%  { opacity: 0; transform: scale(.5); }
-  80%  { opacity: 0; transform: scale(.5); }
-  92%  { opacity: 1; transform: scale(1.18); }
-  100% { opacity: 1; transform: scale(1.18); }
+  12%  { opacity: 0; transform: scale(.4); }
+  80%  { opacity: 0; transform: scale(.4); }
+  88%  { opacity: 1; transform: scale(1.45); }   /* HUGE smile pop */
+  93%  { transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1.35); }
 }
 .st-C1_confirm .smile {
-  animation-name: C1-smile;
-  animation-duration: calc(var(--spd) * 2400ms);
-  animation-timing-function: cubic-bezier(.4, 0, .3, 1);
+  animation: face-C1-smile calc(var(--spd) * 2400ms) cubic-bezier(.34, 1.7, .4, 1) infinite both;
 }
 
-/* === C2_didnt_catch — Didn't catch — smile briefly flips to a frown then back === */
-@keyframes C2d-smile {
+/* === C2_didnt_catch — confused: bigger wobble, eyes tilt, mouth shakes === */
+@keyframes face-C2-grp {
+  0%   { transform: rotate(0) translateY(0); }
+  3%   { transform: rotate(-11deg) translateY(2px); }
+  6%   { transform: rotate(9deg) translateY(-1px); }
+  9%   { transform: rotate(-7deg) translateY(2px); }
+  12%  { transform: rotate(5deg) translateY(-1px); }
+  17%  { transform: rotate(0) translateY(0); }
+  100% { transform: rotate(0) translateY(0); }
+}
+.st-C2_didnt_catch .face {
+  animation: face-C2-grp calc(var(--spd) * 3600ms) cubic-bezier(.4, .2, .3, 1) infinite both;
+}
+/* keep state-keyframes' C2d-eye + C2d-dot (the per-eye tilt + slow blink) */
+@keyframes face-C2-smile {
   0%, 2% { transform: scale(1); }
-  6.5%   { transform: scaleY(-.7) translateY(-18px) scale(.85); }   /* upside-down arc = frown */
-  11%    { transform: scaleY(-.7) translateY(-18px) scale(.85); }
-  16.7%  { transform: scale(1); }
+  4%     { transform: scaleY(-.9) translateY(-28px) scaleX(.6); }     /* frown */
+  7%     { transform: scaleY(-.9) translateY(-28px) scaleX(1); }      /* shake wider */
+  10%    { transform: scaleY(-.9) translateY(-28px) scaleX(.65); }
+  13%    { transform: scaleY(-.9) translateY(-28px) scaleX(.95); }
+  17%    { transform: scale(1); }
   100%   { transform: scale(1); }
 }
 .st-C2_didnt_catch .smile {
-  animation-name: C2d-smile;
-  animation-duration: calc(var(--spd) * 3600ms);
-  animation-timing-function: ease-in-out;
+  animation: face-C2-smile calc(var(--spd) * 3600ms) ease-in-out infinite both;
 }
 
 /* ============ D · Proactive moments ============ */
 
-/* === D1_reminder — Reminder — smile fades while the bell rings, then back === */
-@keyframes D1-smile {
+/* === D1_reminder — anticipation tremble → bell pops → snap back smiling === */
+@keyframes face-D1-grp {
+  0%   { transform: scale(1) rotate(0); }
+  6%   { transform: scale(.6) rotate(0); }              /* sucked in */
+  20%  { transform: scale(.6) rotate(-2deg); }          /* tremble */
+  30%  { transform: scale(.62) rotate(2deg); }
+  40%  { transform: scale(.6) rotate(-2deg); }
+  50%  { transform: scale(.62) rotate(2deg); }
+  60%  { transform: scale(.6) rotate(-2deg); }
+  70%  { transform: scale(.6) rotate(2deg); }
+  82%  { transform: scale(.6) rotate(0); }
+  90%  { transform: scale(1.22) rotate(0); }            /* snap back overshoot */
+  96%  { transform: scale(.96); }
+  100% { transform: scale(1); }
+}
+.st-D1_reminder .face {
+  animation: face-D1-grp calc(var(--spd) * 3200ms) cubic-bezier(.4, 1.6, .4, 1) infinite both;
+}
+@keyframes face-D1-smile {
   0%   { opacity: 1; transform: scale(1); }
   12%  { opacity: 0; transform: scale(.5); }
   82%  { opacity: 0; transform: scale(.5); }
-  94%  { opacity: 1; transform: scale(1); }
+  92%  { opacity: 1; transform: scale(1.25); }
   100% { opacity: 1; transform: scale(1); }
 }
 .st-D1_reminder .smile {
-  animation-name: D1-smile;
-  animation-duration: calc(var(--spd) * 3200ms);
-  animation-timing-function: cubic-bezier(.4, 0, .3, 1);
+  animation: face-D1-smile calc(var(--spd) * 3200ms) cubic-bezier(.4, 1.6, .4, 1) infinite both;
 }
 
-/* === D2_wakeword — Wake word — smile pops with attention, settles bigger === */
-@keyframes D2w-smile {
+/* === D2_wakeword — HUGE attentive pop: squash → tall stretch → bounces === */
+@keyframes face-D2-grp {
+  0%   { transform: scale(1, 1) translateY(0); }
+  3%   { transform: scale(1.18, .8) translateY(1px); }         /* squash anticipation */
+  10%  { transform: scale(.82, 1.32) translateY(-12px); }      /* tall stretch UP overshoot */
+  16%  { transform: scale(1.18, 1.08) translateY(-3px); }      /* squash settle */
+  22%  { transform: scale(1.08, 1.18) translateY(-7px); }      /* stretch */
+  28%  { transform: scale(1.13, 1.12) translateY(-5px); }
+  86%  { transform: scale(1.13, 1.12) translateY(-5px); }
+  92%  { transform: scale(1.18, 1.05) translateY(-2px); }
+  100% { transform: scale(1, 1) translateY(0); }
+}
+.st-D2_wakeword .face {
+  animation: face-D2-grp calc(var(--spd) * 3400ms) cubic-bezier(.22, 1.6, .36, 1) infinite both;
+}
+.st-D2_wakeword .eyes { animation: none; }
+@keyframes face-D2-dot {
   0%   { transform: scale(1); }
-  7%   { transform: scale(1.22); }
-  11.8%{ transform: scale(1.08); }
-  15%  { transform: scale(1.15); }
-  86%  { transform: scale(1.15); }
-  96%  { transform: scale(1); }
+  10%  { transform: scale(1.4); }       /* pupils dilate wide */
+  18%  { transform: scale(1.15); }
+  25%  { transform: scale(1.25); }
+  86%  { transform: scale(1.22); }
   100% { transform: scale(1); }
 }
+.st-D2_wakeword .dot {
+  animation: face-D2-dot calc(var(--spd) * 3400ms) cubic-bezier(.22, 1.6, .36, 1) infinite both;
+}
+@keyframes face-D2-open {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+  10%  { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }   /* "O!" of surprise */
+  18%  { transform: translate(-50%, -50%) scale(.85); }
+  25%  { transform: translate(-50%, -50%) scale(1); }
+  86%  { transform: translate(-50%, -50%) scale(1); }
+  95%  { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+  100% { opacity: 0; }
+}
+.st-D2_wakeword .open {
+  animation: face-D2-open calc(var(--spd) * 3400ms) cubic-bezier(.22, 1.6, .36, 1) infinite both;
+}
+@keyframes face-D2-smile-hide {
+  0%, 86% { opacity: 0; }
+  96%, 100% { opacity: 1; }
+}
 .st-D2_wakeword .smile {
-  animation-name: D2w-smile;
-  animation-duration: calc(var(--spd) * 3400ms);
-  animation-timing-function: cubic-bezier(.22, 1.3, .36, 1);
+  animation: face-D2-smile-hide calc(var(--spd) * 3400ms) infinite both;
 }
 
 /* ============ E · Personality ============ */
 
-/* === E2_quirk — Idle micro-quirk — smile drifts with the gaze and returns === */
-@keyframes E2q-smile {
-  0%   { transform: none; }
-  9%   { transform: translate(-9px, 1px); }
-  16%  { transform: translate(-8px, 2px); }
-  24%  { transform: translate(8px, -1px); }
-  30%  { transform: none; }
-  100% { transform: none; }
+/* === E2_quirk — big head turn left + tiny shake → turn right + shake → snap back === */
+@keyframes face-E2-grp {
+  0%   { transform: rotate(0) translate(0, 0); }
+  8%   { transform: rotate(-16deg) translate(-9px, 3px); }
+  12%  { transform: rotate(-15deg) translate(-10px, 4px); }       /* tiny shake */
+  16%  { transform: rotate(-17deg) translate(-9px, 3px); }
+  21%  { transform: rotate(16deg) translate(9px, -3px); }
+  25%  { transform: rotate(15deg) translate(10px, -4px); }
+  29%  { transform: rotate(17deg) translate(9px, -3px); }
+  35%  { transform: rotate(0) translate(0, 0); }
+  100% { transform: rotate(0) translate(0, 0); }
 }
-.st-E2_quirk .smile {
-  animation-name: E2q-smile;
-  animation-duration: calc(var(--spd) * 4200ms);
-  animation-timing-function: cubic-bezier(.4, 0, .2, 1);
+.st-E2_quirk .face {
+  animation: face-E2-grp calc(var(--spd) * 4200ms) cubic-bezier(.4, 0, .2, 1) infinite both;
 }
+.st-E2_quirk .eyes { animation: none; }
 
-/* === E4_wink — Wink — smile holds wide (the eyes carry the wink) === */
-.st-E4_wink .smile { transform: scale(1.08); }
+/* === E4_wink — playful nod + smile lift; eyes do the wink === */
+@keyframes face-E4-grp {
+  0%   { transform: rotate(0) translateY(0); }
+  18%  { transform: rotate(6deg) translateY(-3px); }
+  46%  { transform: rotate(6deg) translateY(-3px); }
+  56%  { transform: rotate(0) translateY(0); }
+  100% { transform: rotate(0) translateY(0); }
+}
+.st-E4_wink .face {
+  animation: face-E4-grp calc(var(--spd) * 2600ms) cubic-bezier(.4, 0, .35, 1) infinite both;
+}
+@keyframes face-E4-smile {
+  0%, 14% { transform: scale(1); }
+  20%     { transform: scale(1.18) skewY(-5deg); }
+  46%     { transform: scale(1.18) skewY(-5deg); }
+  56%     { transform: scale(1); }
+  100%    { transform: scale(1); }
+}
+.st-E4_wink .smile {
+  animation: face-E4-smile calc(var(--spd) * 2600ms) cubic-bezier(.4, 0, .35, 1) infinite both;
+}
