@@ -222,26 +222,28 @@ main { display: flex; flex-direction: row-reverse; align-items: flex-start; gap:
   position: absolute; left: 16px; top: 59px; height: 5px; width: 8%;
   border-radius: 3px; background: rgba(var(--ish), .26);
 }
+/* Hand + pen ON TOP of the pad — wrist from bottom-right of the pad,
+   pen held tilted up-left so the nib touches the active writing line. */
 .notes .hand {
-  position: absolute; z-index: 1;
-  left: 30px; bottom: -30px; width: 56px; height: 66px;
+  position: absolute; z-index: 3;          /* above .pad (z 2) */
+  right: -8px; bottom: -10px; width: 60px; height: 72px;
 }
 .notes .palm {
-  position: absolute; left: 0; bottom: 0; width: 40px; height: 28px;
-  background: #eaf6f3; border-radius: 16px 18px 13px 15px;
+  position: absolute; right: 0; bottom: 0; width: 44px; height: 30px;
+  background: #eaf6f3; border-radius: 18px 16px 13px 15px;
 }
-.notes .palm::before {
-  content: ""; position: absolute; left: -5px; top: 4px; width: 16px; height: 13px;
-  background: inherit; border-radius: 10px; transform: rotate(-20deg);
+.notes .palm::before {                     /* thumb wraps the pen on the left */
+  content: ""; position: absolute; left: -4px; top: 6px; width: 16px; height: 13px;
+  background: inherit; border-radius: 10px; transform: rotate(-22deg);
 }
-.notes .pen2 {
-  position: absolute; left: 22px; bottom: 20px; width: 6px; height: 56px;
-  border-radius: 4px; transform: rotate(16deg); transform-origin: bottom center;
+.notes .pen2 {                             /* pen tilted up-left, tip on the writing line */
+  position: absolute; left: 2px; bottom: 14px; width: 6px; height: 56px;
+  border-radius: 3px; transform: rotate(-30deg); transform-origin: bottom right;
   background: #241f1b;
 }
-.notes .pen2::after {
-  content: ""; position: absolute; left: 0; bottom: -4px; width: 5px; height: 6px;
-  background: #241f1b; border-radius: 0 0 3px 3px;
+.notes .pen2::after {                      /* nib at the TOP of the shaft = writing tip */
+  content: ""; position: absolute; left: 0; top: -5px; width: 5px; height: 6px;
+  background: #241f1b; border-radius: 3px 3px 0 0;
 }
 
 /* ---------- Confirm check overlay (C1_confirm) ---------- */
