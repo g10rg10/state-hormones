@@ -363,16 +363,16 @@
   animation: face-D1-smile calc(var(--spd) * 3200ms) cubic-bezier(.4, 1.6, .4, 1) infinite both;
 }
 
-/* === D2_wakeword — HUGE attentive pop: squash → tall stretch → bounces === */
+/* === D2_wakeword — attentive perk-up (gentle, not a fright): small squash → modest
+   lift → settle. Eyes widen only a little, mouth makes a small "o". === */
 @keyframes face-D2-grp {
   0%   { transform: scale(1, 1) translateY(0); }
-  3%   { transform: scale(1.18, .8) translateY(1px); }         /* squash anticipation */
-  10%  { transform: scale(.82, 1.32) translateY(-12px); }      /* tall stretch UP overshoot */
-  16%  { transform: scale(1.18, 1.08) translateY(-3px); }      /* squash settle */
-  22%  { transform: scale(1.08, 1.18) translateY(-7px); }      /* stretch */
-  28%  { transform: scale(1.13, 1.12) translateY(-5px); }
-  86%  { transform: scale(1.13, 1.12) translateY(-5px); }
-  92%  { transform: scale(1.18, 1.05) translateY(-2px); }
+  4%   { transform: scale(1.1, .9) translateY(0); }            /* gentle squash */
+  11%  { transform: scale(.94, 1.14) translateY(-6px); }       /* modest lift */
+  18%  { transform: scale(1.05, 1.03) translateY(-2px); }
+  26%  { transform: scale(1.07, 1.07) translateY(-4px); }
+  86%  { transform: scale(1.07, 1.07) translateY(-4px); }
+  94%  { transform: scale(1.05, 1.02) translateY(-1px); }
   100% { transform: scale(1, 1) translateY(0); }
 }
 .st-D2_wakeword .face {
@@ -381,20 +381,20 @@
 .st-D2_wakeword .eyes { animation: none; }
 @keyframes face-D2-dot {
   0%   { transform: scale(1); }
-  10%  { transform: scale(1.4); }       /* pupils dilate wide */
-  18%  { transform: scale(1.15); }
-  25%  { transform: scale(1.25); }
-  86%  { transform: scale(1.22); }
+  10%  { transform: scale(1.15); }      /* eyes widen only a little */
+  18%  { transform: scale(1.04); }
+  25%  { transform: scale(1.08); }
+  86%  { transform: scale(1.08); }
   100% { transform: scale(1); }
 }
 .st-D2_wakeword .dot {
   animation: face-D2-dot calc(var(--spd) * 3400ms) cubic-bezier(.22, 1.6, .36, 1) infinite both;
 }
-@keyframes face-D2-open {        /* a quick surprised "O!", then it gives way to the smile */
-  0%   { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
-  8%   { opacity: 1; transform: translate(-50%, -50%) scale(1.25); }   /* "O!" of surprise */
-  14%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  22%  { opacity: 0; transform: translate(-50%, -50%) scale(.55); }    /* fades fast */
+@keyframes face-D2-open {        /* a small surprised "o", then it gives way to the smile */
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(.35); }
+  8%   { opacity: 1; transform: translate(-50%, -50%) scale(.8); }    /* small "o" */
+  14%  { opacity: 1; transform: translate(-50%, -50%) scale(.65); }
+  22%  { opacity: 0; transform: translate(-50%, -50%) scale(.4); }    /* fades fast */
   100% { opacity: 0; }
 }
 .st-D2_wakeword .open {
