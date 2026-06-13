@@ -152,15 +152,28 @@
     "A little progesterone helps you sleep better tonight."
   ];
   var speech = { timer: null };
+  // pick a natural, neutral voice — prefer "Koko", then enhanced/natural English voices,
+  // then any English voice (avoids the robotic system default where possible)
+  function pickVoice() {
+    var voices = TTS && TTS.getVoices ? TTS.getVoices() : [];
+    if (!voices.length) return null;
+    var en = voices.filter(function (v) { return /^en[-_]/i.test(v.lang); });
+    var byName = function (re, list) { return (list || en).filter(function (v) { return re.test(v.name); }); };
+    return (byName(/koko/i, voices)[0] ||                       // requested voice (if installed)
+            byName(/(natural|neural|enhanced|premium)/i)[0] ||  // higher-quality = less robotic
+            byName(/google/i)[0] ||                             // Google voices are natural
+            byName(/\b(samantha|alex|allison|ava|joanna|nicky|aria)\b/i)[0] ||  // neutral, natural
+            en.filter(function (v) { return /^en-US/i.test(v.lang); })[0] ||
+            en[0] || null);
+  }
   function speakHormones() {
     if (!TTS || !state.sound || state.id !== "B1_speaking") return;
     try { TTS.cancel(); } catch (e) {}
     var line = HORMONE_LINES[Math.floor(Math.random() * HORMONE_LINES.length)];
     var u = new SpeechSynthesisUtterance(line);
-    u.lang = "en-US"; u.rate = 1; u.pitch = 1;
-    var voices = TTS.getVoices ? TTS.getVoices() : [];
-    var en = voices.filter(function (v) { return /^en[-_]/i.test(v.lang); });
-    if (en.length) u.voice = en[0];
+    u.rate = 0.95; u.pitch = 1;                 // calm, neutral, less robotic delivery
+    var v = pickVoice();
+    if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = "en-US"; }
     u.onend = function () { if (state.id === "B1_speaking" && state.sound) speech.timer = setTimeout(speakHormones, 350); };
     TTS.speak(u);
   }
@@ -207,8 +220,10 @@
       open: featStage.querySelector(".open"),
       dots: Array.prototype.slice.call(featStage.querySelectorAll(".dot"))
     };
-    ["eyes", "face", "mouth", "smile", "open"].forEach(function (k) { if (gaze.els[k]) gaze.els[k].style.animation = "none"; });
+    ["eyes", "mouth", "smile", "open"].forEach(function (k) { if (gaze.els[k]) gaze.els[k].style.animation = "none"; });
     gaze.els.dots.forEach(function (d) { d.style.animation = "none"; });
+    // the face gently breathes (CSS) — a touch quicker than the old idle rhythm
+    if (gaze.els.face) gaze.els.face.style.animation = "idleBreath " + Math.round(3400 * state.spd) + "ms ease-in-out infinite";
     gazeLook();
     gazeBlinkLoop();
     gazeSmileLoop();
@@ -223,11 +238,8 @@
     var ease = "cubic-bezier(.45,0,.25,1)";
     e.eyes.style.transition = "transform " + move + "ms " + ease;
     e.eyes.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
-    if (e.face) {
-      e.face.style.transition = "transform " + move + "ms " + ease;
-      e.face.style.transform = "translate(" + (x * 0.28).toFixed(1) + "px," + (y * 0.3).toFixed(1) +
-        "px) rotate(" + (x * 0.06).toFixed(2) + "deg) scale(" + rand(1, 1.03).toFixed(3) + ")";
-    }
+    // the head leans a touch toward the gaze — applied to the eyes layer so the .face
+    // is free to run its CSS breath (mouth follows too, below)
     if (e.mouth) {
       e.mouth.style.transition = "transform " + move + "ms " + ease;
       e.mouth.style.transform = "translate(" + (x * 0.4).toFixed(1) + "px," + (y * 0.2).toFixed(1) + "px)";

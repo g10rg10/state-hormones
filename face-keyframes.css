@@ -124,6 +124,11 @@
 .st-A3_idle .smile {
   animation: idleSmile calc(var(--spd) * 9000ms) ease-in-out infinite both;
 }
+/* gentle breath for the JS-driven idle face (face.js applies this to .face) */
+@keyframes idleBreath {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
 
 /* === A4_clock === */
 .st-A4_clock .face  { display: none; }
@@ -256,24 +261,10 @@
   animation: face-B3-grp calc(var(--spd) * 2000ms) cubic-bezier(.4, 0, .2, 1) infinite both;
 }
 .st-B3_thinking .eyes { animation: none; }
-@keyframes face-B3-mouth {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%      { transform: translateY(2px) scale(.92); }
-}
-.st-B3_thinking .mouth {
-  animation: face-B3-mouth calc(var(--spd) * 1400ms) ease-in-out infinite both;
-}
-@keyframes face-B3-smile {       /* pondering: the mouth keeps its size but stretches
-                                    longer then pulls shorter — no growing/shrinking */
-  0%   { transform: scaleX(1) scaleY(.9); }
-  28%  { transform: scaleX(1.45) scaleY(.88); }   /* stretch long */
-  52%  { transform: scaleX(.7) scaleY(.92); }     /* pull short */
-  76%  { transform: scaleX(1.2) scaleY(.88); }    /* long again */
-  100% { transform: scaleX(1) scaleY(.9); }
-}
-.st-B3_thinking .smile {
-  animation: face-B3-smile calc(var(--spd) * 2000ms) ease-in-out infinite both;
-}
+/* thinking: the mouth stays FIXED (no growing/shrinking, no morph) — the gaze drift
+   and head tilt carry the "pondering"; the mouth is just a calm steady smile */
+.st-B3_thinking .mouth { animation: none; }
+.st-B3_thinking .smile { animation: none; }
 
 /* ============ C · Feedback & confirmation ============ */
 
@@ -332,19 +323,16 @@
   animation: face-C2-grp calc(var(--spd) * 3600ms) cubic-bezier(.4, .2, .3, 1) infinite both;
 }
 /* keep state-keyframes' C2d-eye + C2d-dot (the per-eye tilt + slow blink) */
-@keyframes face-C2-smile {       /* puzzled "didn't get that": the mouth works like an
-                                    ACCORDION — squeeze narrow, stretch wide, in and out
-                                    a few times — then settles back to the smile */
-  0%, 3% { transform: scale(1, 1); }
-  8%     { transform: scale(.42, .8); }    /* squeeze in (narrow) */
-  13%    { transform: scale(1.18, .5); }   /* stretch out (wide + flat) */
-  18%    { transform: scale(.48, .78); }   /* squeeze */
-  23%    { transform: scale(1.14, .52); }  /* stretch */
-  28%    { transform: scale(.52, .76); }   /* squeeze */
-  33%    { transform: scale(1.08, .56); }  /* stretch */
-  38%    { transform: scale(.8, .72); }    /* easing out of the bellows */
-  45%    { transform: scale(1, 1); }       /* back to the smile */
-  100%   { transform: scale(1, 1); }
+@keyframes face-C2-smile {       /* a displeased FROWN ("corruccio"): the mouth turns down
+                                    into a small tight frown, gives a little quiver, then
+                                    eases back to the smile */
+  0%, 5%  { transform: translateY(0) scale(1, 1); }
+  13%     { transform: translateY(-15px) scale(.72, -.95); }   /* flip down = frown */
+  19%     { transform: translateY(-15px) scale(.8, -1); }      /* quiver */
+  25%     { transform: translateY(-15px) scale(.72, -.95); }
+  33%     { transform: translateY(-15px) scale(.78, -.98); }   /* hold the frown */
+  44%     { transform: translateY(0) scale(1, 1); }            /* back to the smile */
+  100%    { transform: translateY(0) scale(1, 1); }
 }
 .st-C2_didnt_catch .smile {
   animation: face-C2-smile calc(var(--spd) * 3600ms) ease-in-out infinite both;
