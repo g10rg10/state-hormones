@@ -18,22 +18,22 @@
 /* === A1_off — Off === */
 .st-A1_off .smile, .st-A1_off .open { opacity: 0; }
 
-/* === A2_wake — the head turns around ON the sphere: it starts facing AWAY (rotated
-   behind), swings around the side into view, overshoots slightly past center, and
-   settles facing front. The per-element perspective + rotateY gives the 3D turn;
-   opacity hides the face while it's turned away (the "back of the head"). === */
+/* === A2_wake — the face is a STICKER on the sphere: it rides the surface around
+   from the back, curving over the LEFT limb (foreshortening as it wraps the edge),
+   to the front, where it sinks flat to rest. rotateY orbits it on the surface,
+   translateZ holds it ON the surface (radius) and eases to 0 = flat at front. === */
 @keyframes face-A2-grp {
-  0%        { opacity: 0; transform: perspective(900px) rotateY(-165deg) scale(.86); }
-  18%       { opacity: 0; transform: perspective(900px) rotateY(-120deg) scale(.9); }  /* swinging, still hidden */
-  34%       { opacity: 1; transform: perspective(900px) rotateY(-66deg) scale(.95); }  /* edge comes into view */
-  56%       { opacity: 1; transform: perspective(900px) rotateY(16deg) scale(1.03); }  /* past-center overshoot */
-  72%       { transform: perspective(900px) rotateY(-7deg) scale(1); }                 /* settle back */
-  82%, 88%  { transform: perspective(900px) rotateY(0deg) scale(1); }                  /* face front */
-  96%, 100% { opacity: 0; transform: perspective(900px) rotateY(-165deg) scale(.86); }
+  0%        { opacity: 0; transform: perspective(700px) rotateY(-180deg) translateZ(140px); }
+  20%       { opacity: 0; transform: perspective(700px) rotateY(-128deg) translateZ(140px); }  /* on the back, hidden */
+  36%       { opacity: 1; transform: perspective(700px) rotateY(-78deg)  translateZ(132px); }  /* curving over the left limb */
+  58%       { opacity: 1; transform: perspective(700px) rotateY(-24deg)  translateZ(82px); }   /* swinging to the front */
+  72%       { transform: perspective(700px) rotateY(11deg)  translateZ(34px); }                /* slight overshoot */
+  84%, 88%  { transform: perspective(700px) rotateY(0deg)   translateZ(0px); }                 /* flat at front, at rest */
+  96%, 100% { opacity: 0; transform: perspective(700px) rotateY(-180deg) translateZ(140px); }
 }
 .st-A2_wake .face {
-  transform-style: preserve-3d;
-  animation: face-A2-grp calc(var(--spd) * 4000ms) cubic-bezier(.3, .7, .3, 1) infinite both;
+  backface-visibility: hidden;
+  animation: face-A2-grp calc(var(--spd) * 4000ms) cubic-bezier(.32, .7, .3, 1) infinite both;
 }
 /* the eyes + smile just ride the turn (open + smiling); the 3D reveal does the work */
 .st-A2_wake .eyes { animation: none; }
