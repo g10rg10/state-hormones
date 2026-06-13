@@ -183,7 +183,7 @@
   }
   function speakDidntCatch() {
     if (!TTS || !state.sound || state.id !== "C2_didnt_catch") return;
-    var u = speakPhrase("Non ho capito.", "it");   // "I didn't understand" — talks via the mouth
+    var u = speakPhrase("Sorry, I didn't catch that.", "en");   // talks via the mouth, in English
     if (u) TTS.speak(u);
   }
   function manageSpeech() {
