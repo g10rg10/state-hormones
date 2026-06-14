@@ -14,8 +14,6 @@
   var fname = document.getElementById("fname");
   var gridLeft = document.getElementById("gridLeft");
   var gridRight = document.getElementById("gridRight");
-  var spd = document.getElementById("spd");
-  var spdVal = document.getElementById("spdVal");
 
   var flight = document.getElementById("flight");
   var fsound = document.getElementById("fsound");
@@ -31,7 +29,7 @@
 
   var state = {
     id: STATES.length ? STATES[2].id : null,   // start on A3_idle
-    spd: parseFloat(spd.value),
+    spd: 0.80,                                  // fixed tempo (slider removed)
     sound: true,
   };
 
@@ -71,7 +69,6 @@
 
   function applySpd() {
     root.style.setProperty("--spd", state.spd);
-    spdVal.textContent = "× " + state.spd.toFixed(2);
   }
 
   // Stage carries the face (eyes + mouth) plus the same overlays states.html uses
@@ -384,27 +381,6 @@
       }, win);
     }, delay);
   }
-
-  function restart(el) {
-    el.style.animation = "none";
-    void el.offsetWidth;
-    el.style.animation = "";
-  }
-  function replay() {
-    Array.prototype.forEach.call(
-      document.querySelectorAll(".stage, .stage .eyes, .stage .eye, .stage .dot, .stage .mouth, .stage .smile, .stage .open, .stage .check path"),
-      restart
-    );
-    playCurrent();
-  }
-
-  spd.addEventListener("input", function () {
-    state.spd = parseFloat(spd.value);
-    applySpd();
-    if (state.sound && SE && /loop/i.test((find(state.id) || {}).type || "")) playCurrent();
-  });
-
-  document.getElementById("replay").addEventListener("click", replay);
 
   if (power) {
     power.addEventListener("change", function () {
