@@ -12,7 +12,8 @@
   var root = document.documentElement;
   var featStage = document.getElementById("featStage");
   var fname = document.getElementById("fname");
-  var grid = document.getElementById("grid");
+  var gridLeft = document.getElementById("gridLeft");
+  var gridRight = document.getElementById("gridRight");
   var spd = document.getElementById("spd");
   var spdVal = document.getElementById("spdVal");
 
@@ -108,14 +109,18 @@
   }
 
   function renderGrid() {
-    grid.innerHTML = "";
-    SECTIONS.forEach(function (s) {
+    gridLeft.innerHTML = ""; gridRight.innerHTML = "";
+    SECTIONS.forEach(function (s, i) {
+      var states = STATES.filter(function (a) { return a.sec === s.key; });
+      if (!states.length) return;
+      var target = i < 2 ? gridLeft : gridRight;   // first two groups on the left, the rest on the right
+
       var head = document.createElement("div");
       head.className = "sechead";
       head.textContent = s.title;
-      grid.appendChild(head);
+      target.appendChild(head);
 
-      STATES.filter(function (a) { return a.sec === s.key; }).forEach(function (a) {
+      states.forEach(function (a) {
         var card = document.createElement("div");
         card.className = "card" + (a.id === state.id ? " active" : "");
         card.dataset.id = a.id;
@@ -134,7 +139,7 @@
           '<div class="cmeta">' + a.type + "</div>"
         );
         card.addEventListener("click", function () { select(a.id); });
-        grid.appendChild(card);
+        target.appendChild(card);
       });
     });
   }
@@ -153,7 +158,7 @@
         fsound.parentNode.classList.toggle("silent", silent);
       }
     }
-    Array.prototype.forEach.call(grid.querySelectorAll(".card"), function (c) {
+    Array.prototype.forEach.call(document.querySelectorAll(".grid-side .card"), function (c) {
       c.classList.toggle("active", c.dataset.id === state.id);
     });
   }
@@ -242,18 +247,12 @@
     u.onend = function () { if (state.id === "B1_speaking" && state.sound) speech.timer = setTimeout(speakHormones, 350); };
     TTS.speak(u);
   }
-  function speakDidntCatch() {
-    if (!TTS || !state.sound || state.id !== "C2_didnt_catch") return;
-    var u = speakPhrase("Sorry, I didn't catch that.", "en");   // talks via the mouth, in English
-    if (u) TTS.speak(u);
-  }
   function manageSpeech() {
     if (speech.timer) { clearTimeout(speech.timer); speech.timer = null; }
     if (!TTS) return;
+    // only the Speaking state talks; "didn't catch" makes just its sound (no words)
     if (state.sound && !flow.running && state.id === "B1_speaking") {
       if (!TTS.speaking && !TTS.pending) speakHormones();
-    } else if (state.sound && !flow.running && state.id === "C2_didnt_catch") {
-      if (!TTS.speaking && !TTS.pending) speakDidntCatch();
     } else {
       try { TTS.cancel(); } catch (e) {}
       speechMouthRestore();             // leaving speaking → hand the mouth back to CSS
