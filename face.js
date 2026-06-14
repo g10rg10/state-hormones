@@ -525,6 +525,64 @@
   flowBtn.addEventListener("click", function () { flow.running ? flowStop() : flowStart(); });
   wakeBtn.addEventListener("click", function () { if (flow.running) flowWake(); });
 
+  // --- voice wake word: say "Hey Arduino" to make it enter listening mode ---
+  var heyBtn = document.getElementById("hey");
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var hey = { rec: null, on: false, busy: false };
+  function heyHeard() {
+    if (hey.busy) return;
+    hey.busy = true;
+    if (flow.running) flowStop();
+    select("D2_wakeword");                       // attentive pop…
+    setTimeout(function () {
+      select("B2_listening");                    // …then enter listening mode
+      setTimeout(function () {
+        if (hey.busy) { select("A3_idle"); hey.busy = false; }   // back to idle, re-armed
+      }, Math.round(5200 * state.spd));
+    }, Math.round(1100 * state.spd));
+  }
+  function heyMatches(t) {
+    t = (t || "").toLowerCase();
+    return t.indexOf("arduino") >= 0 || t.indexOf("ardu") >= 0 ||
+           t.indexOf("our dino") >= 0 || (t.indexOf("hey") >= 0 && t.indexOf("dino") >= 0);
+  }
+  function heyStart() {
+    if (!SR || hey.rec) return;
+    var rec = new SR();
+    rec.continuous = true; rec.interimResults = true; rec.lang = "en-US";
+    rec.onresult = function (e) {
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        if (heyMatches(e.results[i][0].transcript)) { heyHeard(); return; }
+      }
+    };
+    rec.onend = function () { if (hey.on) { try { rec.start(); } catch (e) {} } };   // keep listening
+    rec.onerror = function () {};
+    hey.rec = rec; hey.on = true;
+    try { rec.start(); } catch (e) {}
+  }
+  function heyStop() {
+    hey.on = false;
+    if (hey.rec) { try { hey.rec.stop(); } catch (e) {} hey.rec = null; }
+  }
+  if (heyBtn) {
+    if (!SR) {
+      heyBtn.disabled = true; heyBtn.textContent = "🎙️ Wake word n/d";
+      heyBtn.title = "SpeechRecognition non disponibile in questo browser";
+    } else {
+      heyBtn.addEventListener("click", function () {
+        if (hey.on) {
+          heyStop();
+          heyBtn.classList.remove("on"); heyBtn.setAttribute("aria-pressed", "false");
+          heyBtn.textContent = "🎙️ Say “Hey Arduino”";
+        } else {
+          heyStart();
+          heyBtn.classList.add("on"); heyBtn.setAttribute("aria-pressed", "true");
+          heyBtn.textContent = "🎙️ Listening for “Hey Arduino”…";
+        }
+      });
+    }
+  }
+
   // --- init ---
   applySpd();
   renderGrid();
