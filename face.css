@@ -90,9 +90,11 @@ html, body {
 /* ---------- Layout: thumbnails flank the big visualization in the centre ---------- */
 main { display: flex; flex-direction: row; align-items: flex-start; justify-content: center;
   gap: 26px; padding: 22px 22px 60px; max-width: 1400px; margin: 0 auto; }
-.featured { flex: 0 0 auto; min-width: 0; display: flex; flex-direction: column; align-items: center;
+/* fixed width = the stage, so long per-state descriptions wrap inside it instead of
+   widening the centre column and shoving the side rails outward */
+.featured { flex: 0 0 480px; width: 480px; display: flex; flex-direction: column; align-items: center;
   gap: 14px; position: sticky; top: 80px; }
-.featured-meta { text-align: center; }
+.featured-meta { text-align: center; max-width: 480px; }
 .featured-meta .fname { font-size: 16px; font-weight: 650; }
 .featured-meta .finfo { margin: 16px auto 0; width: fit-content;
   display: flex; flex-direction: column; gap: 9px; text-align: left; }
