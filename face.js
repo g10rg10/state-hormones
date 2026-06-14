@@ -20,6 +20,7 @@
   var flight = document.getElementById("flight");
   var fsound = document.getElementById("fsound");
   var soundBtn = document.getElementById("sound");
+  var power = document.getElementById("power");
   var SE = window.SoundEngine;
 
   var flowBtn = document.getElementById("flow");
@@ -108,39 +109,37 @@
     });
   }
 
+  function makeCard(a) {
+    var card = document.createElement("div");
+    card.className = "card" + (a.id === state.id ? " active" : "");
+    card.dataset.id = a.id;
+    var thumb = document.createElement("div");
+    thumb.className = "thumb";
+    var stage = document.createElement("div");
+    stage.className = stageClass(a.id);
+    stage.innerHTML = STAGE_HTML;
+    thumb.appendChild(stage);
+    card.appendChild(thumb);
+    card.insertAdjacentHTML(
+      "beforeend",
+      '<div class="cname">' + a.name + "</div>" +
+      '<div class="cmeta">' + a.type + "</div>"
+    );
+    card.addEventListener("click", function () { select(a.id); });
+    return card;
+  }
+  function secIndex(key) {
+    for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].key === key) return i;
+    return 0;
+  }
+  // Compact: cards flow continuously (no section headers) into two 2-column rails of 6 →
+  // exactly 3 rows each. "Off" is the power switch now, so it's skipped.
   function renderGrid() {
     gridLeft.innerHTML = ""; gridRight.innerHTML = "";
-    SECTIONS.forEach(function (s, i) {
-      var states = STATES.filter(function (a) { return a.sec === s.key; });
-      if (!states.length) return;
-      var target = i < 2 ? gridLeft : gridRight;   // first two groups on the left, the rest on the right
-
-      var head = document.createElement("div");
-      head.className = "sechead";
-      head.textContent = s.title;
-      target.appendChild(head);
-
-      states.forEach(function (a) {
-        var card = document.createElement("div");
-        card.className = "card" + (a.id === state.id ? " active" : "");
-        card.dataset.id = a.id;
-
-        var thumb = document.createElement("div");
-        thumb.className = "thumb";
-        var stage = document.createElement("div");
-        stage.className = stageClass(a.id);
-        stage.innerHTML = STAGE_HTML;
-        thumb.appendChild(stage);
-
-        card.appendChild(thumb);
-        card.insertAdjacentHTML(
-          "beforeend",
-          '<div class="cname">' + a.name + "</div>" +
-          '<div class="cmeta">' + a.type + "</div>"
-        );
-        card.addEventListener("click", function () { select(a.id); });
-        target.appendChild(card);
-      });
+    STATES.forEach(function (a) {
+      if (a.id === "A1_off") return;
+      var target = secIndex(a.sec) < 2 ? gridLeft : gridRight;   // System + Conversation left, rest right
+      target.appendChild(makeCard(a));
     });
   }
 
@@ -161,6 +160,12 @@
     Array.prototype.forEach.call(document.querySelectorAll(".grid-side .card"), function (c) {
       c.classList.toggle("active", c.dataset.id === state.id);
     });
+    if (power) {                                   // power switch reflects on / off
+      var on = state.id !== "A1_off";
+      power.checked = on;
+      var pl = power.parentNode.querySelector(".plabel");
+      if (pl) pl.textContent = on ? "On" : "Off";
+    }
   }
 
   function find(id) {
@@ -401,6 +406,12 @@
 
   document.getElementById("replay").addEventListener("click", replay);
 
+  if (power) {
+    power.addEventListener("change", function () {
+      select(power.checked ? "A2_wake" : "A1_off");   // on → wake up, off → power down
+    });
+  }
+
   if (SE && SE.available()) {
     soundBtn.addEventListener("click", function () {
       state.sound = !state.sound;
@@ -528,23 +539,35 @@
   // --- voice wake word: say "Hey Arduino" to make it enter listening mode ---
   var heyBtn = document.getElementById("hey");
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  var hey = { rec: null, on: false, busy: false };
+  var hey = { rec: null, on: false, busy: false, awaiting: false, timer: null };
+  function heyClearTimer() { if (hey.timer) { clearTimeout(hey.timer); hey.timer = null; } }
+  // "Hey Arduino" heard → attentive wake pose, then WAIT for the user to actually speak
   function heyHeard() {
     if (hey.busy) return;
-    hey.busy = true;
+    hey.busy = true; hey.awaiting = true;
     if (flow.running) flowStop();
-    select("D2_wakeword");                       // attentive pop…
-    setTimeout(function () {
-      select("B2_listening");                    // …then enter listening mode
-      setTimeout(function () {
-        if (hey.busy) { select("A3_idle"); hey.busy = false; }   // back to idle, re-armed
-      }, Math.round(5200 * state.spd));
-    }, Math.round(1100 * state.spd));
+    select("D2_wakeword");                       // attentive pop, holds while it waits
+    heyClearTimer();
+    hey.timer = setTimeout(function () {         // nothing said within 3s → back to idle
+      if (hey.awaiting) { hey.awaiting = false; hey.busy = false; select("A3_idle"); }
+    }, 3000);
+  }
+  // the user actually said something → now enter listening mode
+  function heyUserSpoke() {
+    if (!hey.awaiting) return;
+    hey.awaiting = false; heyClearTimer();
+    select("B2_listening");
+    hey.timer = setTimeout(function () { hey.busy = false; select("A3_idle"); }, Math.round(5000 * state.spd));
   }
   function heyMatches(t) {
     t = (t || "").toLowerCase();
     return t.indexOf("arduino") >= 0 || t.indexOf("ardu") >= 0 ||
            t.indexOf("our dino") >= 0 || (t.indexOf("hey") >= 0 && t.indexOf("dino") >= 0);
+  }
+  // real words beyond the wake phrase = the user is talking to it
+  function speechBeyondWake(t) {
+    t = (t || "").toLowerCase().replace(/hey|arduino|ardu\w*|our dino|a dino|dino/g, " ").replace(/[^a-z]/g, "");
+    return t.length >= 3;
   }
   function heyStart() {
     if (!SR || hey.rec) return;
@@ -552,7 +575,9 @@
     rec.continuous = true; rec.interimResults = true; rec.lang = "en-US";
     rec.onresult = function (e) {
       for (var i = e.resultIndex; i < e.results.length; i++) {
-        if (heyMatches(e.results[i][0].transcript)) { heyHeard(); return; }
+        var t = e.results[i][0].transcript;
+        if (hey.awaiting) { if (speechBeyondWake(t)) { heyUserSpoke(); return; } }
+        else if (!hey.busy && heyMatches(t)) { heyHeard(); }
       }
     };
     rec.onend = function () { if (hey.on) { try { rec.start(); } catch (e) {} } };   // keep listening
@@ -561,7 +586,7 @@
     try { rec.start(); } catch (e) {}
   }
   function heyStop() {
-    hey.on = false;
+    hey.on = false; hey.awaiting = false; hey.busy = false; heyClearTimer();
     if (hey.rec) { try { hey.rec.stop(); } catch (e) {} hey.rec = null; }
   }
   if (heyBtn) {
