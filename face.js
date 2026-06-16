@@ -498,38 +498,53 @@
   function flowWake() {
     flowClear();
     wakeBtn.disabled = true;
-    flowPhase("“Hey Arduino” → waiting for you to speak (3s)…");
+    flowPhase("“Hey Arduino” → listening for your request…");
     flowShow("D2_wakeword");
     flowAt(1300, function () {
-      var spoke = false;
-      micListen(function () { spoke = true; flowListened(); }, function () {});
-      flowAt(3000, function () {                 // nothing said within 3s → back to idle
-        if (spoke || !flow.running) return;
-        micStop();
-        flowPhase("No speech in 3s → back to idle");
-        flowBackIdle();
+      var went = false;
+      var go = function () { if (went || !flow.running) return; went = true; micStop(); flowRequest(); };
+      micListen(go, function () {});             // real speech proceeds; else the timer below does
+      flowAt(2200, go);                          // demo: proceed even without a real mic
+    });
+  }
+  // The user asks to set up a recurring reminder → device saves it (Confirm) and replies.
+  function flowRequest() {
+    flowClear();
+    flowPhase("You: “Remind me to take my pill at 9 every day”"); flowShow("B2_listening");
+    flowAt(2600, function () {
+      if (!flow.running) return;
+      flowPhase("Setting it up…"); flowShow("B3_thinking");
+      flowAt(1500, function () {
+        if (!flow.running) return;
+        flowPhase("Confirm ✓ — daily pill reminder saved"); flowShow("C1_confirm");
+        flowAt(2100, function () {
+          if (!flow.running) return;
+          flowPhase("Maind X: “Done — I'll remind you at 9.”"); flowShow("B1_speaking");
+          flowAt(3500, flowReminderLater);
+        });
       });
     });
   }
-  function flowListened() {
-    if (!flow.running) return;
+  // …later, at the scheduled time, the proactive Reminder fires.
+  function flowReminderLater() {
     flowClear();
-    flowPhase("Listening — taking notes"); flowShow("B2_listening");
-    flowAt(2200, function () {
+    flowPhase("…later, at 9:00…"); flowShow("A3_idle");
+    flowAt(2600, flowReminder);
+  }
+  function flowReminder() {
+    flowClear();
+    flowPhase("Reminder 🔔 — time to take your pill"); flowShow("D1_reminder");
+    flowAt(2400, function () {
       if (!flow.running) return;
-      flowPhase("Thinking"); flowShow("B3_thinking");
-      flowAt(1400, function () {
-        if (!flow.running) return;
-        flowPhase("Replying"); flowShow("B1_speaking");
-        flowAt(4000, flowBackIdle);
-      });
+      flowPhase("Maind X: “Time for your pill 💊”"); flowShow("B1_speaking");
+      flowAt(3200, flowBackIdle);
     });
   }
   function flowBackIdle() {
     flowClear();
     flowPhase("Back to idle — still active");
     flowShow("A3_idle");
-    flowAt(3500, flowDeactivate);
+    flowAt(3000, flowDeactivate);
   }
   function flowDeactivate() {                    // flip the switch off → clock, mic off
     flowClear();
