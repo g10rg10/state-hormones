@@ -157,11 +157,11 @@
     Array.prototype.forEach.call(document.querySelectorAll(".grid-side .card"), function (c) {
       c.classList.toggle("active", c.dataset.id === state.id);
     });
-    if (power) {                                   // power switch reflects on / off
-      var on = state.id !== "A1_off";
-      power.checked = on;
+    if (power) {                                   // switch reflects activated (face) vs clock
+      var active = state.id !== "A4_clock" && state.id !== "A1_off";
+      power.checked = active;
       var pl = power.parentNode.querySelector(".plabel");
-      if (pl) pl.textContent = on ? "On" : "Off";
+      if (pl) pl.textContent = active ? "Active" : "Clock";
     }
   }
 
@@ -382,9 +382,23 @@
     }, delay);
   }
 
+  // The top switch = the physical activate / deactivate toggle.
+  //   Activated   → wakes the face, mic ON (listens for "Hey Arduino")
+  //   Deactivated → clock only, mic OFF (no voice)
+  function activate() {
+    if (SR) heyStart();                                  // mic on — within the click gesture
+    select("A2_wake");                                   // wake up…
+    setTimeout(function () {
+      if (power.checked && !hey.busy && !flow.running) select("A3_idle");   // …settle to idle
+    }, Math.round(1600 * state.spd));
+  }
+  function deactivate() {
+    if (SR) heyStop();                                   // mic off — no wake word in clock mode
+    select("A4_clock");                                  // clock only
+  }
   if (power) {
     power.addEventListener("change", function () {
-      select(power.checked ? "A2_wake" : "A1_off");   // on → wake up, off → power down
+      if (power.checked) activate(); else deactivate();
     });
   }
 
@@ -445,13 +459,16 @@
   function flowPhase(txt) { if (flowphase) flowphase.textContent = txt; }
   function flowShow(id) { state.id = id; applyFeatured(); playCurrent(); manageSpeech(); }
 
+  // Interactive demo of the activate / deactivate lifecycle (loops):
+  //   deactivated clock → switch on → wake → idle → "Hey Arduino" → wait (3s) →
+  //   listening → thinking → reply → idle → switch off → clock …
   function flowStart() {
-    idleExit();
+    idleExit(); if (SR) heyStop();
     flow.running = true;
     flowBtn.textContent = "■ Stop flow";
     flowBtn.classList.add("on");
     flowbar.hidden = false;
-    flowPowerOn();
+    flowDeactivated();
   }
   function flowStop() {
     flow.running = false; flowClear();
@@ -459,61 +476,72 @@
     flowBtn.classList.remove("on");
     flowbar.hidden = true;
   }
-  function flowPowerOn() {
-    flowPhase("Power on…"); flowShow("A1_off");
-    flowAt(800, function () {
-      flowPhase("Waking up"); flowShow("A2_wake");
-      flowAt(1700, flowIdle);
-    });
-  }
-  function flowIdle() {
+  function flowDeactivated() {                  // plugged in, switch off → clock only, mic off
     flowClear();
+    flowPhase("Deactivated — clock only · mic off");
+    flowShow("A4_clock");
+    flowAt(3500, flowActivate);
+  }
+  function flowActivate() {                      // flip the switch on → wake, mic on
+    flowClear();
+    flowPhase("Switched on → waking up · mic on");
+    flowShow("A2_wake");
+    flowAt(1700, flowActiveIdle);
+  }
+  function flowActiveIdle() {
+    flowClear();
+    flowPhase("Active — idle · say “Hey Arduino”");
     flowShow("A3_idle");
     wakeBtn.disabled = false;
-    var left = Math.round(IDLE_TO_CLOCK / 1000);
-    (function tick() {
-      if (!flow.running) return;
-      flowPhase("Idle / waiting — sleeps to clock in " + left + " s");
-      if (left-- > 0) flowAt(1000, tick);
-    })();
-    flowAt(IDLE_TO_CLOCK, flowClock);
-  }
-  function flowClock() {
-    flowClear();
-    flowShow("A4_clock");
-    wakeBtn.disabled = false;
-    flowPhase("Clock mode (5 min idle) — say “Hey Arduino”");
-    flowAt(CLOCK_AUTOWAKE, function () { if (flow.running) flowWake(); });
+    flowAt(4000, function () { if (flow.running) flowWake(); });   // auto-fire the wake word
   }
   function flowWake() {
     flowClear();
     wakeBtn.disabled = true;
-    flowPhase("Wake word → listening");
+    flowPhase("“Hey Arduino” → waiting for you to speak (3s)…");
     flowShow("D2_wakeword");
-    flowAt(1100, function () {
-      // after the wake word the device waits for someone to speak — for real, via the mic
-      flowPhase("Listening… say something into the mic");
-      flowShow("B2_listening");
-      micListen(
-        function () {                                  // heard the user speak
-          if (!flow.running) return;
-          flowPhase("Got it — thinking"); flowShow("B3_thinking");
-          flowAt(1400, function () {
-            if (!flow.running) return;
-            flowPhase("Replying"); flowShow("B1_speaking");
-            flowAt(4200, flowIdle);
-          });
-        },
-        function () { flowAt(2600, flowIdle); }        // no mic → fall back to a timed wait
-      );
+    flowAt(1300, function () {
+      var spoke = false;
+      micListen(function () { spoke = true; flowListened(); }, function () {});
+      flowAt(3000, function () {                 // nothing said within 3s → back to idle
+        if (spoke || !flow.running) return;
+        micStop();
+        flowPhase("No speech in 3s → back to idle");
+        flowBackIdle();
+      });
     });
+  }
+  function flowListened() {
+    if (!flow.running) return;
+    flowClear();
+    flowPhase("Listening — taking notes"); flowShow("B2_listening");
+    flowAt(2200, function () {
+      if (!flow.running) return;
+      flowPhase("Thinking"); flowShow("B3_thinking");
+      flowAt(1400, function () {
+        if (!flow.running) return;
+        flowPhase("Replying"); flowShow("B1_speaking");
+        flowAt(4000, flowBackIdle);
+      });
+    });
+  }
+  function flowBackIdle() {
+    flowClear();
+    flowPhase("Back to idle — still active");
+    flowShow("A3_idle");
+    flowAt(3500, flowDeactivate);
+  }
+  function flowDeactivate() {                    // flip the switch off → clock, mic off
+    flowClear();
+    flowPhase("Switched off → clock · mic off");
+    flowShow("A4_clock");
+    flowAt(3000, flowActivate);                  // loop
   }
 
   flowBtn.addEventListener("click", function () { flow.running ? flowStop() : flowStart(); });
   wakeBtn.addEventListener("click", function () { if (flow.running) flowWake(); });
 
-  // --- voice wake word: say "Hey Arduino" to make it enter listening mode ---
-  var heyBtn = document.getElementById("hey");
+  // --- voice wake word: while Activated, "Hey Arduino" makes it enter listening mode ---
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var hey = { rec: null, on: false, busy: false, awaiting: false, timer: null };
   function heyClearTimer() { if (hey.timer) { clearTimeout(hey.timer); hey.timer = null; } }
@@ -565,24 +593,8 @@
     hey.on = false; hey.awaiting = false; hey.busy = false; heyClearTimer();
     if (hey.rec) { try { hey.rec.stop(); } catch (e) {} hey.rec = null; }
   }
-  if (heyBtn) {
-    if (!SR) {
-      heyBtn.disabled = true; heyBtn.textContent = "🎙️ Wake word n/d";
-      heyBtn.title = "SpeechRecognition non disponibile in questo browser";
-    } else {
-      heyBtn.addEventListener("click", function () {
-        if (hey.on) {
-          heyStop();
-          heyBtn.classList.remove("on"); heyBtn.setAttribute("aria-pressed", "false");
-          heyBtn.textContent = "🎙️ Say “Hey Arduino”";
-        } else {
-          heyStart();
-          heyBtn.classList.add("on"); heyBtn.setAttribute("aria-pressed", "true");
-          heyBtn.textContent = "🎙️ Listening for “Hey Arduino”…";
-        }
-      });
-    }
-  }
+  // the wake-word mic is driven by the activate/deactivate switch (heyStart/heyStop), so
+  // it only listens while Activated — there is no separate button.
 
   // --- init ---
   applySpd();
