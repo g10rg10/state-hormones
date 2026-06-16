@@ -61,6 +61,20 @@ When the device hears **"Hey Arduino"**:
 Other proactive / feedback states (Confirm, Didn't-catch, Reminder, Wink, quirks) all
 live inside this **Activated** mode.
 
+### Confirm vs Reminder — when they trigger
+
+These two look similar (a brief morph) but mean different things:
+
+- **Confirm** (`C1`, check ✓) — the device **saved or updated** something you asked it
+  to remember or change: your **pronouns** or other important **onboarding** details, or
+  when you **set up a recurring / daily event** (e.g. "remind me to take my pill at 9").
+  It's the "got it, saved / updated" acknowledgement.
+- **Reminder** (`D1`, ringing bell) — the **proactive reminder itself**, fired when it's
+  **time to do** something you'd previously asked to be reminded of: **take the pill**,
+  **apply the gel**, **do the injection**. Calm, never alarming.
+
+So: you *ask* to be reminded → **Confirm** (saved). Later, when the time comes → **Reminder**.
+
 ## 4. Flip the switch back to DEACTIVATED → Clock
 
 - Any interaction stops, the **microphone turns OFF**, and the screen returns to the
@@ -83,7 +97,10 @@ live inside this **Activated** mode.
 | `B2_listening`   | Activated   | you started speaking |
 | `B3_thinking`    | Activated   | processing |
 | `B1_speaking`    | Activated   | replying (TTS) |
-| `C1`/`C2`/`D1`/`E*` | Activated | feedback, reminders, personality |
+| `C1_confirm`     | Activated   | saved/updated something (pronouns, onboarding, recurring event) |
+| `C2_didnt_catch` | Activated   | didn't understand the request |
+| `D1_reminder`    | Activated   | proactive reminder fires (pill / gel / injection) |
+| `E*` (quirk/wink)| Activated   | personality / idle micro-moments |
 
 ## Demo (face.html)
 

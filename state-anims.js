@@ -64,7 +64,7 @@ window.STATES = [
     light: "[CONFIRM]", type: "one-shot", dur: "~1.9 s",
     lightDesc: "Single brightness pulse — saved / accepted.",
     soundDesc: "Bright positive two-note (A→D).",
-    desc: "The eyes morph into a check ✓, hold, then return to eyes: choice saved / accepted."
+    desc: "The eyes morph into a check ✓, hold, then return to eyes. Shown when the device SAVES or UPDATES something you asked to remember or change — e.g. your pronouns or other important onboarding details, or when you set up a recurring/daily event (like a pill reminder): saved / updated / accepted."
   },
   {
     id: "C2_didnt_catch", sec: "C", name: "Didn't catch that",
@@ -78,7 +78,7 @@ window.STATES = [
     light: "[SPEAK] · reminder-chime", type: "one-shot → B1", dur: "~1.9 s",
     lightDesc: "Calm speak pulse for the reminder (never alarming).",
     soundDesc: "Gentle alarm-bell ring — 3 soft strikes.",
-    desc: "The eyes morph into a little bell that rings, then return to eyes — a calm reminder, never alarming."
+    desc: "The eyes morph into a little bell that rings, then return to eyes. This is the proactive reminder ITSELF, fired when it's time to do something you'd asked to be reminded of — take the pill, apply the gel, do the injection. Calm, never alarming."
   },
   {
     id: "D2_wakeword", sec: "D", name: "Wake word",
