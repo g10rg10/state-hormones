@@ -20,7 +20,7 @@ only toggles the assistant **on the device that's already running**.
 
 - Screen shows **only the clock** (state `A4_clock`, live `HH:MM`, blinking colon).
 - The **microphone is OFF**: saying "Hey Arduino" does **nothing**.
-- Ambient light: calm idle floor (warm). No interaction is possible here.
+- The **ambient light is OFF** too — a quiet, dark bedside clock. No interaction here.
 
 ```
 [ Deactivated ] ──▶ Clock display  (mic OFF)  ──▶ stays here until you flip the switch
@@ -83,7 +83,7 @@ returns to the eyes.
 
 | State            | Mode        | Reachable when… |
 | ---------------- | ----------- | --------------- |
-| `A4_clock`       | Deactivated | switch off (mic off) |
+| `A4_clock`       | Deactivated | switch off (mic off · light off) |
 | `A2_wake`        | Activated   | on flipping the switch on |
 | `A3_idle`        | Activated   | resting / waiting for the wake word |
 | `D2_wakeword`    | Activated   | "Hey Arduino" heard |

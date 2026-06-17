@@ -33,10 +33,10 @@ window.STATES = [
   },
   {
     id: "A4_clock", sec: "A", name: "Clock",
-    light: "[IDLE]", type: "display", dur: "live",
-    lightDesc: "Idle floor, slow breathe (on the shelf).",
+    light: "[OFF]", type: "display", dur: "live",
+    lightDesc: "Light off — a quiet, dark bedside clock (deactivated).",
     soundDesc: "",
-    desc: "On the shelf: the eyes give way to a glowing digital clock (live HH:MM, colon blinking once a second)."
+    desc: "Deactivated: the eyes give way to a digital clock (live HH:MM, colon blinking once a second). Microphone and ambient light are both off."
   },
   {
     id: "B1_speaking", sec: "B", name: "Speaking (TTS)",

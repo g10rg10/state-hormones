@@ -38,7 +38,7 @@ or the clock auto-wakes so the loop repeats. The firmware runs the same logic in
 | `A1_off` | dark screen, dots off (static) | soft descending power-down | **off** (dark) |
 | `A2_wake` | fade-in + one slow waking blink → chains to A3 | gentle rising arpeggio (D→F#→A) + shimmer | **wake**: fade-in, settle to floor |
 | `A3_idle` | ±8% breath (~4.6 s) + look-around drift (~7.2 s) + natural blink (~5–8 s) | — *(silent)* | **idle**: slow breathe |
-| `A4_clock` | eyes give way to a tall rounded-digit clock `HH:MM`, colon blinks 1 Hz | soft tick / tock ~1 Hz (loop) | **idle** breathe |
+| `A4_clock` | eyes give way to a tall rounded-digit clock `HH:MM`, colon blinks 1 Hz | — *(silent)* | **off** — no halo (quiet clock) |
 | `B1_speaking` | breath at speech rhythm (~3.4 s) + blink (~6 s) + tiny drift | — *(silent)* | **speak**: pulses *in time with the eyes* |
 | `B2_listening` | dots +12 %, held still, rare blink (~9 s) + **centered notepad with a writing hand** | — *(silent)* | **listen**: brighter floor + cooler tint |
 | `B3_thinking` | gaze slips away and back (~2 s) + slow half-blink | sparse contemplative blips (loop) | **idle** breathe |
@@ -58,12 +58,12 @@ External halo; brightness follows the audio envelope (floor never 0); guardrail 
 
 | Light | States | Behavior |
 |-------|--------|----------|
-| **idle** | A3, A4, B3, E2, E4 | slow breathe around a low floor (not audio-driven) |
+| **idle** | A3, B3, E2, E4 | slow breathe around a low floor (not audio-driven) |
 | **speak** | B1, C2 | pulses with the speech envelope — floor 0.55, fast attack / slow release; B1 is timed to the eye breath |
 | **listen** | B2, D2 | brighter floor (0.65) + cooler tint → "your turn" |
 | **wake** | A2 | fade-in from off, settle to floor |
 | **confirm** | C1 | single brightness pulse |
-| **off** | A1 | dark (the only state with light fully off) |
+| **off** | A1, A4 | dark — light fully off (A1 = unplugged, A4 = deactivated clock) |
 
 ---
 

@@ -392,17 +392,15 @@
 @keyframes lumConfirm { 0% { --lumeLevel: .18; } 9% { --lumeLevel: .52; } 26% { --lumeLevel: .20; } 100% { --lumeLevel: .20; } }
 .st-A2_wake        { animation: lumWake    calc(var(--spd) * 4000ms) ease-out    infinite; }
 .st-A3_idle,
-.st-A4_clock,
 .st-B3_thinking,
 .st-E2_quirk,
 .st-E4_wink        { animation: lumIdle    calc(var(--spd) * 4600ms) ease-in-out infinite; }
 .st-B1_speaking    { animation: lumSpeak   calc(var(--spd) * 3400ms) ease-in-out infinite; }
-.st-C2_didnt_catch,
-.st-D1_reminder    { animation: lumSpeak   calc(var(--spd) * 3400ms) ease-in-out infinite; }
+.st-C2_didnt_catch { animation: lumSpeak   calc(var(--spd) * 3400ms) ease-in-out infinite; }
 .st-B2_listening   { animation: lumListen  calc(var(--spd) * 3000ms) ease-in-out infinite; }
 .st-D2_wakeword    { animation: lumListen  calc(var(--spd) * 3000ms) ease-in-out infinite; }
 .st-C1_confirm     { animation: lumConfirm calc(var(--spd) * 2400ms) ease-in-out infinite; }
-/* A1_off: no stage animation → --lumeLevel 0 = light off */
+/* A1_off and A4_clock: no stage animation → --lumeLevel 0 = light off (quiet deactivated clock) */
 
 /* ============ E · Personality — expression (height-only) ============ */
 
