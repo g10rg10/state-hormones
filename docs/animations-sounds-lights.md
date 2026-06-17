@@ -44,12 +44,11 @@ or the clock auto-wakes so the loop repeats. The firmware runs the same logic in
 | `B3_thinking` | gaze slips away and back (~2 s) + slow half-blink | sparse contemplative blips (loop) | **idle** breathe |
 | `C1_confirm` | the eyes **morph into a check ✓**, hold, then return to eyes | bright positive two-note (A→D) | **confirm**: single pulse |
 | `C2_didnt_catch` | slow blink + gentle tilt (one dot up, one down) | questioning upward "hm?" (E→A↗B) | **speak** pulse → cools toward listen |
-| `D1_reminder` | the eyes **morph into a bell that rings**, then return to eyes | gentle **alarm-bell ring** (3 soft strikes) | **speak** pulse |
 | `D2_wakeword` | attentive pop, settles at the listening size (B2 pose) | attentive rising pop (D→A→D) | **listen** (cooler) |
 | `E2_quirk` | looks around (left, right) and back + one natural blink | — *(silent)* | **idle** |
 | `E4_wink` | right eye flattens to a line and holds, left squints, both reopen | playful upward blip | **idle** |
 
-**Overlays / morphs:** `A4_clock` clock face · `B2_listening` notepad + writing hand · `C1_confirm` check ✓ · `D1_reminder` ringing bell.
+**Overlays / morphs:** `A4_clock` clock face · `B2_listening` notepad + writing hand · `C1_confirm` check ✓.
 
 ---
 
@@ -60,7 +59,7 @@ External halo; brightness follows the audio envelope (floor never 0); guardrail 
 | Light | States | Behavior |
 |-------|--------|----------|
 | **idle** | A3, A4, B3, E2, E4 | slow breathe around a low floor (not audio-driven) |
-| **speak** | B1, C2, D1 | pulses with the speech envelope — floor 0.55, fast attack / slow release; B1 is timed to the eye breath |
+| **speak** | B1, C2 | pulses with the speech envelope — floor 0.55, fast attack / slow release; B1 is timed to the eye breath |
 | **listen** | B2, D2 | brighter floor (0.65) + cooler tint → "your turn" |
 | **wake** | A2 | fade-in from off, settle to floor |
 | **confirm** | C1 | single brightness pulse |

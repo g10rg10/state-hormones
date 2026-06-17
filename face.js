@@ -508,36 +508,22 @@
     });
   }
   // The user asks to set up a recurring reminder → device saves it (Confirm) and replies.
+  // The user asks to change/save something → device saves it (Confirm) and replies.
   function flowRequest() {
     flowClear();
-    flowPhase("You: “Remind me to take my pill at 9 every day”"); flowShow("B2_listening");
+    flowPhase("You: “Update my pronouns to they/them”"); flowShow("B2_listening");
     flowAt(2600, function () {
       if (!flow.running) return;
-      flowPhase("Setting it up…"); flowShow("B3_thinking");
+      flowPhase("Saving it…"); flowShow("B3_thinking");
       flowAt(1500, function () {
         if (!flow.running) return;
-        flowPhase("Confirm ✓ — daily pill reminder saved"); flowShow("C1_confirm");
+        flowPhase("Confirm ✓ — saved your pronouns"); flowShow("C1_confirm");
         flowAt(2100, function () {
           if (!flow.running) return;
-          flowPhase("Maind X: “Done — I'll remind you at 9.”"); flowShow("B1_speaking");
-          flowAt(3500, flowReminderLater);
+          flowPhase("Maind X: “Done — updated.”"); flowShow("B1_speaking");
+          flowAt(3500, flowBackIdle);
         });
       });
-    });
-  }
-  // …later, at the scheduled time, the proactive Reminder fires.
-  function flowReminderLater() {
-    flowClear();
-    flowPhase("…later, at 9:00…"); flowShow("A3_idle");
-    flowAt(2600, flowReminder);
-  }
-  function flowReminder() {
-    flowClear();
-    flowPhase("Reminder 🔔 — time to take your pill"); flowShow("D1_reminder");
-    flowAt(2400, function () {
-      if (!flow.running) return;
-      flowPhase("Maind X: “Time for your pill 💊”"); flowShow("B1_speaking");
-      flowAt(3200, flowBackIdle);
     });
   }
   function flowBackIdle() {

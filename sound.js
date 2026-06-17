@@ -160,14 +160,6 @@ window.SoundEngine = (function () {
     },
 
     // D · proactive
-    D1_reminder: function (t, spd) {                   // gentle alarm-bell RING — 3 soft strikes
-      var hits = [0, 0.17, 0.34];
-      for (var i = 0; i < hits.length; i++) {
-        var tt = t + hits[i] * spd;
-        blip(N.D5, tt, 0.18 * spd, 0.13);              // bell strike
-        blip(N.D5 * 2, tt, 0.14 * spd, 0.025);         // soft octave harmonic = bell timbre
-      }
-    },
     D2_wakeword: function (t, spd) {                   // attentive, alert pop (rising)
       blip(N.D4, t, 0.09 * spd, 0.17, { sub: true });
       blip(N.A4, t + 0.07 * spd, 0.10 * spd, 0.19);

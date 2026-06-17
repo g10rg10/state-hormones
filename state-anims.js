@@ -74,13 +74,6 @@ window.STATES = [
     desc: "Slow blink + gentle tilt (one dot up, one down): a silent “hm?”, then back."
   },
   {
-    id: "D1_reminder", sec: "D", name: "Reminder",
-    light: "[SPEAK] · reminder-chime", type: "one-shot → B1", dur: "~1.9 s",
-    lightDesc: "Calm speak pulse for the reminder (never alarming).",
-    soundDesc: "Gentle alarm-bell ring — 3 soft strikes.",
-    desc: "The eyes morph into a little bell that rings, then return to eyes. This is the proactive reminder ITSELF, fired when it's time to do something you'd asked to be reminded of — take the pill, apply the gel, do the injection. Calm, never alarming."
-  },
-  {
     id: "D2_wakeword", sec: "D", name: "Wake word",
     light: "[WAKE]→[LISTEN]", type: "one-shot", dur: "~400 ms",
     lightDesc: "Lifts and cools to the listening floor — “your turn”.",

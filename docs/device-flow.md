@@ -6,10 +6,10 @@ device up for interaction, the other puts it to rest as a quiet clock.
 
 The switch has two positions:
 
-| Switch        | Screen                | Microphone | What it does                                  |
-| ------------- | --------------------- | ---------- | --------------------------------------------- |
-| **Deactivated** | **Clock only** (HH:MM) | **OFF**   | Quiet bedside clock. No voice, no listening.  |
-| **Activated**   | The face (eyes)        | **ON**    | Full voice assistant: wake word + interaction |
+| Switch          | Screen                 | Microphone | What it does                                  |
+| --------------- | ---------------------- | ---------- | --------------------------------------------- |
+| **Deactivated** | **Clock only** (HH:MM) | **OFF**    | Quiet bedside clock. No voice, no listening.  |
+| **Activated**   | The face (eyes)        | **ON**     | Full voice assistant: wake word + interaction |
 
 The device is always plugged in / powered. The switch is **not** a power button — it
 only toggles the assistant **on the device that's already running**.
@@ -58,22 +58,15 @@ When the device hears **"Hey Arduino"**:
  Listening (B2) ─▶ Thinking (B3) ─▶ Speaking (B1) ─▶ Idle (A3)   Idle (A3)
 ```
 
-Other proactive / feedback states (Confirm, Didn't-catch, Reminder, Wink, quirks) all
-live inside this **Activated** mode.
+Other feedback / personality states (Confirm, Didn't-catch, Wink, quirks) all live
+inside this **Activated** mode.
 
-### Confirm vs Reminder — when they trigger
+### When Confirm appears
 
-These two look similar (a brief morph) but mean different things:
-
-- **Confirm** (`C1`, check ✓) — the device **saved or updated** something you asked it
-  to remember or change: your **pronouns** or other important **onboarding** details, or
-  when you **set up a recurring / daily event** (e.g. "remind me to take my pill at 9").
-  It's the "got it, saved / updated" acknowledgement.
-- **Reminder** (`D1`, ringing bell) — the **proactive reminder itself**, fired when it's
-  **time to do** something you'd previously asked to be reminded of: **take the pill**,
-  **apply the gel**, **do the injection**. Calm, never alarming.
-
-So: you *ask* to be reminded → **Confirm** (saved). Later, when the time comes → **Reminder**.
+**Confirm** (`C1`, a check ✓) is shown when the device **saved or updated** something you
+asked it to remember or change — for example your **pronouns** or other important
+**onboarding** details. It's the "got it, saved / updated" acknowledgement, then it
+returns to the eyes.
 
 ## 4. Flip the switch back to DEACTIVATED → Clock
 
@@ -97,9 +90,8 @@ So: you *ask* to be reminded → **Confirm** (saved). Later, when the time comes
 | `B2_listening`   | Activated   | you started speaking |
 | `B3_thinking`    | Activated   | processing |
 | `B1_speaking`    | Activated   | replying (TTS) |
-| `C1_confirm`     | Activated   | saved/updated something (pronouns, onboarding, recurring event) |
+| `C1_confirm`     | Activated   | saved/updated something (pronouns, onboarding) |
 | `C2_didnt_catch` | Activated   | didn't understand the request |
-| `D1_reminder`    | Activated   | proactive reminder fires (pill / gel / injection) |
 | `E*` (quirk/wink)| Activated   | personality / idle micro-moments |
 
 ## Demo (face.html)
@@ -109,5 +101,5 @@ So: you *ask* to be reminded → **Confirm** (saved). Later, when the time comes
 - While **Active**, real speech works: say **"Hey Arduino"** (grant the mic) and then a
   request; if you stay silent for 3 s after the wake word it returns to idle.
 - **▶ Simulate flow** runs the whole lifecycle hands-free: deactivated clock → activate →
-  idle → "Hey Arduino" → wait → listening → thinking → reply → idle → deactivate → clock,
-  looping.
+  idle → "Hey Arduino" → wait → listening → thinking → Confirm ✓ (e.g. saved pronouns) →
+  reply → idle → deactivate → clock, looping.
