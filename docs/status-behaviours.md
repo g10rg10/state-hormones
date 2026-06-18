@@ -32,7 +32,7 @@ a physical **activate / deactivate switch** (see `device-flow.md`):
 - **Light:** fades in from off, neutral, settling to the idle floor.
 
 ### `A3_idle` — Idle / waiting (loop)
-- **When:** activated and at rest — **waiting for the wake word** ("Hey Arduino").
+- **When:** activated and at rest — **waiting for the wake word** ("Hey Kai").
 - **Behaviour:** a curious face that is never perfectly still — slow ±8% breath (~4.6 s),
   a gentle look-around drift, and a natural blink every ~5–8 s. Occasionally a micro-quirk
   (`E2`) or, rarely, a wink (`E4`) breaks the loop.
@@ -99,7 +99,7 @@ a physical **activate / deactivate switch** (see `device-flow.md`):
 ## D · Proactive moments
 
 ### `D2_wakeword` — Wake word (one-shot)
-- **When:** it **hears "Hey Arduino"** (only while activated, mic on).
+- **When:** it **hears "Hey Kai"** (only while activated, mic on).
 - **Behaviour:** an attentive pop — scales up with a little overshoot and settles at the
   listening size. It does **not** jump straight into listening: it then **waits up to 3 s**
   for you to actually say something. If you stay silent, it returns to Idle.
@@ -139,6 +139,6 @@ a physical **activate / deactivate switch** (see `device-flow.md`):
 | `B1_speaking` | loop | replying (TTS) | talking mouth + gentle bob/turn | the reply | pulses with speech |
 | `C1_confirm` | one-shot | saved/updated (pronouns, onboarding) | eyes → check ✓ → eyes | positive two-note | single pulse |
 | `C2_didnt_catch` | one-shot | didn't understand | slow blink + tilt ("hm?") | questioning "hm?" | speak → cools to listen |
-| `D2_wakeword` | one-shot | "Hey Arduino" heard | attentive pop, then waits ≤3 s | rising pop | lifts + cools |
+| `D2_wakeword` | one-shot | "Hey Kai" heard | attentive pop, then waits ≤3 s | rising pop | lifts + cools |
 | `E2_quirk` | rare one-shot | idle micro-moment | look around + blink | silent | idle floor |
 | `E4_wink` | one-shot | playful idle beat | right eye winks shut | playful blip (on close) | idle floor |

@@ -383,7 +383,7 @@
   }
 
   // The top switch = the physical activate / deactivate toggle.
-  //   Activated   → wakes the face, mic ON (listens for "Hey Arduino")
+  //   Activated   → wakes the face, mic ON (listens for "Hey Kai")
   //   Deactivated → clock only, mic OFF (no voice)
   function activate() {
     if (SR) heyStart();                                  // mic on — within the click gesture
@@ -460,7 +460,7 @@
   function flowShow(id) { state.id = id; applyFeatured(); playCurrent(); manageSpeech(); }
 
   // Interactive demo of the activate / deactivate lifecycle (loops):
-  //   deactivated clock → switch on → wake → idle → "Hey Arduino" → wait (3s) →
+  //   deactivated clock → switch on → wake → idle → "Hey Kai" → wait (3s) →
   //   listening → thinking → reply → idle → switch off → clock …
   function flowStart() {
     idleExit(); if (SR) heyStop();
@@ -490,7 +490,7 @@
   }
   function flowActiveIdle() {
     flowClear();
-    flowPhase("Active — idle · say “Hey Arduino”");
+    flowPhase("Active — idle · say “Hey Kai”");
     flowShow("A3_idle");
     wakeBtn.disabled = false;
     flowAt(4000, function () { if (flow.running) flowWake(); });   // auto-fire the wake word
@@ -498,7 +498,7 @@
   function flowWake() {
     flowClear();
     wakeBtn.disabled = true;
-    flowPhase("“Hey Arduino” → listening for your request…");
+    flowPhase("“Hey Kai” → listening for your request…");
     flowShow("D2_wakeword");
     flowAt(1300, function () {
       var went = false;
@@ -520,7 +520,7 @@
         flowPhase("Confirm ✓ — saved your pronouns"); flowShow("C1_confirm");
         flowAt(2100, function () {
           if (!flow.running) return;
-          flowPhase("Maind X: “Done — updated.”"); flowShow("B1_speaking");
+          flowPhase("Kai: “Done — updated.”"); flowShow("B1_speaking");
           flowAt(3500, flowBackIdle);
         });
       });
@@ -542,11 +542,11 @@
   flowBtn.addEventListener("click", function () { flow.running ? flowStop() : flowStart(); });
   wakeBtn.addEventListener("click", function () { if (flow.running) flowWake(); });
 
-  // --- voice wake word: while Activated, "Hey Arduino" makes it enter listening mode ---
+  // --- voice wake word: while Activated, "Hey Kai" makes it enter listening mode ---
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var hey = { rec: null, on: false, busy: false, awaiting: false, timer: null };
   function heyClearTimer() { if (hey.timer) { clearTimeout(hey.timer); hey.timer = null; } }
-  // "Hey Arduino" heard → attentive wake pose, then WAIT for the user to actually speak
+  // "Hey Kai" heard → attentive wake pose, then WAIT for the user to actually speak
   function heyHeard() {
     if (hey.busy) return;
     hey.busy = true; hey.awaiting = true;
@@ -564,14 +564,15 @@
     select("B2_listening");
     hey.timer = setTimeout(function () { hey.busy = false; select("A3_idle"); }, Math.round(5000 * state.spd));
   }
+  // "Kai" is short and easily mis-heard, so match it plus its common ASR variants
   function heyMatches(t) {
     t = (t || "").toLowerCase();
-    return t.indexOf("arduino") >= 0 || t.indexOf("ardu") >= 0 ||
-           t.indexOf("our dino") >= 0 || (t.indexOf("hey") >= 0 && t.indexOf("dino") >= 0);
+    return /\b(kai|kaya|kye|chai)\b/.test(t) ||
+           (t.indexOf("hey") >= 0 && /\b(kai| kai|ky|ki|kie|guy)\b/.test(t));
   }
   // real words beyond the wake phrase = the user is talking to it
   function speechBeyondWake(t) {
-    t = (t || "").toLowerCase().replace(/hey|arduino|ardu\w*|our dino|a dino|dino/g, " ").replace(/[^a-z]/g, "");
+    t = (t || "").toLowerCase().replace(/\b(hey|kai|kaya|kye|chai|ky|ki|kie)\b/g, " ").replace(/[^a-z]/g, "");
     return t.length >= 3;
   }
   function heyStart() {

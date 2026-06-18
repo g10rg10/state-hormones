@@ -62,7 +62,7 @@ room, the eyes still say whose turn it is. Speaking vs Listening must be unmista
 | ID | Use case | Trigger (flow) | Eyes (two dots) | Light | Type | ~Duration |
 |---|---|---|---|---|---|---|
 | D1 | Reminder fires | scheduled reminder (device only) | gentle "perk up" (quick scale-up), one soft blink to draw attention — calm, not alarming | `[SPEAK]` · `(reminder-chime)` | one-shot → into B1 | ~500ms |
-| D2 | Heard the wake word | "Hey Arduino!" | brief attentive pop (scale-up + settle) as it shifts into listening | `[WAKE]`→`[LISTEN]` | one-shot | ~400ms |
+| D2 | Heard the wake word | "Hey Kai!" | brief attentive pop (scale-up + settle) as it shifts into listening | `[WAKE]`→`[LISTEN]` | one-shot | ~400ms |
 
 ---
 

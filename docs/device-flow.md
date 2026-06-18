@@ -19,7 +19,7 @@ only toggles the assistant **on the device that's already running**.
 ## 1. Plugged in — switch DEACTIVATED → Clock
 
 - Screen shows **only the clock** (state `A4_clock`, live `HH:MM`, blinking colon).
-- The **microphone is OFF**: saying "Hey Arduino" does **nothing**.
+- The **microphone is OFF**: saying "Hey Kai" does **nothing**.
 - The **ambient light is OFF** too — a quiet, dark bedside clock. No interaction here.
 
 ```
@@ -31,15 +31,15 @@ only toggles the assistant **on the device that's already running**.
 - A short **wake** animation (`A2_wake`) — the face appears.
 - Settles into **Idle / waiting** (`A3_idle`) — the curious face looks around.
 - The **microphone turns ON** and the device starts **listening for the wake word**
-  ("Hey Arduino").
+  ("Hey Kai").
 
 ```
-[ Activated ] ──▶ Wake (A2) ──▶ Idle / waiting (A3)  + mic ON, listening for "Hey Arduino"
+[ Activated ] ──▶ Wake (A2) ──▶ Idle / waiting (A3)  + mic ON, listening for "Hey Kai"
 ```
 
 ## 3. Voice interaction (only while Activated)
 
-When the device hears **"Hey Arduino"**:
+When the device hears **"Hey Kai"**:
 
 1. **Wake word** (`D2_wakeword`) — an attentive perk-up. It does **not** jump straight
    into the listening pose; it **waits for you to actually say something**.
@@ -48,7 +48,7 @@ When the device hears **"Hey Arduino"**:
 3. **You say nothing for more than 3 s** → it gives up and returns to **Idle**.
 
 ```
-"Hey Arduino"
+"Hey Kai"
       │
       ▼
   Wake word (D2) ── waits up to 3 s for speech ──┐
@@ -86,7 +86,7 @@ returns to the eyes.
 | `A4_clock`       | Deactivated | switch off (mic off · light off) |
 | `A2_wake`        | Activated   | on flipping the switch on |
 | `A3_idle`        | Activated   | resting / waiting for the wake word |
-| `D2_wakeword`    | Activated   | "Hey Arduino" heard |
+| `D2_wakeword`    | Activated   | "Hey Kai" heard |
 | `B2_listening`   | Activated   | you started speaking |
 | `B3_thinking`    | Activated   | processing |
 | `B1_speaking`    | Activated   | replying (TTS) |
@@ -98,8 +98,8 @@ returns to the eyes.
 
 - The **top switch** ("Active" / "Clock") is the physical switch — flip it to
   activate (face + mic) or deactivate (clock + mic off).
-- While **Active**, real speech works: say **"Hey Arduino"** (grant the mic) and then a
+- While **Active**, real speech works: say **"Hey Kai"** (grant the mic) and then a
   request; if you stay silent for 3 s after the wake word it returns to idle.
 - **▶ Simulate flow** runs the whole lifecycle hands-free: deactivated clock → activate →
-  idle → "Hey Arduino" → wait → listening → thinking → Confirm ✓ (e.g. saved pronouns) →
+  idle → "Hey Kai" → wait → listening → thinking → Confirm ✓ (e.g. saved pronouns) →
   reply → idle → deactivate → clock, looping.

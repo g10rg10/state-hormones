@@ -19,7 +19,7 @@ Sketch folder: [`Hormy_eyes/`](Hormy_eyes/).
 ## What it does out of the box
 
 Runs the **device lifecycle**: power on → **Wake** → **Idle** (face). After
-**5 min** of inactivity → **Clock**. The **wake word** ("Hey Arduino" — call
+**5 min** of inactivity → **Clock**. The **wake word** ("Hey Kai" — call
 `wakeWord()` from the mic) → Wake word → Listening → back to the face. For the
 demo without a mic, the clock auto-wakes after 15 s so the loop repeats
 (`CLOCK_AUTOWAKE_MS`; set `0` for a real mic). `setStateIdx(i)` pins any single

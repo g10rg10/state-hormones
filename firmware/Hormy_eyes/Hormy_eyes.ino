@@ -2,7 +2,7 @@
 // 2.8C (480x480 round, ST7701), Arduino + Arduino_GFX.
 //
 // Device lifecycle (logic): power on -> Wake -> Idle (face). After 5 min of
-// inactivity -> Clock. The wake word ("Hey Arduino") -> Wake word -> Listening
+// inactivity -> Clock. The wake word ("Hey Kai") -> Wake word -> Listening
 // -> back to the face. Call wakeWord() from the mic/host. The States web page
 // simulates this with its "Simulate flow" button.
 //   setStateIdx(i) pins any single state (host control / testing);
@@ -37,7 +37,7 @@ const uint32_t CLOCK_AUTOWAKE_MS = 15000;            // demo: auto-wake (no mic 
 static void setPhase(int p) { g_phase = p; g_phaseStart = millis(); }
 
 // ---- hooks for the mic / host ----
-void wakeWord()         { g_override = -1; setPhase(PH_WAKEWORD); }   // "Hey Arduino"
+void wakeWord()         { g_override = -1; setPhase(PH_WAKEWORD); }   // "Hey Kai"
 void resumeLifecycle()  { g_override = -1; setPhase(PH_IDLE); }
 void setStateIdx(int i) { if (i >= 0 && i < NUM_STATES) { g_override = i; g_overrideStart = millis(); } }
 

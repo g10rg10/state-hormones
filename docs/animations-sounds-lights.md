@@ -23,11 +23,11 @@ Power on ──[A2_wake]──▶ Idle / face (A3_idle) ──5 min idle──�
 
 - **Power on** → `A2_wake` → settles into **`A3_idle`** (face mode).
 - **5 min of inactivity** in idle → **`A4_clock`** (clock "on the shelf").
-- **Wake word** ("Hey Arduino"), from clock *or* idle → `D2_wakeword` →
+- **Wake word** ("Hey Kai"), from clock *or* idle → `D2_wakeword` →
   `B2_listening` → back to **`A3_idle`** (face), resetting the 5-min timer.
 
 The **States page** has a **▶ Simulate flow** button that runs this end-to-end —
-timings compressed (5 min ≈ a few seconds); press **🎤 "Hey Arduino"** to wake,
+timings compressed (5 min ≈ a few seconds); press **🎤 "Hey Kai"** to wake,
 or the clock auto-wakes so the loop repeats. The firmware runs the same logic in
 `Hormy_eyes.ino` (real 5-min timeout; the wake word is a hook for the mic).
 

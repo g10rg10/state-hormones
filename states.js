@@ -179,7 +179,7 @@
 
   // --- lifecycle flow simulation ---
   // Power on → Wake → Idle (face). After ~5 min of inactivity → Clock. The wake
-  // word ("Hey Arduino") from clock/idle → Wake word → Listening → back to face.
+  // word ("Hey Kai") from clock/idle → Wake word → Listening → back to face.
   // Timings are compressed for the demo (5 min ≈ a few seconds).
   var IDLE_TO_CLOCK = 6000;   // stands in for 5 min of inactivity
   var CLOCK_AUTOWAKE = 6000;  // the demo auto-fires the wake word so it loops
@@ -225,7 +225,7 @@
     flowClear();
     flowShow("A4_clock");
     wakeBtn.disabled = false;
-    flowPhase("Clock mode (5 min idle) — say “Hey Arduino”");
+    flowPhase("Clock mode (5 min idle) — say “Hey Kai”");
     flowAt(CLOCK_AUTOWAKE, function () { if (flow.running) flowWake(); });
   }
   function flowWake() {
