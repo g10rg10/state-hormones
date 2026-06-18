@@ -133,32 +133,21 @@ main { display: flex; flex-direction: row; align-items: flex-start; justify-cont
 .thumb { position: relative; width: 96px; height: 96px; overflow: visible; border-radius: 11px; }
 .thumb .stage { position: absolute; top: 0; left: 0; transform-origin: top left; transform: scale(0.2); }
 
-/* ---------- The 480x480 round stage — shaded like a 3D sphere ----------
-   Lit from the top: a soft sheen up top, the body darkening toward the bottom
-   rim, plus inner highlight/shadow to give the circle real volume (a ball, not
-   a flat disc). The face sits in front of this sphere. */
+/* ---------- The 480x480 round stage — FLAT (no 3D shading) ----------
+   A uniform dark disc; the eyes + mouth sit in front. No sphere gradient, no
+   top sheen, no specular highlight, no volume shadows. The only glow is the
+   functional ambient light-feedback ring (lume) — not a 3D highlight. */
 .stage {
   position: relative;
   width: 480px; height: 480px;
   display: flex; align-items: center; justify-content: center;
-  background:
-    radial-gradient(58% 50% at 50% 24%, rgba(150,182,205,.13) 0%, rgba(150,182,205,0) 56%),  /* top sheen */
-    radial-gradient(135% 130% at 50% 40%, #0f171c 0%, #070d11 56%, #02060a 84%, #010406 100%); /* sphere body */
+  background: #0c1318;                /* flat — single uniform fill */
   overflow: hidden;
   --lumeRGB: var(--glow);             /* default warm light (unchanged) */
   --lumeLevel: 0;
-  box-shadow:
-    inset 0 18px 34px rgba(180,210,230,.07),       /* top inner light */
-    inset 0 -34px 60px rgba(0,0,0,.72),            /* bottom inner shadow → volume */
-    inset 0 0 0 2px rgba(255,255,255,.03),
-    inset 0 0 60px rgba(0,0,0,.5),
-    0 0 44px 6px rgba(var(--lumeRGB), var(--lumeLevel));
+  box-shadow: 0 0 44px 6px rgba(var(--lumeRGB), var(--lumeLevel));  /* ambient light feedback only */
 }
 .stage.round { border-radius: 50%; }
-.stage::before {                       /* glossy specular highlight near the top, like light on a ball */
-  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
-  background: radial-gradient(64% 42% at 50% 13%, rgba(255,255,255,.11) 0%, rgba(255,255,255,0) 62%);
-}
 
 /* ---------- The face: round eyes + smile mouth ----------
    - .face groups eyes + mouth so they sit together (eyes on top, mouth below)
