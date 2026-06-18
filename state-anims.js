@@ -64,7 +64,7 @@ window.STATES = [
     light: "[CONFIRM]", type: "one-shot", dur: "~1.9 s",
     lightDesc: "Single brightness pulse — saved / accepted.",
     soundDesc: "Bright positive two-note (A→D).",
-    desc: "The eyes morph into a check ✓, hold, then return to eyes. Shown when the device SAVES or UPDATES something you asked to remember or change — e.g. your pronouns or other important onboarding details, or when you set up a recurring/daily event (like a pill reminder): saved / updated / accepted."
+    desc: "The eyes morph into a check ✓, hold, then return to eyes. Shown when the device SAVES or UPDATES something you asked to remember or change — e.g. your pronouns or other important onboarding details: saved / updated / accepted."
   },
   {
     id: "C2_didnt_catch", sec: "C", name: "Didn't catch that",
