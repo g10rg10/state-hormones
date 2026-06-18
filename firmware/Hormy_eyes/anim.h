@@ -18,6 +18,12 @@ enum {
   CH_DSY_R,         // .dot   scaleY, right only  — E4
   CH_DOP,           // .dot   opacity, both       — A2 fade-in
   CH_DBR,           // .dot   brightness, both    — D2 flash
+  // --- mouth channels (faithful port of the web .smile / .open layers) ---
+  CH_MOUTH_ALPHA,   // overall mouth opacity 0..1 (0 = hidden)
+  CH_MOUTH_WIDTH,   // horizontal span scale (1.0 = resting-smile span)
+  CH_MOUTH_CURVE,   // signed arc depth: +1 smile, 0 flat, -1 frown
+  CH_MOUTH_OPEN,    // 0 = stroked curve, 1 = filled open mouth
+  CH_MOUTH_CY,      // mouth-specific vertical offset (px) — idle / B2 bob
 };
 
 enum { MODE_STATIC = 0, MODE_LOOP, MODE_ONESHOT, MODE_DISPLAY };
@@ -52,6 +58,8 @@ struct Pose {
   float dSyL = 1, dSyR = 1;
   float dOpacity = 1, dBright = 1;
   bool  pivotBL = false, pivotBR = false;
+  // mouth (faithful port). mouthAlpha defaults to 0 -> hidden unless a track drives it.
+  float mouthAlpha = 0, mouthWidth = 1, mouthCurve = 0, mouthOpen = 0, mouthCy = 0;
 };
 
 extern float g_spd;   // global tempo multiplier (1.0). Defined in the .ino.
@@ -108,6 +116,11 @@ static inline Pose evalState(const StateDef* s, uint32_t now, uint32_t startMs) 
       case CH_DSY_R:   p.dSyR = v; break;
       case CH_DOP:     p.dOpacity = v; break;
       case CH_DBR:     p.dBright = v; break;
+      case CH_MOUTH_ALPHA: p.mouthAlpha = v; break;
+      case CH_MOUTH_WIDTH: p.mouthWidth = v; break;
+      case CH_MOUTH_CURVE: p.mouthCurve = v; break;
+      case CH_MOUTH_OPEN:  p.mouthOpen  = v; break;
+      case CH_MOUTH_CY:    p.mouthCy    = v; break;
     }
   }
   return p;

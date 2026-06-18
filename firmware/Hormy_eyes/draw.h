@@ -286,6 +286,65 @@ static void drawBell(float swing, float alpha) {
   gfx->fillCircle(cx + (int)(swing * 9), cy + 80, 13, pack565(col));// clapper
 }
 
+// ---------------------------------------------------------------- mouth
+// Faithful port of the web .smile (stroked quadratic arc) + .open (filled
+// ellipse) layers, collapsed into one parametric shape. The smile stroke reuses
+// the drawCheck polyline-via-fillCircle idiom (two passes: soft glow, bright line);
+// the open mouth is a fully-rounded fillRoundRect lozenge. Same warm-white tone as
+// the eyes. mouthAlpha = 0 (Pose default) hides the mouth on states with no track.
+static void drawMouth(const Pose& p) {
+  if (p.mouthAlpha <= 0.01f) return;
+
+  const float MOUTH_CX      = CXC;            // 240
+  const float MOUTH_CY_BASE = 348.0f;         // just below the eyes (bottom ~306)
+  const float MOUTH_HALF    = 86.0f;          // resting-smile half-span (px)
+  const float MOUTH_DEPTH   = 34.0f;          // smile depth at mouthCurve = +1 (px)
+  const float OPEN_HIDE     = 0.15f;          // smile stroke gone once open >= this
+
+  // follow the group transform like the eyes do (scale offset-from-center + gTx/gTy).
+  float dy0  = (MOUTH_CY_BASE - CYC) * p.gScale;
+  float cx   = MOUTH_CX + p.gTx;
+  float cy   = CYC + dy0 + p.gTy + p.mouthCy;
+  float half = MOUTH_HALF * p.mouthWidth * p.gScale;
+  if (half < 8) half = 8;
+
+  // ---- open mouth (filled lozenge), faithful to the web .open ellipse ----
+  if (p.mouthOpen > 0.02f) {
+    float ow = half * 0.40f;                  // the open mouth is far narrower than the smile span
+    float oh = 6.0f + p.mouthOpen * 40.0f;    // ~12px closed .. ~46px wide-open
+    int x = (int)(cx - ow), y = (int)(cy - oh * 0.5f);
+    int w = (int)(ow * 2),  h = (int)oh;
+    if (w < 2) w = 2;
+    if (h < 2) h = 2;
+    int r = (h < w ? h : w) / 2;              // fully-rounded ends -> lozenge / "o"
+    RGB oc = mulRGB(lerpRGB(BG, eyeGradient(0.5f), p.mouthAlpha), p.dBright);
+    RGB og = lerpRGB(BG, GLOW, p.mouthAlpha * 0.5f);
+    gfx->fillRoundRect(x - 6, y - 6, w + 12, h + 12, r + 6, pack565(og));
+    gfx->fillRoundRect(x, y, w, h, r, pack565(oc));
+  }
+
+  // ---- smile / flat / frown stroked arc (hidden while the mouth is open) ----
+  float strokeVis = (p.mouthOpen >= OPEN_HIDE) ? 0.0f : (1.0f - p.mouthOpen / OPEN_HIDE);
+  if (strokeVis > 0.02f) {
+    float depth = MOUTH_DEPTH * p.mouthCurve;       // +smile (concave-up) / -frown
+    float a     = p.mouthAlpha * strokeVis;
+    RGB sc = mulRGB(lerpRGB(BG, eyeGradient(0.5f), a), p.dBright);
+    RGB sg = lerpRGB(BG, GLOW, a * 0.5f);
+    uint16_t cCol = pack565(sc), cGlo = pack565(sg);
+    const int STEPS = 24;
+    for (int pass = 0; pass < 2; pass++) {          // 0 = glow (rad 12), 1 = bright (rad 8)
+      int rad = (pass == 0) ? 12 : 8;
+      uint16_t c = (pass == 0) ? cGlo : cCol;
+      for (int i = 0; i <= STEPS; i++) {
+        float t  = -1.0f + 2.0f * (float)i / STEPS; // -1..+1 across the span
+        float px = cx + t * half;
+        float py = cy + depth * (1.0f - t * t);     // middle pulled down -> smile arc
+        gfx->fillCircle((int)px, (int)py, rad, c);
+      }
+    }
+  }
+}
+
 // ---------------------------------------------------------------- background
 static void drawBackground() {
   gfx->fillScreen(pack565(BG));
@@ -336,5 +395,6 @@ static void renderFrame(int stateIdx, uint32_t now, uint32_t startMs) {
   }
 
   drawEyes(p);
+  drawMouth(p);
   if (s->overlay == OV_NOTEPAD) drawNotepad();
 }
