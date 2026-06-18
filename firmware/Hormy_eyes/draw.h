@@ -37,8 +37,8 @@ static void drawEyeGlow(int cx, int top, int w, int h, int rad, float alpha) {
 }
 
 // ---------------------------------------------------------------- eye body
-// vertical-gradient rounded-rect with top gloss + bottom inner shadow, alpha,
-// brightness and a per-row shear (for E1 rotation).
+// FLAT rounded-rect (single uniform fill — no gradient/gloss/shadow), with
+// alpha, brightness and a per-row shear (for E1 rotation).
 static void drawEyeBody(int cx, int top, int w, int h, int rad, float rotTan,
                         int cy, float alpha, float bright) {
   if (h < 1 || w < 1) return;
@@ -58,12 +58,8 @@ static void drawEyeBody(int cx, int top, int w, int h, int rad, float rotTan,
       hw = w / 2.0f;
     }
     if (hw <= 0) continue;
-    // gradient + gloss
-    float fy = (h > 1) ? (float)oy / (h - 1) : 0.0f;
-    RGB col = eyeGradient(fy);
-    if (oy < 18) { float g = 0.45f * (1.0f - fabsf(oy - 7.0f) / 14.0f); if (g > 0) col = lerpRGB(col, WHT, g); }
-    int bb = h - 1 - oy;
-    if (bb < 22) { float g = 0.55f * (1.0f - bb / 22.0f); if (g > 0) col = lerpRGB(col, ISH, g); }
+    // FLAT fill — no vertical gradient, no top gloss, no bottom inner shadow.
+    RGB col = G0;
     if (bright != 1.0f) col = mulRGB(col, bright);
     if (alpha < 1.0f)  col = lerpRGB(BG, col, alpha);
     int shear = (int)((rowY - cy) * rotTan + (rowY >= cy ? 0.5f : -0.5f));
@@ -96,8 +92,7 @@ static void drawEyes(const Pose& p) {
     int top = pivotB ? (int)(cy + EYE_H * p.gScale / 2.0f - h + 0.5f)
                      : (int)(cy - h / 2.0f + 0.5f);
     if (p.dOpacity > 0.01f) {
-      drawEyeGlow(cx, top, w, h, rad, p.dOpacity);
-      drawEyeBody(cx, top, w, h, rad, rotTan, cy, p.dOpacity, p.dBright);
+      drawEyeBody(cx, top, w, h, rad, rotTan, cy, p.dOpacity, p.dBright);   // flat: no glow halo
     }
   }
 }
@@ -288,10 +283,10 @@ static void drawBell(float swing, float alpha) {
 
 // ---------------------------------------------------------------- mouth
 // Faithful port of the web .smile (stroked quadratic arc) + .open (filled
-// ellipse) layers, collapsed into one parametric shape. The smile stroke reuses
-// the drawCheck polyline-via-fillCircle idiom (two passes: soft glow, bright line);
-// the open mouth is a fully-rounded fillRoundRect lozenge. Same warm-white tone as
-// the eyes. mouthAlpha = 0 (Pose default) hides the mouth on states with no track.
+// ellipse) layers, collapsed into one parametric shape. FLAT: the smile is a
+// single-pass polyline (fillCircle along the arc, no glow); the open mouth is a
+// fully-rounded fillRoundRect lozenge (no glow). Same flat fill as the eyes (G0).
+// mouthAlpha = 0 (Pose default) hides the mouth on states with no track.
 static void drawMouth(const Pose& p) {
   if (p.mouthAlpha <= 0.01f) return;
 
@@ -317,9 +312,7 @@ static void drawMouth(const Pose& p) {
     if (w < 2) w = 2;
     if (h < 2) h = 2;
     int r = (h < w ? h : w) / 2;              // fully-rounded ends -> lozenge / "o"
-    RGB oc = mulRGB(lerpRGB(BG, eyeGradient(0.5f), p.mouthAlpha), p.dBright);
-    RGB og = lerpRGB(BG, GLOW, p.mouthAlpha * 0.5f);
-    gfx->fillRoundRect(x - 6, y - 6, w + 12, h + 12, r + 6, pack565(og));
+    RGB oc = mulRGB(lerpRGB(BG, G0, p.mouthAlpha), p.dBright);   // flat fill, no glow halo
     gfx->fillRoundRect(x, y, w, h, r, pack565(oc));
   }
 
@@ -328,19 +321,15 @@ static void drawMouth(const Pose& p) {
   if (strokeVis > 0.02f) {
     float depth = MOUTH_DEPTH * p.mouthCurve;       // +smile (concave-up) / -frown
     float a     = p.mouthAlpha * strokeVis;
-    RGB sc = mulRGB(lerpRGB(BG, eyeGradient(0.5f), a), p.dBright);
-    RGB sg = lerpRGB(BG, GLOW, a * 0.5f);
-    uint16_t cCol = pack565(sc), cGlo = pack565(sg);
+    RGB sc = mulRGB(lerpRGB(BG, G0, a), p.dBright);  // flat stroke, no glow pass
+    uint16_t cCol = pack565(sc);
     const int STEPS = 24;
-    for (int pass = 0; pass < 2; pass++) {          // 0 = glow (rad 12), 1 = bright (rad 8)
-      int rad = (pass == 0) ? 12 : 8;
-      uint16_t c = (pass == 0) ? cGlo : cCol;
-      for (int i = 0; i <= STEPS; i++) {
-        float t  = -1.0f + 2.0f * (float)i / STEPS; // -1..+1 across the span
-        float px = cx + t * half;
-        float py = cy + depth * (1.0f - t * t);     // middle pulled down -> smile arc
-        gfx->fillCircle((int)px, (int)py, rad, c);
-      }
+    const int rad   = 8;
+    for (int i = 0; i <= STEPS; i++) {
+      float t  = -1.0f + 2.0f * (float)i / STEPS;   // -1..+1 across the span
+      float px = cx + t * half;
+      float py = cy + depth * (1.0f - t * t);       // middle pulled down -> smile arc
+      gfx->fillCircle((int)px, (int)py, rad, cCol);
     }
   }
 }
