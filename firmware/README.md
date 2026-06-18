@@ -1,15 +1,16 @@
 # Hormy EMO Eyes — firmware (Arduino + Arduino_GFX)
 
-A **faithful C++ port** of the web `states.html` gallery to the
+A **faithful C++ port** of the web face (`index.html`) to the
 **Waveshare ESP32-S3-Touch-LCD-2.8C** (2.8″ **480×480 round**, ST7701, 8 MB OPI
-PSRAM, 16 MB flash). Same two glossy EMO eyes, same 16 states, the tall
-vertically-elongated clock, the centered listening notepad (white pad, spiral on
-the right, a **writing hand**), the **confirm check ✓** (the eyes morph into a
-checkmark and back), and the **light feedback** (Maind X §0) whose level + tint
-follow the state (idle breathe, speak pulse *in time with the eyes*, listen
-brighter + cooler, confirm pulse, wake fade). The light is **EXTERNAL** on the
-device (an RGB LED halo — the LCD shows only the eyes); the firmware exposes
-`g_lightLevel` / `g_lightCool` for it. **Round-only**, no new design. The
+PSRAM, 16 MB flash). The two **flat** EMO eyes plus the **animated mouth**, the
+same states, the tall vertically-elongated clock, the centered listening notepad
+(white pad, spiral on the right, a **writing hand**), the **confirm check ✓**
+(the eyes morph into a checkmark and back), and the **light feedback**
+(Maind X §0) whose level + tint follow the state (idle breathe, speak pulse
+*in time with the eyes*, listen brighter + cooler, confirm pulse, wake fade). The
+look is **flat** (no gradient / gloss / glow). The light is **EXTERNAL** on the
+device (an RGB LED halo — the LCD shows only the eyes + mouth); the firmware
+exposes `g_lightLevel` / `g_lightCool` for it. **Round-only**, no new design. The
 render loop is paced ~30 fps and every timeline is driven from the wall clock with
 per-segment cubic-bezier easing, so motion stays smooth and framerate-independent
 (matching EMO's eased blinks + continuous micro-life).
@@ -32,14 +33,14 @@ Full flow: [docs/animations-sounds-lights.md](../docs/animations-sounds-lights.m
 |------|------|
 | `Hormy_eyes.ino` | `setup()`/`loop()`, frame pacing, demo state driver, `setState()` hook |
 | `panel_config.h` | **the only file you must verify** — pins, timing, ST7701 init, TCA9554 expander, backlight |
-| `palette.h` | EMO cyan colors, RGB565 pack/lerp, the eye gradient |
+| `palette.h` | EMO cyan colors, RGB565 pack/lerp; flat eye/mouth fill (`G0`) + the clock gradient |
 | `easing.h` | cubic-bezier solver + the exact timing-functions the CSS uses |
-| `anim.h` | the 3-layer keyframe engine (`.eyes` group / `.eye` per-eye / `.dot`), sampling, `evalState()` |
-| `timelines.h` | all 16 state keyframe tables, transcribed 1:1 from `state-keyframes.css` |
-| `draw.h` | renderer: glossy gradient+gloss+glow eyes, tall 7-seg clock, notepad |
+| `anim.h` | the 3-layer keyframe engine (`.eyes` group / `.eye` per-eye / `.dot`) **+ mouth channels**, sampling, `evalState()` |
+| `timelines.h` | the state keyframe tables (eyes, overlays **and mouth**), transcribed 1:1 from `state-keyframes.css` / `face-keyframes.css` |
+| `draw.h` | renderer: **flat** eyes + **animated mouth**, tall 7-seg clock, notepad, confirm check ✓ |
 
 The engine + renderer are **hardware-agnostic** (they only draw through a
-`Arduino_GFX*`). The 16 state tables, easings, durations and geometry are copied
+`Arduino_GFX*`). The state tables, easings, durations and geometry are copied
 verbatim from the web source, so the device matches the preview.
 
 ## Build
@@ -87,7 +88,7 @@ body of `getTime()` in `draw.h`, the signature stays the same.
 - [ ] PSRAM = OPI enabled (framebuffer allocates)
 - [ ] RGB timing matches the example (18 MHz default; if it shears/flickers, the example's values win)
 - [ ] Eyes centered & symmetric within the circle (`CX_L=150, CX_R=330, CY=240`)
-- [ ] Glow halo + notepad far corner not clipped by the round bezel (inset if needed)
+- [ ] Notepad far corner + mouth extremes not clipped by the round bezel (inset if needed)
 - [ ] Backlight on (GPIO 6)
 
 Touch (GT911 @ `0x5D`) is **not** needed for this firmware.
