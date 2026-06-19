@@ -1,0 +1,7 @@
+{
+  "redirects": [
+    { "source": "/face.html", "destination": "/", "permanent": false },
+    { "source": "/states.html", "destination": "/", "permanent": false },
+    { "source": "/index.html", "destination": "/", "permanent": false }
+  ]
+}
